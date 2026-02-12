@@ -35,8 +35,22 @@ contract ACLDemo is ZamaEthereumConfig {
         emit AccessGranted(to);
     }
 
+    /// @notice Increment the secret (demonstrates ACL reset after operations)
+    function incrementSecret() external onlyOwner {
+        _ownerSecret = FHE.add(_ownerSecret, FHE.asEuint32(1));
+        FHE.allowThis(_ownerSecret);
+        FHE.allow(_ownerSecret, msg.sender);
+        emit SecretUpdated(msg.sender);
+    }
+
+    /// @notice Make the secret publicly decryptable by anyone
+    function makePublic() external onlyOwner {
+        FHE.makePubliclyDecryptable(_ownerSecret);
+    }
+
     /// @notice Get the encrypted secret handle (ACL protected)
     function getSecret() external view returns (euint32) {
+        require(FHE.isSenderAllowed(_ownerSecret), "Not authorized to access secret");
         return _ownerSecret;
     }
 

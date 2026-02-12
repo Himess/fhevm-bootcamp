@@ -49,7 +49,6 @@ FHEVM provides special types for receiving client-encrypted data:
 | External Type | On-Chain Type | Description |
 |--------------|---------------|-------------|
 | `externalEbool` | `ebool` | Encrypted boolean input |
-| `externalEuint4` | `euint4` | Encrypted 4-bit input |
 | `externalEuint8` | `euint8` | Encrypted 8-bit input |
 | `externalEuint16` | `euint16` | Encrypted 16-bit input |
 | `externalEuint32` | `euint32` | Encrypted 32-bit input |
@@ -57,9 +56,6 @@ FHEVM provides special types for receiving client-encrypted data:
 | `externalEuint128` | `euint128` | Encrypted 128-bit input |
 | `externalEuint256` | `euint256` | Encrypted 256-bit input |
 | `externalEaddress` | `eaddress` | Encrypted address input |
-| `externalEbytes64` | `ebytes64` | Encrypted 64-bit bytes input |
-| `externalEbytes128` | `ebytes128` | Encrypted 128-bit bytes input |
-| `externalEbytes256` | `ebytes256` | Encrypted 256-bit bytes input |
 
 These types represent **already encrypted** data coming from the client, bundled with a ZK proof of correctness.
 

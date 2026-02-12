@@ -51,7 +51,6 @@ The plaintext **never** appears on-chain.
 | Function Parameter | Converts To |
 |-------------------|-------------|
 | `externalEbool` | `ebool` |
-| `externalEuint4` | `euint4` |
 | `externalEuint8` | `euint8` |
 | `externalEuint16` | `euint16` |
 | `externalEuint32` | `euint32` |

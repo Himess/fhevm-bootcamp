@@ -128,7 +128,33 @@ function processAndForward(address processor) public {
 
 ---
 
-## 5. `FHE.isSenderAllowed(handle)` — Permission Check
+## 5. `FHE.makePubliclyDecryptable(handle)` — Public Reveal
+
+Makes an encrypted value decryptable by **any** address. Use this when you want to reveal a result publicly — for example, the outcome of a vote or the winner of an auction.
+
+```solidity
+// After tallying votes, reveal the result publicly
+function revealResult() external onlyOwner {
+    FHE.makePubliclyDecryptable(_totalYesVotes);
+    FHE.makePubliclyDecryptable(_totalNoVotes);
+}
+```
+
+> ⚠️ **Warning:** Once made publicly decryptable, ANYONE can see the plaintext value. This is irreversible for that handle. Use only for values meant to be public.
+
+**When to use each ACL function:**
+
+| Function | Use Case |
+|----------|----------|
+| `FHE.allowThis(handle)` | Contract needs to use the value in future transactions |
+| `FHE.allow(handle, addr)` | Grant a specific user access to decrypt |
+| `FHE.allowTransient(handle, addr)` | Temporary access within the same transaction (inter-contract calls) |
+| `FHE.makePubliclyDecryptable(handle)` | Reveal result to everyone (vote outcomes, auction winners, etc.) |
+| `FHE.isSenderAllowed(handle)` | Check if caller has access (for view function guards) |
+
+---
+
+## 6. `FHE.isSenderAllowed(handle)` — Permission Check
 
 Returns `true` if `msg.sender` is authorized to use the given ciphertext.
 
@@ -147,7 +173,7 @@ function viewMyBalance() public view returns (euint64) {
 
 ---
 
-## 6. ACL Patterns
+## 7. ACL Patterns
 
 ### Pattern 1: Token Balance ACL
 
@@ -222,7 +248,7 @@ contract GatedData is ZamaEthereumConfig {
 
 ---
 
-## 7. Important ACL Rules
+## 8. Important ACL Rules
 
 ### Rule 1: New Handle = New ACL
 
@@ -262,7 +288,7 @@ There is no `FHE.revoke()`. Once an address has access to a handle, it retains a
 
 ---
 
-## 8. Common Mistakes
+## 9. Common Mistakes
 
 ### Mistake 1: Forgetting `FHE.allowThis()` After Update
 
@@ -304,11 +330,13 @@ FHE.allowTransient(tempResult, helperContract);
 | `FHE.allowThis(handle)` | Grant current contract access | Persistent |
 | `FHE.allow(handle, addr)` | Grant specific address access | Persistent |
 | `FHE.allowTransient(handle, addr)` | Grant temporary access | Transaction only |
+| `FHE.makePubliclyDecryptable(handle)` | Reveal to everyone | Persistent (irreversible) |
 | `FHE.isSenderAllowed(handle)` | Check if msg.sender has access | N/A (view) |
 
-**Key rules:**
+**Key rules (5 ACL functions):**
 1. Every new ciphertext has an empty ACL
 2. Always `FHE.allowThis()` after every state update
 3. Use `FHE.allow()` for users who need to decrypt
 4. Use `FHE.allowTransient()` for inter-contract calls within one transaction
-5. No direct revocation — rotate data instead
+5. Use `FHE.makePubliclyDecryptable()` to reveal values to everyone (irreversible)
+6. No direct revocation — rotate data instead

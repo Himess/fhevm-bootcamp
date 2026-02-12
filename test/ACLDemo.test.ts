@@ -64,4 +64,33 @@ describe("ACLDemo", function () {
     const hasAccess = await contract.checkAccess();
     expect(hasAccess).to.equal(true);
   });
+
+  it("should increment secret and maintain owner access", async function () {
+    await (await contract.setSecret(100)).wait();
+    await (await contract.incrementSecret()).wait();
+    const handle = await contract.getSecret();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, owner);
+    expect(clear).to.equal(101n);
+  });
+
+  it("should lose granted access after increment (ACL reset)", async function () {
+    await (await contract.setSecret(50)).wait();
+    await (await contract.grantAccess(alice.address)).wait();
+    // Alice can access before increment
+    const canAccess = await contract.connect(alice).checkAccess();
+    expect(canAccess).to.equal(true);
+    // Owner increments — new handle, old ACL gone
+    await (await contract.incrementSecret()).wait();
+    // Alice should NOT have access to the NEW handle
+    const canAccessAfter = await contract.connect(alice).checkAccess();
+    expect(canAccessAfter).to.equal(false);
+  });
+
+  it("should make secret publicly decryptable", async function () {
+    await (await contract.setSecret(42)).wait();
+    await (await contract.makePublic()).wait();
+    // After makePubliclyDecryptable, the value should be decryptable
+    const handle = await contract.getSecret();
+    expect(handle).to.not.equal(0n);
+  });
 });

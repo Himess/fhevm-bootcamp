@@ -70,19 +70,20 @@ FHE.not(a);     // 0b00110011
 
 ---
 
-# Shift and Rotate -- Not Yet Available
+# Shift and Rotate Operations
 
-> **Not Available Yet:** The shift and rotate operations (`FHE.shl()`, `FHE.shr()`, `FHE.rotl()`, `FHE.rotr()`) are defined in the TFHE specification but are **not yet available** in the current fhEVM release (v0.10). They may be added in future versions. For now, bitwise operations are limited to: `and`, `or`, `xor`, `not`.
+| Operation | Function | Description |
+|-----------|----------|-------------|
+| Shift Left | `FHE.shl(a, b)` | Multiply by 2^b |
+| Shift Right | `FHE.shr(a, b)` | Divide by 2^b |
+| Rotate Left | `FHE.rotl(a, b)` | Circular left shift |
+| Rotate Right | `FHE.rotr(a, b)` | Circular right shift |
+
+> ⚠️ The shift amount (b) is ALWAYS `euint8` or `uint8`
 
 ```solidity
-// NOT AVAILABLE in fhEVM v0.10 -- shown for reference only
-// euint32 a = FHE.asEuint32(1);
-// FHE.shl(a, 3);   // 8    (shift left)
-// FHE.shr(a, 1);   // 0    (shift right)
-
-// euint8 b = FHE.asEuint8(0b10000001);
-// FHE.rotl(b, 1);  // 0b00000011  (rotate left)
-// FHE.rotr(b, 1);  // 0b11000000  (rotate right)
+euint32 x = FHE.asEuint32(1);
+euint32 result = FHE.shl(x, 3);  // 1 << 3 = 8
 ```
 
 ---
@@ -124,19 +125,21 @@ value = FHE.min(value, FHE.asEuint32(100));
 
 ---
 
-# Type Compatibility
+# Cross-Type Operations
 
-Both operands must be the **same** encrypted type:
+fhEVM supports operations between **different** encrypted types:
 
 ```solidity
-// GOOD
-FHE.add(euint32_val, euint32_val);
+euint8 small = FHE.asEuint8(10);
+euint32 big = FHE.asEuint32(1000);
 
-// ERROR — type mismatch
-FHE.add(euint32_val, euint64_val);
+// Result is euint32 (larger type)
+euint32 sum = FHE.add(small, big);  // ✅ 1010
 ```
 
-Many operations also accept one plaintext operand:
+**Rule:** Result type = the LARGER operand type.
+
+Also accepts one plaintext operand:
 ```solidity
 FHE.add(encryptedVal, 5);  // OK
 FHE.eq(encryptedVal, 42);  // OK
@@ -185,7 +188,7 @@ Uses `FHE.select()` (covered in detail in Module 08).
 NOT         █░░░░░░░░░  Cheapest
 AND/OR/XOR  ██░░░░░░░░
 ADD/SUB     ████░░░░░░
-SHL/SHR     N/A (not yet available)
+SHL/SHR     ████░░░░░░  Medium
 EQ/NE       █████░░░░░
 GT/GE/LT/LE███████░░░
 MIN/MAX     ████████░░
@@ -217,11 +220,11 @@ function increment(uint32 amount) public {
 |----------|-----------|-----------|
 | Arithmetic | add, sub, mul, div, rem, neg | div/rem: plaintext only |
 | Bitwise | and, or, xor, not | Efficient gas |
-| ~~Bitwise (coming soon)~~ | ~~shl, shr, rotl, rotr~~ | Not yet available in v0.10 |
+| Shift/Rotate | shl, shr, rotl, rotr | Shift amount: always euint8/uint8 |
 | Comparison | eq, ne, gt, ge, lt, le | Return `ebool` |
 | Min/Max | min, max | Great for clamping |
 
-- Same-type operands required
+- Cross-type ops supported (auto-upcast to larger type)
 - Wrapping arithmetic (no reverts)
 - Handle bounds with comparisons + `FHE.select()`
 
@@ -231,4 +234,4 @@ function increment(uint32 amount) public {
 
 **Module 05: Access Control (ACL)**
 
-Learn `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, and `FHE.isSenderAllowed()`.
+Learn `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, `FHE.isSenderAllowed()`, and `FHE.makePubliclyDecryptable()`.

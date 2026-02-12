@@ -37,13 +37,14 @@ Handle 0xAABB...
 
 ---
 
-# The Four ACL Functions
+# The Five ACL Functions
 
 | Function | Purpose | Duration |
 |----------|---------|----------|
 | `FHE.allowThis(h)` | Contract self-access | Persistent |
 | `FHE.allow(h, addr)` | Grant to address | Persistent |
 | `FHE.allowTransient(h, addr)` | Temporary grant | Transaction only |
+| `FHE.makePubliclyDecryptable(h)` | Reveal to everyone | Persistent |
 | `FHE.isSenderAllowed(h)` | Check permission | N/A (view) |
 
 ---
@@ -140,6 +141,28 @@ function getMyBalance() public view returns (euint64) {
 
 ---
 
+# FHE.makePubliclyDecryptable()
+
+## Reveal encrypted values to everyone
+
+```solidity
+// Reveal auction winner publicly
+function revealWinner() external onlyOwner {
+    FHE.makePubliclyDecryptable(_winningBid);
+    FHE.makePubliclyDecryptable(_winnerAddress);
+}
+```
+
+### Use Cases:
+- Vote tallying results
+- Auction/game outcomes
+- Aggregated statistics
+- Any value that should become public after a certain event
+
+> Irreversible — once public, anyone can decrypt
+
+---
+
 # Pattern: Encrypted Token Transfer
 
 ```solidity
@@ -214,6 +237,7 @@ contract Auditor is ZamaEthereumConfig {
 - **`FHE.allowThis()`** — Call after EVERY encrypted state update
 - **`FHE.allow()`** — Grant users access to their own data
 - **`FHE.allowTransient()`** — Efficient inter-contract sharing
+- **`FHE.makePubliclyDecryptable()`** — Reveal values to everyone (irreversible)
 - **`FHE.isSenderAllowed()`** — Guard access to encrypted returns
 - Every new handle = empty ACL (no inheritance)
 

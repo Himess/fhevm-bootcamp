@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint8, euint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title BitwiseOps - Module 04: Bitwise operations on encrypted data
@@ -36,7 +36,29 @@ contract BitwiseOps is ZamaEthereumConfig {
         FHE.allow(_result, msg.sender);
     }
 
-    // NOTE: shl, shr, rotl, rotr are not available in the current FHEVM version.
-    // Shift operations may be added in future releases.
-    // For now, bitwise operations are limited to: and, or, xor, not.
+    // --- Shift Operations ---
+
+    function shlOp(uint32 a, uint8 b) external {
+        _result = FHE.shl(FHE.asEuint32(a), FHE.asEuint8(b));
+        FHE.allowThis(_result);
+        FHE.allow(_result, msg.sender);
+    }
+
+    function shrOp(uint32 a, uint8 b) external {
+        _result = FHE.shr(FHE.asEuint32(a), FHE.asEuint8(b));
+        FHE.allowThis(_result);
+        FHE.allow(_result, msg.sender);
+    }
+
+    function rotlOp(uint32 a, uint8 b) external {
+        _result = FHE.rotl(FHE.asEuint32(a), FHE.asEuint8(b));
+        FHE.allowThis(_result);
+        FHE.allow(_result, msg.sender);
+    }
+
+    function rotrOp(uint32 a, uint8 b) external {
+        _result = FHE.rotr(FHE.asEuint32(a), FHE.asEuint8(b));
+        FHE.allowThis(_result);
+        FHE.allow(_result, msg.sender);
+    }
 }

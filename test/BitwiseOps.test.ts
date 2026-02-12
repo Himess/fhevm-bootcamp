@@ -49,4 +49,34 @@ describe("BitwiseOps", function () {
     const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
     expect(clear).to.equal(BigInt(0xFFFFFFFF));
   });
+
+  // --- Shift/Rotate Operations ---
+
+  it("shl: 1 << 3 should be 8", async function () {
+    await (await contract.shlOp(1, 3)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(8n);
+  });
+
+  it("shr: 16 >> 2 should be 4", async function () {
+    await (await contract.shrOp(16, 2)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(4n);
+  });
+
+  it("rotl: 0x80000001 rotl 1 should be 0x00000003", async function () {
+    await (await contract.rotlOp(0x80000001, 1)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(3n);
+  });
+
+  it("rotr: 0x00000001 rotr 1 should be 0x80000000", async function () {
+    await (await contract.rotrOp(1, 1)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(0x80000000n);
+  });
 });

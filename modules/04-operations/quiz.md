@@ -84,10 +84,12 @@ How do you clamp an encrypted value between 10 and 100?
 
 Can you add an `euint32` and an `euint64` directly?
 
-- A) Yes, the result is `euint64`
+- A) Yes, the result is `euint64` ✅
 - B) Yes, the result is `euint32`
-- C) No, both operands must be the same type ✅
+- C) No, both operands must be the same type
 - D) Yes, but you must specify the result type
+
+> fhEVM supports cross-type arithmetic. When operands have different types, the result is automatically upcast to the larger type. `FHE.add(euint32, euint64)` returns `euint64`.
 
 ---
 

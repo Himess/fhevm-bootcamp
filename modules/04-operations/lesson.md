@@ -115,38 +115,50 @@ euint8 a = FHE.asEuint8(0b11001100);
 euint8 result = FHE.not(a); // encrypted 0b00110011 = 51
 ```
 
-> **Not Available Yet:** The shift and rotate operations (`FHE.shl()`, `FHE.shr()`, `FHE.rotl()`, `FHE.rotr()`) are defined in the TFHE specification but are **not yet available** in the current fhEVM release (v0.10). They may be added in future versions. For now, bitwise operations are limited to: `and`, `or`, `xor`, `not`.
+### Shift and Rotate Operations
 
-### ~~Shift Left: `FHE.shl()`~~ (Not Yet Available)
+Shift and rotate operations are available for `euint8` through `euint128`. The shift amount is **always** `euint8` or `uint8`, regardless of the value type being shifted.
 
 ```solidity
-// NOT AVAILABLE in fhEVM v0.10
-// euint32 a = FHE.asEuint32(1);
-// euint32 result = FHE.shl(a, 3); // encrypted 8 (1 << 3)
+euint32 value = FHE.asEuint32(16);
+
+// Shift left by 2: 16 << 2 = 64
+euint32 shifted = FHE.shl(value, FHE.asEuint8(2));
+// OR with plaintext shift amount:
+euint32 shifted2 = FHE.shl(value, 2);  // uint8 literal
+
+// Shift right by 1: 16 >> 1 = 8
+euint32 rightShifted = FHE.shr(value, 1);
 ```
 
-### ~~Shift Right: `FHE.shr()`~~ (Not Yet Available)
+> ⚠️ **Important:** The shift amount (second parameter) must ALWAYS be `euint8` or `uint8`, regardless of the first operand's type.
+
+### Shift Left: `FHE.shl()`
 
 ```solidity
-// NOT AVAILABLE in fhEVM v0.10
-// euint32 a = FHE.asEuint32(16);
-// euint32 result = FHE.shr(a, 2); // encrypted 4 (16 >> 2)
+euint32 a = FHE.asEuint32(1);
+euint32 result = FHE.shl(a, 3); // 1 << 3 = 8
 ```
 
-### ~~Rotate Left: `FHE.rotl()`~~ (Not Yet Available)
+### Shift Right: `FHE.shr()`
 
 ```solidity
-// NOT AVAILABLE in fhEVM v0.10
-// euint8 a = FHE.asEuint8(0b10000001);
-// euint8 result = FHE.rotl(a, 1); // encrypted 0b00000011
+euint32 a = FHE.asEuint32(16);
+euint32 result = FHE.shr(a, 2); // 16 >> 2 = 4
 ```
 
-### ~~Rotate Right: `FHE.rotr()`~~ (Not Yet Available)
+### Rotate Left: `FHE.rotl()`
 
 ```solidity
-// NOT AVAILABLE in fhEVM v0.10
-// euint8 a = FHE.asEuint8(0b10000001);
-// euint8 result = FHE.rotr(a, 1); // encrypted 0b11000000
+euint32 a = FHE.asEuint32(0x80000001);
+euint32 result = FHE.rotl(a, 1); // 0x00000003 (circular shift)
+```
+
+### Rotate Right: `FHE.rotr()`
+
+```solidity
+euint32 a = FHE.asEuint32(1);
+euint32 result = FHE.rotr(a, 1); // 0x80000000 (circular shift)
 ```
 
 ---
@@ -159,10 +171,10 @@ euint8 result = FHE.not(a); // encrypted 0b00110011 = 51
 | OR | `FHE.or(a, b)` | enc \| enc, enc \| plain |
 | XOR | `FHE.xor(a, b)` | enc ^ enc, enc ^ plain |
 | NOT | `FHE.not(a)` | ~enc |
-| ~~Shift Left~~ | ~~`FHE.shl(a, b)`~~ | Not Yet Available |
-| ~~Shift Right~~ | ~~`FHE.shr(a, b)`~~ | Not Yet Available |
-| ~~Rotate Left~~ | ~~`FHE.rotl(a, b)`~~ | Not Yet Available |
-| ~~Rotate Right~~ | ~~`FHE.rotr(a, b)`~~ | Not Yet Available |
+| Shift Left | `FHE.shl(a, b)` | enc, shift amount: euint8/uint8 |
+| Shift Right | `FHE.shr(a, b)` | enc, shift amount: euint8/uint8 |
+| Rotate Left | `FHE.rotl(a, b)` | enc, shift amount: euint8/uint8 |
+| Rotate Right | `FHE.rotr(a, b)` | enc, shift amount: euint8/uint8 |
 
 ---
 
@@ -249,19 +261,25 @@ euint32 atLeast10 = FHE.max(value, FHE.asEuint32(10));
 
 ---
 
-## 8. Type Compatibility Rules
+## 8. Cross-Type Operation Support
 
-### Same-Type Requirement
+### Automatic Type Upcasting
 
-Both operands must be the same encrypted type:
+fhEVM supports operations between different encrypted types! The result is automatically upcast to the larger type:
 
 ```solidity
-// GOOD: both euint32
-FHE.add(euint32_a, euint32_b);
+euint8 small = FHE.asEuint8(10);
+euint32 big = FHE.asEuint32(1000);
 
-// ERROR: type mismatch
-FHE.add(euint32_a, euint64_b); // Will not compile
+// Cross-type addition: result is euint32
+euint32 sum = FHE.add(small, big);  // ✅ Works! Result: 1010 as euint32
+
+// Cross-type comparison: result is ebool
+ebool isLess = FHE.lt(small, big);  // ✅ Works!
 ```
+
+> **Rule:** When mixing types, the result type is always the LARGER of the two operand types.
+> **Supported combinations:** All pairs of euint8, euint16, euint32, euint64, euint128.
 
 ### Encrypted + Plaintext
 
@@ -274,7 +292,7 @@ euint32 a = FHE.asEuint32(10);
 FHE.add(a, 5);       // euint32 + plaintext
 FHE.mul(a, 3);       // euint32 * plaintext
 FHE.eq(a, 10);       // euint32 == plaintext
-// FHE.shl(a, 2);    // euint32 << plaintext (not yet available in v0.10)
+FHE.shl(a, 2);       // euint32 << 2 (shift amount always uint8)
 ```
 
 The plaintext is automatically encrypted to match the encrypted operand's type.
@@ -371,7 +389,7 @@ Operations ordered by approximate gas cost (lowest to highest):
 1. **NOT** — Cheapest (single operand)
 2. **AND, OR, XOR** — Bitwise is efficient
 3. **ADD, SUB** — Standard arithmetic
-4. ~~**SHL, SHR**~~ — N/A (not yet available)
+4. **SHL, SHR, ROTL, ROTR** — Medium (shift operations)
 5. **EQ, NE** — Equality checks
 6. **GT, GE, LT, LE** — Ordering comparisons
 7. **MIN, MAX** — Comparison + select
@@ -383,9 +401,9 @@ Operations ordered by approximate gas cost (lowest to highest):
 ## Summary
 
 - **Arithmetic:** `add`, `sub`, `mul` (enc+enc), `div`, `rem` (enc+plain only), `neg`
-- **Bitwise:** `and`, `or`, `xor`, `not` (available); `shl`, `shr`, `rotl`, `rotr` (coming soon -- not yet available in v0.10)
+- **Bitwise:** `and`, `or`, `xor`, `not`, `shl`, `shr`, `rotl`, `rotr` (shift amount always `euint8`/`uint8`)
 - **Comparison:** `eq`, `ne`, `gt`, `ge`, `lt`, `le` — all return `ebool`
 - **Min/Max:** `FHE.min()`, `FHE.max()` for clamping
-- Both operands must be the **same encrypted type** (or one plaintext)
+- Cross-type operations are supported — result is automatically upcast to the larger type
 - Arithmetic uses **wrapping** (no overflow reverts) — handle bounds manually
 - Use `FHE.select()` for safe conditional patterns (covered in Module 08)
