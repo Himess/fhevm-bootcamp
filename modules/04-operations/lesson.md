@@ -299,7 +299,28 @@ The plaintext is automatically encrypted to match the encrypted operand's type.
 
 ---
 
-## 9. Overflow and Underflow Behavior
+## 9. Operation Support by Type
+
+Not all operations are available for all encrypted types:
+
+| Operation | euint8-128 | euint256 | eaddress | ebool |
+|-----------|-----------|----------|----------|-------|
+| add, sub, mul | ✅ | ❌ | ❌ | ❌ |
+| div, rem (scalar) | ✅ | ❌ | ❌ | ❌ |
+| min, max | ✅ | ❌ | ❌ | ❌ |
+| le, lt, ge, gt | ✅ | ❌ | ❌ | ❌ |
+| eq, ne | ✅ | ✅ | ✅ | ✅ |
+| and, or, xor | ✅ | ✅ | ❌ | ✅ |
+| not, neg | ✅ | ❌ | ❌ | ✅ (not) |
+| shl, shr, rotl, rotr | ✅ | ❌ | ❌ | ❌ |
+| select | ✅ | ✅ | ✅ | ✅ |
+
+> 💡 `euint256` is primarily useful for storing large hashes/IDs with equality checks.
+> For arithmetic, use `euint128` or smaller.
+
+---
+
+## 10. Overflow and Underflow Behavior
 
 FHEVM uses **wrapping arithmetic** (modular arithmetic):
 
@@ -332,7 +353,7 @@ function safeSub(euint32 a, euint32 b) internal returns (euint32) {
 
 ---
 
-## 10. Practical Example: Encrypted Calculator
+## 11. Practical Example: Encrypted Calculator
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -382,7 +403,7 @@ contract EncryptedCalculator is ZamaEthereumConfig {
 
 ---
 
-## 11. Gas Cost Comparison
+## 12. Gas Cost Comparison
 
 Operations ordered by approximate gas cost (lowest to highest):
 

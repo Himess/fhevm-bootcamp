@@ -1,3 +1,6 @@
+// Note: In Hardhat tests, `fhevm.createEncryptedInput()` is the equivalent of
+// `instance.input.createEncryptedInput()` used in browser/frontend code.
+// The functionality is identical — different environments, same API.
 import { expect } from "chai";
 import { ethers, fhevm } from "hardhat";
 import { FhevmType } from "@fhevm/hardhat-plugin";
@@ -73,6 +76,30 @@ describe("SecureInput", function () {
     const handle = await contract.getStoredBool();
     const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
     expect(clear).to.equal(false);
+  });
+
+  it("should store multiple encrypted values with shared proof", async function () {
+    const encrypted = await fhevm
+      .createEncryptedInput(contractAddress, deployer.address)
+      .add32(42)
+      .add64(999)
+      .encrypt();
+
+    await (
+      await contract.storeMultiple(
+        encrypted.handles[0],
+        encrypted.handles[1],
+        encrypted.inputProof
+      )
+    ).wait();
+
+    const handle32 = await contract.getStoredUint32();
+    const clear32 = await fhevm.userDecryptEuint(FhevmType.euint32, handle32, contractAddress, deployer);
+    expect(clear32).to.equal(42n);
+
+    const handle64 = await contract.getStoredUint64();
+    const clear64 = await fhevm.userDecryptEuint(FhevmType.euint64, handle64, contractAddress, deployer);
+    expect(clear64).to.equal(999n);
   });
 
   it("should emit InputStored event", async function () {

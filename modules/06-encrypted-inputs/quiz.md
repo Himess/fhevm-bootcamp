@@ -114,11 +114,43 @@ When should you use `FHE.asEuintXX(value)` instead of `externalEuintXX`?
 
 ---
 
+### Question 11
+
+When encrypting multiple values with `.add32().add64().encrypt()`, how many `inputProof` values are produced?
+
+- A) One per encrypted value
+- B) One shared proof for all values in that `encrypt()` call ✅
+- C) None — proofs are generated on-chain
+- D) Two — one for each type
+
+<details>
+<summary>Explanation</summary>
+A single `encrypt()` call produces one shared `inputProof` that covers all handles created in that batch. You pass the same `inputProof` to the contract for all encrypted values from that batch.
+</details>
+
+---
+
+### Question 12
+
+After calling `FHE.fromExternal(input, proof)`, what must you do before storing the result?
+
+- A) Nothing — it's ready to use
+- B) Call `FHE.verify()` to validate the proof
+- C) Call `FHE.allowThis()` and `FHE.allow()` to set ACL permissions ✅
+- D) Convert it with `FHE.asEuint32()`
+
+<details>
+<summary>Explanation</summary>
+`FHE.fromExternal()` returns a new encrypted handle. Like all new handles, it has no ACL permissions. You must call `FHE.allowThis(result)` for the contract to use it later, and `FHE.allow(result, msg.sender)` for the sender to decrypt it.
+</details>
+
+---
+
 ## Scoring
 
 | Score | Rating |
 |-------|--------|
-| 10/10 | Excellent — You are ready for Module 07! |
-| 7-9/10 | Good — Review the items you missed. |
-| 4-6/10 | Fair — Re-read the lesson before proceeding. |
-| 0-3/10 | Needs work — Go through the lesson and exercise again. |
+| 11-12/12 | Excellent — You are ready for Module 07! |
+| 8-10/12 | Good — Review the items you missed. |
+| 5-7/12 | Fair — Re-read the lesson before proceeding. |
+| 0-4/12 | Needs work — Go through the lesson and exercise again. |

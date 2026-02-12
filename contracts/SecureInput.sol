@@ -45,6 +45,21 @@ contract SecureInput is ZamaEthereumConfig {
         emit InputStored(msg.sender, "bool");
     }
 
+    /// @notice Store multiple encrypted values in one transaction (shared proof)
+    function storeMultiple(
+        externalEuint32 encA,
+        externalEuint64 encB,
+        bytes calldata inputProof
+    ) external {
+        _storedUint32 = FHE.fromExternal(encA, inputProof);
+        _storedUint64 = FHE.fromExternal(encB, inputProof);
+        FHE.allowThis(_storedUint32);
+        FHE.allow(_storedUint32, msg.sender);
+        FHE.allowThis(_storedUint64);
+        FHE.allow(_storedUint64, msg.sender);
+        emit InputStored(msg.sender, "multiple");
+    }
+
     function getStoredUint8() external view returns (euint8) { return _storedUint8; }
     function getStoredUint32() external view returns (euint32) { return _storedUint32; }
     function getStoredUint64() external view returns (euint64) { return _storedUint64; }
