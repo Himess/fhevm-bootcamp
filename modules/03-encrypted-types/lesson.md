@@ -13,7 +13,6 @@ FHEVM offers the following encrypted types:
 | Encrypted Type | Plaintext Equivalent | Bit Width | Typical Use Case |
 |---------------|---------------------|-----------|-----------------|
 | `ebool` | `bool` | 1 bit | Flags, conditions |
-| `euint4` | `uint8` (4-bit) | 4 bits | Small enums, categories |
 | `euint8` | `uint8` | 8 bits | Small counters, scores |
 | `euint16` | `uint16` | 16 bits | Moderate ranges |
 | `euint32` | `uint32` | 32 bits | General purpose integers |
@@ -21,9 +20,6 @@ FHEVM offers the following encrypted types:
 | `euint128` | `uint128` | 128 bits | Large numbers |
 | `euint256` | `uint256` | 256 bits | Hashes, full-range values |
 | `eaddress` | `address` | 160 bits | Encrypted addresses |
-| `ebytes64` | `bytes8` | 64 bits | Short encrypted data |
-| `ebytes128` | `bytes16` | 128 bits | Medium encrypted data |
-| `ebytes256` | `bytes32` | 256 bits | Longer encrypted data |
 
 ---
 
@@ -80,21 +76,7 @@ ebool isGreater = FHE.gt(a, b);  // encrypted false
 
 ---
 
-## 4. Unsigned Integer Types: `euint4` to `euint256`
-
-### `euint4` — 4-bit Encrypted Integer
-
-```solidity
-euint4 private _category;
-
-function setCategory(uint8 cat) public {
-    require(cat < 16, "euint4 max is 15");
-    _category = FHE.asEuint4(cat);
-    FHE.allowThis(_category);
-}
-```
-
-Range: 0 to 15. Useful for small enumerations.
+## 4. Unsigned Integer Types: `euint8` to `euint256`
 
 ### `euint8` — 8-bit Encrypted Integer
 
@@ -159,6 +141,12 @@ euint128 private _largeValue;
 euint256 private _hash;
 ```
 
+> **Important Limitation:** `euint256` does NOT support arithmetic operations (add, sub, mul, min, max) or ordering comparisons (le, lt, ge, gt, select). It only supports:
+> - Bitwise: `FHE.and()`, `FHE.or()`, `FHE.xor()`
+> - Equality: `FHE.eq()`, `FHE.ne()`
+>
+> Use `euint128` or smaller for arithmetic operations.
+
 ---
 
 ## 5. Encrypted Address: `eaddress`
@@ -188,40 +176,13 @@ ebool isSame = FHE.eq(_secretRecipient, FHE.asEaddress(msg.sender));
 
 ---
 
-## 6. Encrypted Bytes: `ebytes64`, `ebytes128`, `ebytes256`
-
-### Declaration
-
-```solidity
-ebytes64 private _shortData;
-ebytes128 private _mediumData;
-ebytes256 private _longData;
-```
-
-### Use Cases
-
-- Encrypted metadata
-- Encrypted identifiers or labels
-- Encrypted short messages
-
-```solidity
-function storeData(bytes memory data) public {
-    // For small data fitting in 64 bits
-    _shortData = FHE.asEbytes64(data);
-    FHE.allowThis(_shortData);
-}
-```
-
----
-
-## 7. Type Conversion Functions
+## 6. Type Conversion Functions
 
 All conversions go through `FHE.asXXX()`:
 
 | Function | Input | Output |
 |----------|-------|--------|
 | `FHE.asEbool(bool)` | `bool` | `ebool` |
-| `FHE.asEuint4(uint8)` | `uint8` | `euint4` |
 | `FHE.asEuint8(uint8)` | `uint8` | `euint8` |
 | `FHE.asEuint16(uint16)` | `uint16` | `euint16` |
 | `FHE.asEuint32(uint32)` | `uint32` | `euint32` |
@@ -229,15 +190,40 @@ All conversions go through `FHE.asXXX()`:
 | `FHE.asEuint128(uint128)` | `uint128` | `euint128` |
 | `FHE.asEuint256(uint256)` | `uint256` | `euint256` |
 | `FHE.asEaddress(address)` | `address` | `eaddress` |
-| `FHE.asEbytes64(bytes)` | `bytes` | `ebytes64` |
-| `FHE.asEbytes128(bytes)` | `bytes` | `ebytes128` |
-| `FHE.asEbytes256(bytes)` | `bytes` | `ebytes256` |
 
 > **Important:** These functions encrypt plaintext values **on-chain**. The plaintext is visible in the transaction calldata. For truly private inputs from users, use `externalEuintXX` and `FHE.fromExternal()` (covered in Module 06).
 
+### Encrypted-to-Encrypted Casting (Type Conversion)
+
+fhEVM supports casting between encrypted types:
+
+#### Upcasting (safe, no data loss):
+```solidity
+euint8 small = FHE.asEuint8(42);
+euint32 bigger = FHE.asEuint32(small);  // 42 as euint32
+```
+
+#### Downcasting (may truncate):
+```solidity
+euint32 big = FHE.asEuint32(300);
+euint8 truncated = FHE.asEuint8(big);  // 300 mod 256 = 44
+```
+
+> **Warning:** Downcasting silently truncates. There is no overflow check on encrypted values!
+
+#### Bool-Integer conversion:
+```solidity
+ebool flag = FHE.asEbool(true);
+euint8 asInt = FHE.asEuint8(flag);     // true -> 1
+ebool backToBool = FHE.asEbool(asInt); // non-zero -> true
+```
+
+#### Supported casting chain:
+`ebool <-> euint8 <-> euint16 <-> euint32 <-> euint64 <-> euint128 <-> euint256`
+
 ---
 
-## 8. Storage Patterns
+## 7. Storage Patterns
 
 ### Pattern 1: Initialize in Constructor
 
@@ -290,7 +276,7 @@ function addValue(uint32 val) public {
 
 ---
 
-## 9. ACL Basics: Who Can Use Encrypted Values?
+## 8. ACL Basics: Who Can Use Encrypted Values?
 
 When you create or update an encrypted value, you must explicitly grant access to it:
 
@@ -314,14 +300,13 @@ FHE.allow(_secretValue, msg.sender);   // Caller can decrypt/view it
 
 ---
 
-## 10. Gas Considerations
+## 9. Gas Considerations
 
 Larger types cost more gas for operations:
 
 | Type | Relative Gas Cost |
 |------|------------------|
 | `ebool` | Lowest |
-| `euint4` | Very Low |
 | `euint8` | Low |
 | `euint16` | Low-Medium |
 | `euint32` | Medium |
@@ -333,7 +318,7 @@ Larger types cost more gas for operations:
 
 ---
 
-## 11. Common Mistakes
+## 10. Common Mistakes
 
 ### Mistake 1: Using Uninitialized Encrypted Variables
 
@@ -373,7 +358,7 @@ function setSecret(uint32 val) public {
 
 ## Summary
 
-- FHEVM provides **12+ encrypted types** covering booleans, integers (4-256 bit), addresses, and bytes.
+- FHEVM provides **8 core encrypted types** covering booleans, integers (8-256 bit), and addresses.
 - Encrypted values are stored as **handles** (uint256 references) pointing to ciphertexts in the co-processor.
 - Use `FHE.asXXX()` to convert plaintext to encrypted (but note the plaintext is visible on-chain).
 - Always **initialize** encrypted variables and call `FHE.allowThis()` after updates.

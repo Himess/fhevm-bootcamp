@@ -56,6 +56,22 @@ describe("HelloFHEVM", function () {
     expect(counter).to.not.equal(ethers.ZeroHash);
   });
 
+  it("should allow different users to increment", async function () {
+    // Alice increments
+    const encrypted = await fhevm
+      .createEncryptedInput(contractAddress, alice.address)
+      .add32(7)
+      .encrypt();
+
+    await (await contract.connect(alice).increment(
+      encrypted.handles[0],
+      encrypted.inputProof
+    )).wait();
+
+    const counter = await contract.getCounter();
+    expect(counter).to.not.equal(ethers.ZeroHash);
+  });
+
   it("should emit CounterIncremented event", async function () {
     const encrypted = await fhevm
       .createEncryptedInput(contractAddress, deployer.address)

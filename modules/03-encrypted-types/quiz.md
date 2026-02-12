@@ -19,14 +19,14 @@ Which of the following is NOT a valid FHEVM encrypted type?
 
 ### Question 2
 
-What is the maximum value that can be stored in an `euint4`?
+What is the maximum value that can be stored in an `euint8`?
 
-- A) 4
-- B) 8
-- C) 15 ✅
-- D) 16
+- A) 128
+- B) 200
+- C) 255 ✅
+- D) 256
 
-> `euint4` is a 4-bit unsigned integer, so its range is 0 to 2^4 - 1 = 15.
+> `euint8` is an 8-bit unsigned integer, so its range is 0 to 2^8 - 1 = 255.
 
 ---
 
@@ -106,14 +106,14 @@ Why is `FHE.asEuint32(42)` in a public function NOT truly private?
 
 ### Question 9
 
-Which encrypted bytes type would you use to store an encrypted 32-byte hash?
+Which operations are NOT supported on `euint256`?
 
-- A) `ebytes64`
-- B) `ebytes128`
-- C) `ebytes256` ✅
-- D) `euint256`
+- A) `FHE.eq()` and `FHE.ne()`
+- B) `FHE.and()`, `FHE.or()`, `FHE.xor()`
+- C) `FHE.add()`, `FHE.sub()`, `FHE.mul()` ✅
+- D) All operations are supported
 
-> `ebytes256` can hold up to 32 bytes (256 bits) of encrypted data.
+> `euint256` only supports bitwise operations (and, or, xor) and equality checks (eq, ne). Arithmetic operations like add, sub, mul, and ordering comparisons like le, lt, ge, gt are NOT available. Use `euint128` or smaller for arithmetic.
 
 ---
 

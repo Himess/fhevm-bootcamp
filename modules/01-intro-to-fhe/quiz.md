@@ -151,7 +151,7 @@ Which of the following is an encrypted data type available in fhEVM?
 
 **B) `euint64`**
 
-fhEVM provides encrypted versions of integer types (`euint4` through `euint256`), `ebool`, `eaddress`, and `ebytes` variants. There is no `efloat`, `estring`, or `emap` type.
+fhEVM provides encrypted versions of integer types (`euint8` through `euint256`), `ebool`, and `eaddress`. There is no `efloat`, `estring`, or `emap` type.
 </details>
 
 ---
@@ -194,11 +194,70 @@ FHE provides the strongest privacy guarantee (data is never decrypted during com
 
 ---
 
+---
+
+### Question 11
+
+What does TFHE stand for and what makes it special?
+
+- A) Trusted Fully Homomorphic Encryption — uses trusted hardware
+- B) Torus Fully Homomorphic Encryption — supports fast bootstrapping for unlimited operations
+- C) Total Fully Homomorphic Encryption — encrypts all data types
+- D) Threshold Fully Homomorphic Encryption — requires multiple parties
+
+<details>
+<summary>Answer</summary>
+
+**B) Torus Fully Homomorphic Encryption — supports fast bootstrapping for unlimited operations**
+
+TFHE stands for Torus Fully Homomorphic Encryption. Its key innovation is fast bootstrapping, which resets noise after each operation, enabling unlimited sequential computations on encrypted data.
+</details>
+
+---
+
+### Question 12
+
+Which component of fhEVM handles the heavy FHE computations?
+
+- A) The Gateway
+- B) The KMS (Key Management Service)
+- C) The Coprocessor
+- D) The ACL contract
+
+<details>
+<summary>Answer</summary>
+
+**C) The Coprocessor**
+
+The Coprocessor executes the computationally expensive FHE operations off-chain, while the on-chain contract only stores encrypted handles (bytes32 references).
+</details>
+
+---
+
+### Question 13
+
+Which of the following is NOT a product/library created by Zama?
+
+- A) TFHE-rs
+- B) Concrete ML
+- C) fhEVM
+- D) Circom
+
+<details>
+<summary>Answer</summary>
+
+**D) Circom**
+
+Circom is a ZK-SNARK circuit language, not a Zama product. Zama's products include TFHE-rs (Rust FHE library), Concrete (FHE compiler), Concrete ML (encrypted machine learning), and fhEVM (encrypted smart contracts).
+</details>
+
+---
+
 ## Scoring
 
 | Score   | Assessment                                    |
 |---------|-----------------------------------------------|
-| 9-10    | Excellent -- you have a strong grasp of FHE theory |
-| 7-8     | Good -- review the topics you missed          |
-| 5-6     | Fair -- re-read the relevant lesson sections  |
+| 11-13   | Excellent -- you have a strong grasp of FHE theory |
+| 8-10    | Good -- review the topics you missed          |
+| 5-7     | Fair -- re-read the relevant lesson sections  |
 | Below 5 | Review the entire lesson before proceeding    |

@@ -114,11 +114,70 @@ What is the core library object used for all FHE operations in the new FHEVM API
 
 ---
 
+---
+
+### Question 11
+
+What is the correct function signature for accepting encrypted input in production?
+
+- A) `function doSomething(euint32 encValue) external`
+- B) `function doSomething(externalEuint32 encValue, bytes calldata inputProof) external`
+- C) `function doSomething(bytes calldata encryptedData) external`
+- D) `function doSomething(uint32 encValue, bytes calldata proof) external`
+
+<details>
+<summary>Answer</summary>
+
+**B) `function doSomething(externalEuint32 encValue, bytes calldata inputProof) external`**
+
+In production fhEVM contracts, encrypted inputs use the `externalEuintXX` type paired with `bytes calldata inputProof`. Inside the function, `FHE.fromExternal(encValue, inputProof)` converts and verifies the input.
+</details>
+
+---
+
+### Question 12
+
+What is the correct test pattern for sending encrypted data in Hardhat tests?
+
+- A) `contract.increment(42)`
+- B) `contract.increment(ethers.encryptedValue(42))`
+- C) Create encrypted input with `fhevm.createEncryptedInput()`, then pass `encrypted.handles[0]` and `encrypted.inputProof`
+- D) `contract.increment(FHE.encrypt(42))`
+
+<details>
+<summary>Answer</summary>
+
+**C) Create encrypted input with `fhevm.createEncryptedInput()`, then pass `encrypted.handles[0]` and `encrypted.inputProof`**
+
+In tests using @fhevm/hardhat-plugin, you create encrypted inputs via `fhevm.createEncryptedInput(contractAddress, signerAddress)`, chain `.add32(value)`, call `.encrypt()`, then pass `encrypted.handles[0]` and `encrypted.inputProof` to the contract function.
+</details>
+
+---
+
+### Question 13
+
+What is the difference between FHE.allowThis() and FHE.allow()?
+
+- A) allowThis() is for testing, allow() is for production
+- B) allowThis() grants the contract access to the handle, allow() grants a specific address access
+- C) allowThis() is deprecated, only allow() should be used
+- D) They are identical functions with different names
+
+<details>
+<summary>Answer</summary>
+
+**B) allowThis() grants the contract access to the handle, allow() grants a specific address access**
+
+`FHE.allowThis(handle)` grants the current contract permission to use the encrypted handle in future transactions. `FHE.allow(handle, address)` grants a specific external address (like msg.sender) permission to access the handle. Both are typically needed after updating an encrypted state variable.
+</details>
+
+---
+
 ## Scoring
 
 | Score | Rating |
 |-------|--------|
-| 10/10 | Excellent — You are ready for Module 03! |
-| 7-9/10 | Good — Review the items you missed. |
-| 4-6/10 | Fair — Re-read the lesson before proceeding. |
-| 0-3/10 | Needs work — Go through the lesson and exercise again. |
+| 12-13/13 | Excellent -- You are ready for Module 03! |
+| 9-11/13 | Good -- Review the items you missed. |
+| 5-8/13 | Fair -- Re-read the lesson before proceeding. |
+| 0-4/13 | Needs work -- Go through the lesson and exercise again. |

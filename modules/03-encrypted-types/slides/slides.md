@@ -17,7 +17,6 @@ Master every encrypted data type in FHEVM.
 | Type | Bits | Example Use |
 |------|------|-------------|
 | `ebool` | 1 | Flags, conditions |
-| `euint4` | 4 | Small enums (0-15) |
 | `euint8` | 8 | Scores, small counters |
 | `euint16` | 16 | Item counts |
 | `euint32` | 32 | General purpose |
@@ -25,7 +24,6 @@ Master every encrypted data type in FHEVM.
 | `euint128` | 128 | Large numbers |
 | `euint256` | 256 | Hashes, full range |
 | `eaddress` | 160 | Hidden recipients |
-| `ebytes64/128/256` | 64-256 | Encrypted data blobs |
 
 ---
 
@@ -51,7 +49,6 @@ EVM Storage              FHE Co-processor
 
 ```solidity
 ebool   flag    = FHE.asEbool(true);
-euint4  small   = FHE.asEuint4(7);
 euint8  score   = FHE.asEuint8(100);
 euint16 count   = FHE.asEuint16(5000);
 euint32 balance = FHE.asEuint32(1000000);
@@ -77,18 +74,6 @@ Use cases:
 - Anonymous voting
 - Hidden transfer recipients
 - Sealed-bid auctions
-
----
-
-# Encrypted Bytes
-
-```solidity
-ebytes64  shortData;   // Up to 8 bytes encrypted
-ebytes128 mediumData;  // Up to 16 bytes encrypted
-ebytes256 longData;    // Up to 32 bytes encrypted
-```
-
-For storing encrypted metadata, identifiers, or short messages.
 
 ---
 
@@ -204,7 +189,6 @@ For truly private inputs: use `externalEuintXX` + `FHE.fromExternal()` (Module 0
 
 ```
 ebool    ████░░░░░░░░░░░░░░░░  Lowest
-euint4   █████░░░░░░░░░░░░░░░
 euint8   ██████░░░░░░░░░░░░░░
 euint16  ███████░░░░░░░░░░░░░
 euint32  █████████░░░░░░░░░░░  Medium
@@ -217,9 +201,46 @@ euint256 ████████████████████  Highest
 
 ---
 
+# Which Encrypted Type to Use?
+
+```
+Need a flag/boolean? --> ebool
+Need to store an address privately? --> eaddress
+Need arithmetic operations?
+  +-- Values < 256? --> euint8 (lowest gas)
+  +-- Values < 65,536? --> euint16
+  +-- Values < 4 billion? --> euint32 (most common)
+  +-- Large values? --> euint64 or euint128
+  +-- Need 256-bit? --> euint256 (WARNING: NO arithmetic!)
+```
+
+> Rule of thumb: Use the smallest type that fits your data.
+> Smaller types = lower gas costs.
+
+---
+
+# Type Casting Between Encrypted Types
+
+## Upcasting (safe)
+```solidity
+euint8 small = FHE.asEuint8(42);
+euint32 bigger = FHE.asEuint32(small); // safe
+```
+
+## Downcasting (truncates!)
+```solidity
+euint32 big = FHE.asEuint32(300);
+euint8 truncated = FHE.asEuint8(big); // 300 mod 256 = 44!
+```
+
+## Casting chain:
+`ebool <-> euint8 <-> euint16 <-> euint32 <-> euint64 <-> euint128 <-> euint256`
+
+---
+
 # Summary
 
-1. **12+ encrypted types** covering all common data needs
+1. **8 core encrypted types** covering all common data needs
 2. Values stored as **uint256 handles** referencing co-processor ciphertexts
 3. Create with `FHE.asXXX(plaintext)` — but plaintext is on-chain
 4. Always **initialize** and **`FHE.allowThis()`** after every update

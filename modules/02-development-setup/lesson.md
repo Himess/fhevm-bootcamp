@@ -56,11 +56,12 @@ npm install --save-dev @fhevm/hardhat-plugin @fhevm/mock-utils
 
 ## 3. Hardhat Configuration
 
-Your `hardhat.config.ts` needs to be configured for the FHEVM devnet:
+Your `hardhat.config.ts` needs to be configured for FHEVM development:
 
 ```typescript
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import "@fhevm/hardhat-plugin";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -93,7 +94,7 @@ Every FHEVM contract must inherit from a configuration contract that sets up the
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
@@ -122,7 +123,7 @@ This stripped-down counter initializes from a plaintext value and increments by 
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
@@ -161,7 +162,7 @@ In a real contract, users do **not** send plaintext values. Instead, they encryp
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
@@ -223,7 +224,7 @@ Compiled 1 Solidity file successfully
 | Error | Solution |
 |-------|----------|
 | `Source not found: @fhevm/solidity` | Run `npm install @fhevm/solidity` |
-| `ParserError: pragma solidity` | Ensure Solidity version matches (^0.8.27) |
+| `ParserError: pragma solidity` | Ensure Solidity version matches (^0.8.24 or later) |
 
 ---
 
@@ -234,8 +235,6 @@ Create a test file at `test/HelloFHEVM.test.ts`. The `@fhevm/hardhat-plugin` pro
 ```typescript
 import { expect } from "chai";
 import { ethers, fhevm } from "hardhat";
-import { FhevmType } from "@fhevm/hardhat-plugin";
-
 describe("HelloFHEVM", function () {
   it("should deploy successfully", async function () {
     const factory = await ethers.getContractFactory("HelloFHEVM");

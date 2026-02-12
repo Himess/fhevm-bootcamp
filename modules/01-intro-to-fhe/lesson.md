@@ -80,10 +80,10 @@ At no point did anyone see an individual vote. Yet the final tally is mathematic
 For an encryption scheme `E` and a computation `f`:
 
 ```
-E(f(a, b)) = f(E(a), E(b))
+D(f(E(a), E(b))) = f(a, b)
 ```
 
-In other words: encrypting the result of a computation is the same as computing on the encrypted values and then decrypting.
+In other words: decrypting the result of computing on encrypted values yields the same result as computing on the original plaintext values.
 
 ### 2.3 A Simple Illustration
 
@@ -156,7 +156,7 @@ graph LR
 - **1978:** Rivest, Adleman, and Dertouzos propose the idea of computing on encrypted data.
 - **2009:** Craig Gentry publishes the first FHE construction (lattice-based). It was groundbreaking but extremely slow -- a single operation took minutes.
 - **2016:** TFHE scheme published by Chillotti, Gama, Georgieva, and Izabachene, enabling fast bootstrapped gate-by-gate evaluation.
-- **2022:** Zama releases the fhEVM, bringing FHE to Solidity smart contracts.
+- **2023:** Zama releases the fhEVM, bringing FHE to EVM-compatible smart contracts.
 
 ---
 
@@ -191,15 +191,13 @@ Zama's TFHE library for fhEVM provides encrypted equivalents of common Solidity 
 | Plaintext Type | Encrypted Type | Description |
 |---------------|---------------|-------------|
 | `bool`   | `ebool`   | Encrypted boolean |
-| `uint4`  | `euint4`  | Encrypted 4-bit unsigned integer |
 | `uint8`  | `euint8`  | Encrypted 8-bit unsigned integer |
 | `uint16` | `euint16` | Encrypted 16-bit unsigned integer |
 | `uint32` | `euint32` | Encrypted 32-bit unsigned integer |
 | `uint64` | `euint64` | Encrypted 64-bit unsigned integer |
 | `uint128`| `euint128`| Encrypted 128-bit unsigned integer |
-| `uint256`| `euint256`| Encrypted 256-bit unsigned integer |
+| `uint256`| `euint256`| Encrypted 256-bit unsigned integer (limited ops) |
 | `address`| `eaddress`| Encrypted address |
-| `bytes`  | `ebytes64`, `ebytes128`, `ebytes256` | Encrypted byte arrays |
 
 ---
 
@@ -506,7 +504,7 @@ sequenceDiagram
     User->>SDK: Enter amount (e.g. 100)
     SDK->>SDK: Encrypt with network public key
     SDK->>Contract: transfer(to, encryptedAmount, proof)
-    Contract->>Coprocessor: FHE.ge(senderBalance, amount)
+    Contract->>Coprocessor: FHE.le(amount, senderBalance)
     Coprocessor-->>Contract: ebool hasEnough
     Contract->>Coprocessor: FHE.select(hasEnough, ...)
     Coprocessor-->>Contract: Updated encrypted balances

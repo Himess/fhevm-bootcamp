@@ -83,6 +83,7 @@ describe("EncryptedGreeting", function () {
    npm init -y
    npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
    npm install @fhevm/solidity
+   npm install --save-dev @fhevm/hardhat-plugin @fhevm/mock-utils
    npx hardhat init  # Choose TypeScript
    ```
 
@@ -153,3 +154,13 @@ Add an `owner` variable and an `onlyOwner` modifier so that only the deployer ca
 - [ ] Contract uses `FHE` library (not `TFHE`)
 - [ ] Contract inherits `ZamaEthereumConfig`
 - [ ] `FHE.allowThis()` is called after every encrypted state update
+
+## Bonus Challenge: Production Pattern (Stage 2)
+
+Modify your `EncryptedGreeting` contract to accept encrypted input instead of plaintext:
+
+1. Change the parameter type from `uint8` to `externalEuint8` and add `bytes calldata inputProof`
+2. Use `FHE.fromExternal(encValue, inputProof)` inside the function
+3. Update your test to use `fhevm.createEncryptedInput()` pattern
+
+**Hint:** Look at `../../contracts/HelloFHEVM.sol` for the production pattern.

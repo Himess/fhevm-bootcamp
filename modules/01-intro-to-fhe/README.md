@@ -37,7 +37,8 @@ By completing this module you will be able to:
 |----------|-------------|
 | [Lesson](lesson.md) | Comprehensive written lesson covering all FHE theory |
 | [Slides](slides/slides.md) | Presentation slides (Marp format, 12-15 slides) |
-| [Quiz](quiz.md) | 10 multiple-choice review questions |
+| [Exercise](exercise.md) | Hands-on exercises with answer keys |
+| [Quiz](quiz.md) | 10+ multiple-choice review questions |
 
 ---
 

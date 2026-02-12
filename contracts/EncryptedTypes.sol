@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, ebool, euint8, euint16, euint32, euint64, eaddress} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, ebool, euint8, euint16, euint32, euint64, euint128, euint256, eaddress} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedTypes - Module 03: Demonstrates all encrypted types
@@ -12,6 +12,18 @@ contract EncryptedTypes is ZamaEthereumConfig {
     euint32 private _secretUint32;
     euint64 private _secretUint64;
     eaddress private _secretAddress;
+
+    constructor() {
+        // Initialize commonly-read variables to demonstrate best practice
+        _secretBool = FHE.asEbool(false);
+        FHE.allowThis(_secretBool);
+
+        _secretUint32 = FHE.asEuint32(0);
+        FHE.allowThis(_secretUint32);
+
+        // Note: Not all variables need initialization in constructor.
+        // Only initialize variables that will be read before being set.
+    }
 
     // --- Bool ---
     function setBool(bool value) external {
@@ -66,6 +78,32 @@ contract EncryptedTypes is ZamaEthereumConfig {
 
     function getUint64() external view returns (euint64) {
         return _secretUint64;
+    }
+
+    // --- Uint128 ---
+    euint128 private _secretUint128;
+
+    function setUint128(uint128 value) external {
+        _secretUint128 = FHE.asEuint128(value);
+        FHE.allowThis(_secretUint128);
+        FHE.allow(_secretUint128, msg.sender);
+    }
+
+    function getUint128() external view returns (euint128) {
+        return _secretUint128;
+    }
+
+    // --- Uint256 ---
+    euint256 private _secretUint256;
+
+    function setUint256(uint256 value) external {
+        _secretUint256 = FHE.asEuint256(value);
+        FHE.allowThis(_secretUint256);
+        FHE.allow(_secretUint256, msg.sender);
+    }
+
+    function getUint256() external view returns (euint256) {
+        return _secretUint256;
     }
 
     // --- Address ---

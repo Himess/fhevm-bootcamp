@@ -58,4 +58,45 @@ describe("EncryptedTypes", function () {
     const clear = await fhevm.userDecryptEuint(FhevmType.euint8, handle, contractAddress, deployer);
     expect(clear).to.equal(255n);
   });
+
+  it("should set and get encrypted bool (true)", async function () {
+    await (await contract.setBool(true)).wait();
+    const handle = await contract.getBool();
+    expect(handle).to.not.equal(ethers.ZeroHash);
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(true);
+  });
+
+  it("should set and get encrypted bool (false)", async function () {
+    await (await contract.setBool(false)).wait();
+    const handle = await contract.getBool();
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(false);
+  });
+
+  it("should set and get encrypted address", async function () {
+    const testAddr = "0x1234567890AbcdEF1234567890aBcdef12345678";
+    await (await contract.setAddress(testAddr)).wait();
+    // Use getFunction to avoid collision with ethers.js built-in getAddress()
+    const handle = await contract.getFunction("getAddress")();
+    expect(handle).to.not.equal(ethers.ZeroHash);
+    const clear = await fhevm.userDecryptEaddress(handle, contractAddress, deployer);
+    expect(clear.toLowerCase()).to.equal(testAddr.toLowerCase());
+  });
+
+  it("should set and get encrypted uint128", async function () {
+    await (await contract.setUint128(12345)).wait();
+    const handle = await contract.getUint128();
+    expect(handle).to.not.equal(ethers.ZeroHash);
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint128, handle, contractAddress, deployer);
+    expect(clear).to.equal(12345n);
+  });
+
+  it("should set and get encrypted uint256", async function () {
+    await (await contract.setUint256(99999)).wait();
+    const handle = await contract.getUint256();
+    expect(handle).to.not.equal(ethers.ZeroHash);
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint256, handle, contractAddress, deployer);
+    expect(clear).to.equal(99999n);
+  });
 });

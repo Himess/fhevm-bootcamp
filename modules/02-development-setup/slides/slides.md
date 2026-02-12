@@ -84,7 +84,7 @@ No manual address configuration needed!
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
@@ -110,7 +110,7 @@ Hardcoded plaintext init + increment. Good for understanding the basics.
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.24;
 
 import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
@@ -189,6 +189,31 @@ my-fhevm-project/
 
 ---
 
+# Testing Encrypted Contracts
+
+## The fhevm Test Pattern
+
+```typescript
+// 1. Create encrypted input
+const encrypted = await fhevm.createEncryptedInput(
+  contractAddress, signerAddress
+);
+
+// 2. Add value and encrypt
+encrypted.add32(42);
+const encryptedAmount = await encrypted.encrypt();
+
+// 3. Call contract with handles + proof
+await contract.increment(
+  encryptedAmount.handles[0],
+  encryptedAmount.inputProof
+);
+```
+
+> The `fhevm` object is provided by `@fhevm/hardhat-plugin`
+
+---
+
 # Common Pitfalls
 
 | Pitfall | Fix |
@@ -198,7 +223,7 @@ my-fhevm-project/
 | Forgot `ZamaEthereumConfig` | Always inherit it |
 | Missing `FHE.allowThis()` | Call after every state write |
 | Missing `FHE.allow()` for users | Grant callers access to read ciphertext |
-| Old Solidity version | Use `^0.8.27` |
+| Old Solidity version | Use `^0.8.24` or later |
 
 ---
 
@@ -218,4 +243,4 @@ my-fhevm-project/
 
 **Module 03: Encrypted Types Deep Dive**
 
-Explore `ebool`, `euint4` through `euint256`, `eaddress`, `ebytes`, and how encrypted data is stored on-chain.
+Explore `ebool`, `euint8` through `euint256`, `eaddress`, and how encrypted data is stored on-chain.

@@ -242,7 +242,7 @@ fhEVM provides encrypted equivalents for common Solidity types:
 | `uint128`   | `euint128`  | Large balances                |
 | `uint256`   | `euint256`  | Hashes, very large values     |
 | `address`   | `eaddress`  | Hidden recipients             |
-| `bytes`     | `ebytes64/128/256` | Encrypted data blobs   |
+| `bytes`     | `ebytes64/128/256` | Encrypted data blobs (limited support) |
 
 ---
 
