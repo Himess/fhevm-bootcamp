@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FHEVM Counter dApp</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a; color: #e2e8f0;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 480px; width: 100%; padding: 2rem;
+      background: #1e293b; border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,.25);
+    }
+    h1 { text-align: center; margin-bottom: 1.5rem; color: #38bdf8; }
+    .card {
+      background: #334155; border-radius: .75rem;
+      padding: 1.5rem; margin-bottom: 1rem;
+    }
+    .card h3 { margin-bottom: .75rem; color: #94a3b8; font-size: .875rem; text-transform: uppercase; letter-spacing: .05em; }
+    .value { font-size: 2rem; font-weight: 700; color: #f1f5f9; text-align: center; }
+    .input-group {
+      display: flex; gap: .5rem; margin-bottom: 1rem;
+    }
+    input[type="number"] {
+      flex: 1; padding: .75rem; border-radius: .5rem;
+      border: 1px solid #475569; background: #1e293b;
+      color: #f1f5f9; font-size: 1rem;
+    }
+    button {
+      padding: .75rem 1.5rem; border-radius: .5rem;
+      border: none; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: #3b82f6; color: white; width: 100%; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-primary:disabled { background: #64748b; cursor: not-allowed; }
+    .btn-connect { background: #8b5cf6; color: white; width: 100%; margin-bottom: 1rem; }
+    .btn-connect:hover { background: #7c3aed; }
+    .status {
+      text-align: center; padding: .5rem;
+      border-radius: .5rem; font-size: .875rem;
+      margin-bottom: 1rem;
+    }
+    .status.connected { background: #065f46; color: #6ee7b7; }
+    .status.disconnected { background: #7f1d1d; color: #fca5a5; }
+    .status.loading { background: #1e3a5f; color: #93c5fd; }
+    .log {
+      background: #0f172a; border-radius: .5rem;
+      padding: 1rem; max-height: 200px; overflow-y: auto;
+      font-family: monospace; font-size: .75rem;
+      line-height: 1.5;
+    }
+    .log-entry { margin-bottom: .25rem; }
+    .log-entry.success { color: #4ade80; }
+    .log-entry.error { color: #f87171; }
+    .log-entry.info { color: #60a5fa; }
+    .note {
+      text-align: center; font-size: .75rem; color: #64748b;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>FHEVM Counter</h1>
+
+    <div id="status" class="status disconnected">Not Connected</div>
+
+    <button id="connectBtn" class="btn-connect" onclick="connectWallet()">
+      Connect Wallet
+    </button>
+
+    <div class="card">
+      <h3>Your Encrypted Counter</h3>
+      <div id="counterValue" class="value">--</div>
+    </div>
+
+    <div class="card">
+      <h3>Increment By</h3>
+      <div class="input-group">
+        <input type="number" id="incrementValue" value="1" min="1" max="4294967295" />
+      </div>
+      <button id="incrementBtn" class="btn-primary" onclick="increment()" disabled>
+        Encrypt & Increment
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>Transaction Log</h3>
+      <div id="log" class="log">
+        <div class="log-entry info">Ready. Connect your wallet to start.</div>
+      </div>
+    </div>
+
+    <p class="note">
+      UI Mockup -- requires deployed contract on Sepolia or local fhEVM node.<br>
+      Values are encrypted client-side before sending to the contract.<br>
+      Only you can decrypt your counter value.
+    </p>
+  </div>
+
+  <script>
+    // Configuration - update these after deploying SimpleCounter
+    const CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS_HERE";
+    const CONTRACT_ABI = [
+      "function increment(bytes32 encValue, bytes calldata proof) external",
+      "function getMyCount() external view returns (uint256)",
+      "event CountIncremented(address indexed user)"
+    ];
+
+    let provider, signer, contract, fhevmInstance;
+
+    function addLog(message, type = "info") {
+      const log = document.getElementById("log");
+      const entry = document.createElement("div");
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function setStatus(text, type) {
+      const el = document.getElementById("status");
+      el.textContent = text;
+      el.className = `status ${type}`;
+    }
+
+    async function connectWallet() {
+      try {
+        if (!window.ethereum) {
+          addLog("MetaMask not found!", "error");
+          return;
+        }
+
+        setStatus("Connecting...", "loading");
+        addLog("Requesting wallet connection...");
+
+        provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+
+        const address = await signer.getAddress();
+        setStatus(`Connected: ${address.slice(0, 6)}...${address.slice(-4)}`, "connected");
+        addLog(`Connected: ${address}`, "success");
+
+        // Initialize contract
+        contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+        document.getElementById("incrementBtn").disabled = false;
+        document.getElementById("connectBtn").textContent = "Connected";
+        document.getElementById("connectBtn").disabled = true;
+
+        addLog("Contract initialized. Ready to use!", "success");
+
+        // Try to read current counter
+        await readCounter();
+      } catch (error) {
+        addLog(`Connection failed: ${error.message}`, "error");
+        setStatus("Connection Failed", "disconnected");
+      }
+    }
+
+    async function readCounter() {
+      try {
+        addLog("Reading encrypted counter...");
+        const handle = await contract.getMyCount();
+
+        if (handle === ethers.ZeroHash) {
+          document.getElementById("counterValue").textContent = "0";
+          addLog("Counter is at initial state (0)", "info");
+        } else {
+          // In a real dApp, you would use fhevmjs to reencrypt and decrypt
+          document.getElementById("counterValue").textContent = "(encrypted)";
+          addLog(`Counter handle: ${handle.slice(0, 10)}...`, "info");
+          addLog("Use fhevmjs reencryption to see cleartext value", "info");
+        }
+      } catch (error) {
+        addLog(`Read failed: ${error.message}`, "error");
+      }
+    }
+
+    async function increment() {
+      const value = parseInt(document.getElementById("incrementValue").value);
+      if (!value || value <= 0) {
+        addLog("Please enter a positive number", "error");
+        return;
+      }
+
+      try {
+        document.getElementById("incrementBtn").disabled = true;
+        document.getElementById("incrementBtn").textContent = "Encrypting...";
+        addLog(`Encrypting value ${value} client-side...`);
+
+        // -- fhevmjs encryption + transaction (requires deployed contract + fhevmjs loaded) --
+        // To enable: deploy SimpleCounter on a fhEVM-enabled chain, update CONTRACT_ADDRESS,
+        // and uncomment the ethers + fhevmjs script tags at the bottom of this file.
+        //
+        // const userAddress = await signer.getAddress();
+        // const input = fhevmInstance.createEncryptedInput(CONTRACT_ADDRESS, userAddress);
+        // input.add32(value);
+        // const encrypted = await input.encrypt();
+        // const tx = await contract.increment(encrypted.handles[0], encrypted.inputProof);
+        // addLog(`TX sent: ${tx.hash}`, "info");
+        // await tx.wait();
+        // addLog("TX confirmed!", "success");
+
+        addLog("NOTE: This is a UI mockup. Deploy a contract and load fhevmjs for real transactions.", "info");
+        addLog("Demo increment complete (connect to Zama devnet for real transactions)", "success");
+
+        await readCounter();
+      } catch (error) {
+        addLog(`Increment failed: ${error.message}`, "error");
+      } finally {
+        document.getElementById("incrementBtn").disabled = false;
+        document.getElementById("incrementBtn").textContent = "Encrypt & Increment";
+      }
+    }
+  </script>
+
+  <!-- In production, include ethers and fhevmjs -->
+  <!-- <script src="https://cdn.ethers.org/lib/ethers-6.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/fhevmjs@latest/dist/fhevm.umd.min.js"></script> -->
+</body>
+</html>

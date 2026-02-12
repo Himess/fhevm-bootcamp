@@ -1,0 +1,43 @@
+name: Build Slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/**/slides/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'modules/**/slides/**'
+
+jobs:
+  build-slides:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Marp CLI
+        run: npm install -g @marp-team/marp-cli
+
+      - name: Build all slides to PDF
+        run: |
+          mkdir -p slides-output
+          for dir in modules/*/slides; do
+            module=$(basename $(dirname $dir))
+            if [ -f "$dir/slides.md" ]; then
+              echo "Building slides for $module..."
+              marp "$dir/slides.md" --pdf -o "slides-output/${module}-slides.pdf" || true
+            fi
+          done
+
+      - name: Upload slides artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: slides-pdf
+          path: slides-output/
+          retention-days: 30

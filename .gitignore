@@ -1,0 +1,15 @@
+node_modules/
+.env
+cache/
+artifacts/
+coverage/
+typechain-types/
+types/
+*.pdf
+dist/
+.DS_Store
+fhevmTemp/
+coverage.json
+deployments/
+slides-output/
+hardhat.config.ts.bak
