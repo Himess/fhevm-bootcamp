@@ -258,6 +258,38 @@ euint32 rand = FHE.randEuint32();
 
 ---
 
+## Deployed Contracts (Ethereum Sepolia)
+
+All 21 contracts have been deployed and verified on Ethereum Sepolia testnet.
+
+**Deployer:** `0xF505e2E71df58D7244189072008f25f6b6aaE5ae`
+
+| Contract | Address | Etherscan |
+|----------|---------|-----------|
+| SimpleStorage | `0x8A5CBAe9F9629Ea4f7359Bb364E11aB7B19df302` | [View](https://sepolia.etherscan.io/address/0x8A5CBAe9F9629Ea4f7359Bb364E11aB7B19df302) |
+| BasicToken | `0x392762A3BE63A0AE826994Cb84D351a65D7f143b` | [View](https://sepolia.etherscan.io/address/0x392762A3BE63A0AE826994Cb84D351a65D7f143b) |
+| HelloFHEVM | `0xDC1739aAC5040545AF6dbEF86218e274450a1e99` | [View](https://sepolia.etherscan.io/address/0xDC1739aAC5040545AF6dbEF86218e274450a1e99) |
+| EncryptedTypes | `0xB12cCd422222837382eB788fb0525A76cf4b7117` | [View](https://sepolia.etherscan.io/address/0xB12cCd422222837382eB788fb0525A76cf4b7117) |
+| TypeConversions | `0xF31035dfBC2C7FA39e821d4EED9026F1C09b9c23` | [View](https://sepolia.etherscan.io/address/0xF31035dfBC2C7FA39e821d4EED9026F1C09b9c23) |
+| ArithmeticOps | `0x34660C089aB44eaE86990b7be908F7deab4A8ead` | [View](https://sepolia.etherscan.io/address/0x34660C089aB44eaE86990b7be908F7deab4A8ead) |
+| BitwiseOps | `0x35290555CbB959ff6A933a64c96b00142B22ffb2` | [View](https://sepolia.etherscan.io/address/0x35290555CbB959ff6A933a64c96b00142B22ffb2) |
+| ComparisonOps | `0x7f64637f8b95B9c2310B8682ED8f8dcA9a8c10BC` | [View](https://sepolia.etherscan.io/address/0x7f64637f8b95B9c2310B8682ED8f8dcA9a8c10BC) |
+| ACLDemo | `0x62fc4eF59B6250377738C2D04f456B33BF085E82` | [View](https://sepolia.etherscan.io/address/0x62fc4eF59B6250377738C2D04f456B33BF085E82) |
+| MultiUserVault | `0x81741436E652175A6CeD5212E8c2E1476FDF6f99` | [View](https://sepolia.etherscan.io/address/0x81741436E652175A6CeD5212E8c2E1476FDF6f99) |
+| SecureInput | `0xD0Bf225ce453dB1E463EfA73B84825eCCe4C0aDc` | [View](https://sepolia.etherscan.io/address/0xD0Bf225ce453dB1E463EfA73B84825eCCe4C0aDc) |
+| PublicDecrypt | `0x968A04fCcC620e1F8c4c5Cc31176cec063BbeDb8` | [View](https://sepolia.etherscan.io/address/0x968A04fCcC620e1F8c4c5Cc31176cec063BbeDb8) |
+| UserDecrypt | `0x1422971799DF47ee1492BE8c19227e7711f3BB03` | [View](https://sepolia.etherscan.io/address/0x1422971799DF47ee1492BE8c19227e7711f3BB03) |
+| ConditionalDemo | `0x739246740FF597F860372a549F106c9EC1cCF23B` | [View](https://sepolia.etherscan.io/address/0x739246740FF597F860372a549F106c9EC1cCF23B) |
+| EncryptedMinMax | `0x8d46e2e06F0A256255e75489CFc5527E37E6aB3B` | [View](https://sepolia.etherscan.io/address/0x8d46e2e06F0A256255e75489CFc5527E37E6aB3B) |
+| RandomDemo | `0x8836493F103fFB8226549b8aeA0c3E152Ac3b9e1` | [View](https://sepolia.etherscan.io/address/0x8836493F103fFB8226549b8aeA0c3E152Ac3b9e1) |
+| SimpleCounter | `0xB0370cEE99171735bE92b8Ec66506B443Ff6416C` | [View](https://sepolia.etherscan.io/address/0xB0370cEE99171735bE92b8Ec66506B443Ff6416C) |
+| ConfidentialERC20 | `0x5127acf277ac514b275f0824d8cc5aDe39dC1f33` | [View](https://sepolia.etherscan.io/address/0x5127acf277ac514b275f0824d8cc5aDe39dC1f33) |
+| ConfidentialVoting | `0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3` | [View](https://sepolia.etherscan.io/address/0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3) |
+| SealedBidAuction | `0x1AB15668906f288dE4dF3064B8B50e91eFBD771D` | [View](https://sepolia.etherscan.io/address/0x1AB15668906f288dE4dF3064B8B50e91eFBD771D) |
+| ConfidentialDAO | `0x2eDadE60f5Db5da59c73ADd9159ec7519E127770` | [View](https://sepolia.etherscan.io/address/0x2eDadE60f5Db5da59c73ADd9159ec7519E127770) |
+
+---
+
 ## Contributing
 
 We welcome contributions from the community. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting improvements, new exercises, bug fixes, and translations.
