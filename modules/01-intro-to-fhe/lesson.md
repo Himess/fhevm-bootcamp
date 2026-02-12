@@ -637,25 +637,81 @@ The $ZAMA token launched on **February 2, 2026** across major exchanges (Kraken,
 
 With the mainnet launch, Zama completed the **first confidential USDT (cUSDT) transfer** on Ethereum -- proving that FHE can handle real-world token transfers at production scale. The protocol maintained zero downtime and kept up with Ethereum's throughput, proving FHE is production-ready for financial applications.
 
-### 10.4 Zama Developer Program Winners
+### 10.4 Zama Developer Program
 
-The Zama Developer Program has awarded **685 developers** across 6 seasons with **$106,000** in prizes. Here are notable winning projects that demonstrate real-world FHE applications:
+The Zama Developer Program launched in **September 2025** and distributes **$20,000 monthly** across two competitive tracks plus a startup track. As of February 2026, the program has entered **Mainnet Season 1**.
 
-| Project | Track | Prize | Description |
-|---------|-------|-------|-------------|
-| **Zama School** (MadeleineAguil) | Builder | $5,000 | Educational platform demonstrating FHE through interactive examples |
-| **Hello FHE Tutorial** (realchriswilder) | Builder | $3,000 | Step-by-step guide for privacy-preserving dApps |
-| **FHE Guessing Game** (NecipAkgz) | Bounty | $2,000 | Rock-Paper-Scissors game using Zama Protocol |
-| **Agora** | Builder | - | Privacy-focused governance system |
-| **AlphaEngine** | Builder | - | Uniswap V4 privacy hook integration |
-| **Siphon Protocol** | Builder | - | DeFi privacy layer with FHE + ZK proofs |
-| **Uniquity** | Builder | - | Privacy-first identity verification |
-| **Encrypted Wordle** | Bounty | - | On-chain word game using FHE |
+**Program structure:**
 
-**Current tracks:**
-- **Builder Track** ($10,000): Create complete end-to-end demo apps using fhEVM
-- **Bounty Track** ($10,000): Build Hardhat-based fhEVM example repositories
-- **Startup Track**: Rolling applications for FHE-based startups
+| Track | Monthly Prize | Format |
+|-------|--------------|--------|
+| **Builder Track** | up to $5,000 | Build complete demo apps (smart contract + frontend + tests + docs) |
+| **Bounty Track** | up to $5,000 | Build Hardhat-based fhEVM example repositories and educational resources |
+| **Startup Track** | Rolling | Year of free premium support, VC introductions, 1:1 mentoring with CEO Rand Hindi |
+
+**Bounty Track winners (September 2025):**
+
+| Place | Project | Creator | Prize |
+|-------|---------|---------|-------|
+| 1st | **Zama School** | MadeleineAguil | $5,000 |
+| 2nd | **Hello FHE Tutorial** | realchriswilder | $3,000 |
+| 3rd | **FHE Guessing Game** | NecipAkgz | $2,000 |
+
+**Builder Track projects (August 2025 - December 2025):**
+
+| Project | Creator | Season | Category |
+|---------|---------|--------|----------|
+| **Agora** | ElioMargiotta | Nov 2025 | Confidential governance |
+| **AlphaEngine** | Nilay27 | Oct 2025 | Privacy-preserving DeFi (Uniswap V4 hook) |
+| **Aruvi** | ramakrishnanhulk20 | Dec 2025 | Privacy payment gateway |
+| **CAMM** | 6ygb | Sep 2025 | Confidential AMM (Uniswap V2-based) |
+| **EmelMarket** | devEMEL | Aug 2025 | Confidential NFT auction marketplace |
+| **FHE GeoGuessr** | kocaemre | Oct 2025 | Privacy-preserving location guessing game |
+| **FHERatings** | dordunu1 | Oct 2025 | Private rating platform (only averages public) |
+| **FHEZmail** | NarutoLab | Aug 2025 | Decentralized encrypted email |
+| **FHElings** | victorsampereira | Nov 2025 | Interactive CLI learning tool for confidential dApps |
+| **Fhedback** | erzawansyah | Oct 2025 | Private survey platform with aggregated results |
+| **Filez** | Femtech-web | Nov 2025 | End-to-end encrypted file sharing |
+| **Legacy Vault** | 00Xchriswilder | Dec 2025 | Self-custody inheritance management |
+| **OBOL** | 6ygb | Oct 2025 | Encrypted lending market |
+| **OTC With FHE** | tasneemtoolba | Sep 2025 | Confidential OTC marketplace |
+| **Orion Finance** | OrionFinanceAI | Aug 2025 | Private portfolio management |
+| **PayProof** | mintychan | Oct 2025 | Privacy-preserving payroll streaming |
+| **Pendex** | Himess | Dec 2025 | FHE-powered dark pool for pre-IPO leveraged trading |
+| **Privacy Pad** | huyminh1115 | — | Private token sale launchpad |
+| **Privacy Pool** | tomi204 | Sep 2025 | Privacy AMM with confidential tokens (ERC7984) |
+| **Private Uniswap Intents** | tomi204 | Nov 2025 | Uniswap V4 hook for private swaps via encrypted intents |
+| **Shadow Voting** | hadieskandari | Nov 2025 | Premium confidential voting dApp |
+| **Siphon Protocol** | undefinedlab | Dec 2025 | DeFi privacy layer with FHE + ZK proofs |
+| **Uniquity** | Femtech-web | Dec 2025 | Privacy-first identity verification |
+| **UpDown60** | huaigu | Dec 2025 | Privacy-preserving BTC prediction game |
+| **Zamabelief** | dordunu1 | Sep 2025 | Confidential conviction market |
+| **Zentity** | gustavovalverde | Dec 2025 | Privacy-first KYC with FHE attestations |
+| **Zolymarket** | Farukest | Oct 2025 | Decentralized prediction market (private bets) |
+| **z-payment** | 0xethll | Nov 2025 | Confidential ERC20 token wrapping |
+
+**Bounty Track projects:**
+
+| Project | Creator | Season | Description |
+|---------|---------|--------|-------------|
+| **FHEVM Example Factory** | NecipAkgz | Dec 2025 | 28+ contract examples with full toolkit |
+| **FHE Hub** | tomi204 | Dec 2025 | Comprehensive FHEVM example collection |
+| **fhEVM Hub** | gustavovalverde | Dec 2025 | Example library with multiple categories |
+| **FHEVM-SDK** | 0xAleksaOpacic | Oct 2025 | TypeScript SDK for confidential dApps |
+| **jobjab-fhevm-sdk** | jobjab-dev | Oct 2025 | Framework-agnostic universal FHEVM SDK |
+
+**Other notable projects:**
+
+| Project | Creator | Season | Description |
+|---------|---------|--------|-------------|
+| **Cibon** | SwineCoder101 | Oct 2025 | Trustless carbon credit verification |
+| **FHESplit** | Wagalidoom | Oct 2025 | Private expense splitting |
+| **Graze** | nicolas-takimo | Nov 2025 | Encrypted auctions for agricultural assets |
+| **RescueDao** | armsves | Nov 2025 | Verified donations with privacy + cross-chain |
+| **SecSanta** | batikanor | Oct 2025 | Anonymous gift pooling platform |
+| **FHEVesting** | thiagorochatr | Nov 2025 | Cross-chain confidential vesting with ZK proofs |
+
+**Progression pathway:** Builder/Bounty participation → Certified Zama Developer (interview-based, paid contractor access) → Zama Startup Program (VC intros, protocol fee subsidies)
 
 Learn more and apply: [zama.org/developer-hub](https://www.zama.org/developer-hub)
 
