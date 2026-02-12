@@ -66,8 +66,8 @@ These types represent **already encrypted** data coming from the client, bundled
 Once the contract receives an `externalEuintXX`, it must convert it to the corresponding on-chain encrypted type:
 
 ```solidity
-function setSecret(externalEuint32 encValue, bytes calldata proof) external {
-    euint32 value = FHE.fromExternal(encValue, proof);
+function setSecret(externalEuint32 encValue, bytes calldata inputProof) external {
+    euint32 value = FHE.fromExternal(encValue, inputProof);
     _secret = value;
     FHE.allowThis(_secret);
     FHE.allow(_secret, msg.sender);
@@ -84,8 +84,8 @@ function setSecret(externalEuint32 encValue, bytes calldata proof) external {
 
 ```solidity
 // Single encrypted input
-function myFunction(externalEuint32 encValue, bytes calldata proof) external {
-    euint32 value = FHE.fromExternal(encValue, proof);
+function myFunction(externalEuint32 encValue, bytes calldata inputProof) external {
+    euint32 value = FHE.fromExternal(encValue, inputProof);
     // ... use value
 }
 
@@ -93,15 +93,15 @@ function myFunction(externalEuint32 encValue, bytes calldata proof) external {
 function myFunction(
     externalEuint64 encAmount,
     externalEaddress encRecipient,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
-    euint64 amt = FHE.fromExternal(encAmount, proof);
-    eaddress rec = FHE.fromExternal(encRecipient, proof);
+    euint64 amt = FHE.fromExternal(encAmount, inputProof);
+    eaddress rec = FHE.fromExternal(encRecipient, inputProof);
     // ... use amt and rec
 }
 ```
 
-> **Important:** The `bytes calldata proof` parameter carries the ZK proof and must be passed to every `FHE.fromExternal(input, proof)` call. Prefer `external` visibility for functions that accept encrypted inputs.
+> **Important:** The `bytes calldata inputProof` parameter carries the ZK proof and must be passed to every `FHE.fromExternal(input, inputProof)` call. Prefer `external` visibility for functions that accept encrypted inputs.
 
 ---
 
@@ -147,8 +147,8 @@ await tx.wait();
 ### Step 4: Contract Receives and Converts
 
 ```solidity
-function setSecret(externalEuint32 encValue, bytes calldata proof) external {
-    euint32 value = FHE.fromExternal(encValue, proof);
+function setSecret(externalEuint32 encValue, bytes calldata inputProof) external {
+    euint32 value = FHE.fromExternal(encValue, inputProof);
     // Now `value` is a usable on-chain encrypted value
 }
 ```
@@ -182,13 +182,13 @@ contract SealedBidAuction is ZamaEthereumConfig {
 
     /// @notice Submit a sealed bid using client-side encryption
     /// @param encryptedBid The encrypted bid amount from the client
-    /// @param proof The ZK proof for the encrypted input
-    function submitBid(externalEuint64 encryptedBid, bytes calldata proof) external {
+    /// @param inputProof The ZK proof for the encrypted input
+    function submitBid(externalEuint64 encryptedBid, bytes calldata inputProof) external {
         require(auctionOpen, "Auction closed");
         require(!_hasBid[msg.sender], "Already bid");
 
         // Convert external encrypted input to on-chain type
-        euint64 bid = FHE.fromExternal(encryptedBid, proof);
+        euint64 bid = FHE.fromExternal(encryptedBid, inputProof);
 
         // Store the bid
         _bids[msg.sender] = bid;
@@ -294,11 +294,11 @@ function createOrder(
     externalEuint64 encryptedPrice,
     externalEuint32 encryptedQuantity,
     externalEaddress encryptedRecipient,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
-    euint64 price = FHE.fromExternal(encryptedPrice, proof);
-    euint32 quantity = FHE.fromExternal(encryptedQuantity, proof);
-    eaddress recipient = FHE.fromExternal(encryptedRecipient, proof);
+    euint64 price = FHE.fromExternal(encryptedPrice, inputProof);
+    euint32 quantity = FHE.fromExternal(encryptedQuantity, inputProof);
+    eaddress recipient = FHE.fromExternal(encryptedRecipient, inputProof);
 
     // Store order details
     _prices[msg.sender] = price;
@@ -336,27 +336,27 @@ const tx = await contract.createOrder(
 
 ## 8. Common Mistakes
 
-### Mistake 1: Forgetting the `bytes calldata proof` Parameter
+### Mistake 1: Forgetting the `bytes calldata inputProof` Parameter
 
 ```solidity
 // WRONG — missing proof parameter
 function bad(externalEuint32 encValue) public { }
 
 // CORRECT
-function good(externalEuint32 encValue, bytes calldata proof) external { }
+function good(externalEuint32 encValue, bytes calldata inputProof) external { }
 ```
 
-### Mistake 2: Forgetting to Call `FHE.fromExternal(input, proof)`
+### Mistake 2: Forgetting to Call `FHE.fromExternal(input, inputProof)`
 
 ```solidity
 // WRONG — cannot use externalEuint32 directly in operations
-function bad(externalEuint32 encValue, bytes calldata proof) external {
+function bad(externalEuint32 encValue, bytes calldata inputProof) external {
     _value = FHE.add(_value, encValue); // ERROR
 }
 
 // CORRECT
-function good(externalEuint32 encValue, bytes calldata proof) external {
-    euint32 val = FHE.fromExternal(encValue, proof);
+function good(externalEuint32 encValue, bytes calldata inputProof) external {
+    euint32 val = FHE.fromExternal(encValue, inputProof);
     _value = FHE.add(_value, val);
     FHE.allowThis(_value);
 }
@@ -371,12 +371,42 @@ function vote(uint8 candidate) public {
 }
 
 // GOOD — user's vote is encrypted before submission
-function vote(externalEuint8 encryptedVote, bytes calldata proof) external {
-    euint8 v = FHE.fromExternal(encryptedVote, proof);
+function vote(externalEuint8 encryptedVote, bytes calldata inputProof) external {
+    euint8 v = FHE.fromExternal(encryptedVote, inputProof);
     _votes[msg.sender] = v;
     FHE.allowThis(_votes[msg.sender]);
 }
 ```
+
+---
+
+## 9. Hardhat Test Environment vs Browser
+
+The API is functionally identical but differs slightly between environments:
+
+| Environment | API |
+|-------------|-----|
+| Browser (fhevmjs) | `instance.input.createEncryptedInput(contractAddr, userAddr)` |
+| Hardhat Tests | `fhevm.createEncryptedInput(contractAddr, signerAddr)` |
+
+The `fhevm` object in Hardhat is provided by `@fhevm/hardhat-plugin`. Both produce the same `{ handles, inputProof }` output.
+
+```javascript
+// Hardhat test
+const encrypted = await fhevm
+  .createEncryptedInput(contractAddress, deployer.address)
+  .add32(42)
+  .encrypt();
+await contract.myFunction(encrypted.handles[0], encrypted.inputProof);
+
+// Browser (fhevmjs)
+const input = await instance.input.createEncryptedInput(contractAddress, userAddress);
+input.add32(42);
+const encrypted = await input.encrypt();
+await contract.myFunction(encrypted.handles[0], encrypted.inputProof);
+```
+
+> Both environments produce the same encrypted output format. The only difference is how the encryption instance is created.
 
 ---
 
@@ -386,9 +416,9 @@ function vote(externalEuint8 encryptedVote, bytes calldata proof) external {
 |---------|---------|
 | **Problem** | `FHE.asEuintXX(plaintext)` exposes the value in calldata |
 | **Solution** | Client encrypts data before sending; contract receives `externalEuintXX` |
-| **Conversion** | `FHE.fromExternal(input, proof)` validates ZK proof and returns `euintXX` |
-| **Parameters** | Function must accept both `externalEuintXX` and `bytes calldata proof` |
+| **Conversion** | `FHE.fromExternal(input, inputProof)` validates ZK proof and returns `euintXX` |
+| **Parameters** | Function must accept both `externalEuintXX` and `bytes calldata inputProof` |
 | **ZK proof** | Automatically verified — ensures well-formedness and range validity |
 | **Client library** | `fhevmjs` handles encryption and proof generation |
 
-**Rule of thumb:** If the plaintext value should be private, always use `externalEuintXX` + `bytes calldata proof` + `FHE.fromExternal(input, proof)`. Reserve `FHE.asEuintXX()` for non-sensitive constants and contract-internal values.
+**Rule of thumb:** If the plaintext value should be private, always use `externalEuintXX` + `bytes calldata inputProof` + `FHE.fromExternal(input, inputProof)`. Reserve `FHE.asEuintXX()` for non-sensitive constants and contract-internal values.

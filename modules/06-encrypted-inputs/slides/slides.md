@@ -68,9 +68,9 @@ Converts external encrypted input to on-chain encrypted type:
 ```solidity
 function setSecret(
     externalEuint32 encInput,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
-    euint32 value = FHE.fromExternal(encInput, proof);
+    euint32 value = FHE.fromExternal(encInput, inputProof);
 
     _secret = value;
     FHE.allowThis(_secret);
@@ -127,9 +127,9 @@ contract SealedBidAuction is ZamaEthereumConfig {
 
     function submitBid(
         externalEuint64 encBid,
-        bytes calldata proof
+        bytes calldata inputProof
     ) external {
-        euint64 bid = FHE.fromExternal(encBid, proof);
+        euint64 bid = FHE.fromExternal(encBid, inputProof);
 
         _bids[msg.sender] = bid;
         _highestBid = FHE.max(_highestBid, bid);
@@ -151,10 +151,10 @@ No bidder can see anyone else's bid amount!
 function createOrder(
     externalEuint64 encPrice,
     externalEuint32 encQty,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
-    euint64 price = FHE.fromExternal(encPrice, proof);
-    euint32 qty   = FHE.fromExternal(encQty, proof);
+    euint64 price = FHE.fromExternal(encPrice, inputProof);
+    euint32 qty   = FHE.fromExternal(encQty, inputProof);
     // ... store and use
 }
 ```
@@ -170,17 +170,17 @@ await contract.createOrder(enc.handles[0], enc.handles[1], enc.inputProof);
 
 ---
 
-# Key Rule: `bytes calldata proof` Required
+# Key Rule: `bytes calldata inputProof` Required
 
 ```solidity
 // WRONG — missing proof parameter
 function bad(externalEuint32 encValue) public { }
 
 // CORRECT
-function good(externalEuint32 encValue, bytes calldata proof) external { }
+function good(externalEuint32 encValue, bytes calldata inputProof) external { }
 ```
 
-Functions accepting encrypted inputs must always include the `bytes calldata proof` parameter.
+Functions accepting encrypted inputs must always include the `bytes calldata inputProof` parameter.
 
 ---
 
@@ -188,7 +188,7 @@ Functions accepting encrypted inputs must always include the `bytes calldata pro
 
 | Scenario | Use |
 |----------|-----|
-| User-provided private data | `externalEuintXX` + `bytes calldata proof` + `FHE.fromExternal(input, proof)` |
+| User-provided private data | `externalEuintXX` + `bytes calldata inputProof` + `FHE.fromExternal(input, inputProof)` |
 | Contract-internal constants | `FHE.asEuintXX(plaintext)` |
 | Initializing state to zero | `FHE.asEuintXX(0)` |
 | Non-sensitive public params | `FHE.asEuintXX(value)` |
@@ -199,9 +199,9 @@ Functions accepting encrypted inputs must always include the `bytes calldata pro
 
 | Mistake | Fix |
 |---------|-----|
-| Missing `bytes calldata proof` param | Add `bytes calldata proof` to function signature |
-| Using external type directly in ops | Call `FHE.fromExternal(input, proof)` first |
-| Using `FHE.asEuintXX()` for secrets | Use `externalEuintXX` + `proof` |
+| Missing `bytes calldata inputProof` param | Add `bytes calldata inputProof` to function signature |
+| Using external type directly in ops | Call `FHE.fromExternal(input, inputProof)` first |
+| Using `FHE.asEuintXX()` for secrets | Use `externalEuintXX` + `inputProof` |
 | Forgetting ACL after `fromExternal` | Call `allowThis` + `allow` |
 
 ---
@@ -209,10 +209,10 @@ Functions accepting encrypted inputs must always include the `bytes calldata pro
 # Summary
 
 1. `FHE.asEuintXX(plaintext)` exposes the value in calldata
-2. `externalEuintXX` + `bytes calldata proof` + `FHE.fromExternal(input, proof)` = truly private inputs
+2. `externalEuintXX` + `bytes calldata inputProof` + `FHE.fromExternal(input, inputProof)` = truly private inputs
 3. Client encrypts with `fhevmjs`, sends ciphertext + ZK proof
 4. ZK proof is auto-verified inside `FHE.fromExternal(input, proof)`
-5. Always include `bytes calldata proof` parameter alongside encrypted inputs
+5. Always include `bytes calldata inputProof` parameter alongside encrypted inputs
 6. Always manage ACL after conversion
 
 ---

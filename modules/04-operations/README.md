@@ -22,7 +22,7 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- Contracts: [ArithmeticOps.sol](../../contracts/ArithmeticOps.sol), [BitwiseOps.sol](../../contracts/BitwiseOps.sol), [ComparisonOps.sol](../../contracts/ComparisonOps.sol)
+- Contracts: [ArithmeticOps.sol](../../contracts/ArithmeticOps.sol), [BitwiseOps.sol](../../contracts/BitwiseOps.sol), [ComparisonOps.sol](../../contracts/ComparisonOps.sol), [ConditionalDemo.sol](../../contracts/ConditionalDemo.sol), [EncryptedMinMax.sol](../../contracts/EncryptedMinMax.sol)
 - Tests: [ArithmeticOps.test.ts](../../test/ArithmeticOps.test.ts), [BitwiseOps.test.ts](../../test/BitwiseOps.test.ts), [ComparisonOps.test.ts](../../test/ComparisonOps.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
@@ -32,6 +32,8 @@ By the end of this module, you will be able to:
 - **Arithmetic** — `FHE.add()`, `FHE.sub()`, `FHE.mul()`, `FHE.div()`, `FHE.rem()`
 - **Bitwise** — `FHE.and()`, `FHE.or()`, `FHE.xor()`, `FHE.not()`, `FHE.shl()`, `FHE.shr()`
 - **Comparison** — `FHE.eq()`, `FHE.ne()`, `FHE.gt()`, `FHE.ge()`, `FHE.lt()`, `FHE.le()`
+- **Conditional** — `FHE.select(ebool, a, b)` for branch-free encrypted logic
+- **Shift/Rotate** — `FHE.shl()`, `FHE.shr()`, `FHE.rotl()`, `FHE.rotr()` (shift amount always euint8/uint8)
 - **Min/Max** — `FHE.min()`, `FHE.max()`
 - **Negation** — `FHE.neg()`
 

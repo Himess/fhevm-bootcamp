@@ -95,14 +95,14 @@ Can you add an `euint32` and an `euint64` directly?
 
 ### Question 8
 
-What happens when you perform `FHE.sub(FHE.asEuint8(3), FHE.asEuint8(5))` (subtracting 5 from 3)?
+What does `FHE.xor(FHE.asEuint8(0xFF), FHE.asEuint8(0xFF))` decrypt to?
 
-- A) It reverts with an underflow error
-- B) It returns encrypted 0
-- C) It wraps around to encrypted 254 (modular arithmetic) ✅
-- D) It returns a negative encrypted value
+- A) 255
+- B) 0 ✅
+- C) 1
+- D) Compilation error
 
-> FHE arithmetic uses modular (wrapping) behavior, similar to unchecked Solidity math. Since euint8 is unsigned 8-bit, 3 - 5 wraps to 256 - 2 = 254. There are no negative values in encrypted unsigned integers, and the operation never reverts.
+> XOR of a value with itself always produces 0. 0xFF XOR 0xFF = 0x00.
 
 ---
 
@@ -132,11 +132,24 @@ What does `FHE.rem(FHE.asEuint32(17), 5)` compute?
 
 ---
 
+### Question 11
+
+In `FHE.shl(value, amount)`, what type must `amount` be?
+
+- A) Same type as `value`
+- B) Always `uint256`
+- C) Always `euint8` or `uint8` ✅
+- D) Any unsigned integer type
+
+> Shift and rotate operations in fhEVM require the shift amount to be `euint8` or `uint8`, regardless of the value being shifted. This applies to `shl`, `shr`, `rotl`, and `rotr`.
+
+---
+
 ## Scoring
 
 | Score | Rating |
 |-------|--------|
-| 10/10 | Excellent — You are ready for Module 05! |
-| 7-9/10 | Good — Review the items you missed. |
-| 4-6/10 | Fair — Re-read the lesson before proceeding. |
-| 0-3/10 | Needs work — Go through the lesson and exercise again. |
+| 11/11 | Excellent — You are ready for Module 05! |
+| 8-10/11 | Good — Review the items you missed. |
+| 5-7/11 | Fair — Re-read the lesson before proceeding. |
+| 0-4/11 | Needs work — Go through the lesson and exercise again. |

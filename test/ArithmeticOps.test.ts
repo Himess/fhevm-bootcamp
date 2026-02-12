@@ -70,4 +70,25 @@ describe("ArithmeticOps", function () {
     const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
     expect(clear).to.equal(30n);
   });
+
+  it("should negate encrypted value", async function () {
+    await (await contract.negEncrypted(5)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(4294967291n); // 2^32 - 5
+  });
+
+  it("should wrap on underflow (5 - 10)", async function () {
+    await (await contract.subEncrypted(5, 10)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(4294967291n); // 2^32 - 5
+  });
+
+  it("should wrap on overflow (max + 1)", async function () {
+    await (await contract.addEncrypted(4294967295, 1)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(0n);
+  });
 });

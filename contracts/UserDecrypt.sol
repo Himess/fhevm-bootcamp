@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, euint64, externalEuint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title UserDecrypt - Module 07: User (re-encryption based) decryption demo
+/// @title UserDecrypt - Module 05/07: Per-user secret storage with access sharing
 /// @notice Demonstrates ACL-gated user decryption patterns
 contract UserDecrypt is ZamaEthereumConfig {
     mapping(address => euint32) private _userSecrets;

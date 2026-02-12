@@ -10,7 +10,7 @@ Build an encrypted voting contract where voters submit their choices using clien
 
 Create a voting contract with the following features:
 
-1. An owner registers candidates (up to 8 candidates, IDs 0-7)
+1. An owner registers candidates (up to 4 candidates, IDs 0-3)
 2. Voters submit encrypted votes using `externalEuint8`
 3. Each voter can only vote once
 4. The contract tallies votes per candidate using encrypted counters
@@ -60,12 +60,12 @@ contract PrivateVoting is ZamaEthereumConfig {
 
     /// @notice Cast an encrypted vote
     /// @param encryptedVote Client-encrypted candidate ID (0 to candidateCount-1)
-    /// @param proof The ZK proof for the encrypted input
-    function vote(externalEuint8 encryptedVote, bytes calldata proof) external {
+    /// @param inputProof The ZK proof for the encrypted input
+    function vote(externalEuint8 encryptedVote, bytes calldata inputProof) external {
         require(votingOpen, "Voting closed");
         require(!_hasVoted[msg.sender], "Already voted");
 
-        // TODO: Convert external input using FHE.fromExternal(encryptedVote, proof)
+        // TODO: Convert external input using FHE.fromExternal(encryptedVote, inputProof)
 
         // TODO: For each candidate, check if vote == candidateId using FHE.eq()
         // TODO: If match, increment that candidate's tally by 1 using FHE.add() + FHE.select()
@@ -97,7 +97,7 @@ contract PrivateVoting is ZamaEthereumConfig {
 1. **Constructor**: Initialize `_tally0` through `_tally3` with `FHE.asEuint32(0)` and call `FHE.allowThis()` for each.
 
 2. **`vote` function**:
-   - Convert the external input: `euint8 v = FHE.fromExternal(encryptedVote, proof);`
+   - Convert the external input: `euint8 v = FHE.fromExternal(encryptedVote, inputProof);`
    - For each candidate `i`, check if the vote matches: `ebool isCandidate_i = FHE.eq(v, FHE.asEuint8(i));`
    - Create an encrypted 1 or 0 based on the match: `euint32 increment = FHE.select(isCandidate_i, FHE.asEuint32(1), FHE.asEuint32(0));`
    - Add to the tally: `_tally_i = FHE.add(_tally_i, increment);`
@@ -128,7 +128,7 @@ FHE.allowThis(_tally3);
 <summary>Hint 2: Vote tallying logic</summary>
 
 ```solidity
-euint8 v = FHE.fromExternal(encryptedVote, proof);
+euint8 v = FHE.fromExternal(encryptedVote, inputProof);
 
 euint32 one = FHE.asEuint32(1);
 euint32 zero = FHE.asEuint32(0);
@@ -202,8 +202,8 @@ await tx.wait();
 ## Success Criteria
 
 - [ ] Contract compiles without errors
-- [ ] `vote` accepts `externalEuint8` and `bytes calldata proof` parameters
-- [ ] `FHE.fromExternal(input, proof)` is used to convert the input
+- [ ] `vote` accepts `externalEuint8` and `bytes calldata inputProof` parameters
+- [ ] `FHE.fromExternal(input, inputProof)` is used to convert the input
 - [ ] Each candidate's tally is correctly incremented based on the encrypted vote
 - [ ] `FHE.allowThis()` is called for all updated tallies
 - [ ] Tallies are only accessible after voting closes

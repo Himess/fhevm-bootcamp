@@ -45,7 +45,7 @@ This path is designed for instructor-led bootcamp cohorts or highly motivated in
 | 13:00 -- 14:00 | 1h | Lunch break |
 | 14:00 -- 17:00 | 3h | **Module 04:** Input Handling & Validation |
 | 17:00 -- 17:30 | 30m | Break |
-| 17:30 -- 21:00 | 3.5h | **Module 05:** Comparison & Conditional Logic (first half) |
+| 17:30 -- 21:00 | 3.5h | **Module 05:** Access Control (ACL) (first half) |
 
 **End-of-day checkpoint:** Understand ACL system. Can handle encrypted inputs. Starting conditional logic patterns.
 
@@ -54,7 +54,7 @@ This path is designed for instructor-led bootcamp cohorts or highly motivated in
 | Time | Duration | Module/Activity |
 |---|---|---|
 | 09:00 -- 09:30 | 30m | Day 2 review and Q&A |
-| 09:30 -- 10:30 | 1h | **Module 05:** Comparison & Conditional Logic (complete) |
+| 09:30 -- 10:30 | 1h | **Module 05:** Access Control (ACL) (complete) |
 | 10:30 -- 13:00 | 2.5h | **Module 06:** Decryption Patterns & Callbacks (first half) |
 | 13:00 -- 14:00 | 1h | Lunch break |
 | 14:00 -- 15:30 | 1.5h | **Module 06:** Decryption Patterns (complete) |
@@ -129,7 +129,7 @@ This path is designed for working professionals who can dedicate evenings and we
 |---|---|---|---|
 | Monday | Evening | 2h | **Module 04:** Input Handling (Part 1: Client-side encryption, externalEuintXX) |
 | Tuesday | Evening | 2h | **Module 04:** Complete (Validation patterns, exercises) + Quiz |
-| Wednesday | Evening | 2h | **Module 05:** Comparisons & Conditionals (Part 1: Comparison ops, ebool) |
+| Wednesday | Evening | 2h | **Module 05:** Access Control / ACL (Part 1: Comparison ops, ebool) |
 | Thursday | Evening | 2h | **Module 05:** Complete (FHE.select patterns, branchless refactoring) + Quiz |
 | Saturday | Morning | 4h | **Module 06:** Decryption Patterns & Callbacks (all topics + exercises) |
 | Sunday | Morning | 4h | **Module 07:** Encrypted ERC-20 (Part 1: Design, transfer, balances) |
@@ -205,7 +205,7 @@ This path is for independent learners who want to work through the material at t
 | Module | Estimated Time | Milestone |
 |---|---|---|
 | 04: Input Handling & Validation | 3h | Client-to-contract input script working |
-| 05: Comparison & Conditional Logic | 4h | Branchless refactoring exercise complete |
+| 05: Access Control (ACL) | 4h | Branchless refactoring exercise complete |
 | 06: Decryption Patterns & Callbacks | 4h | Timed Reveal exercise complete |
 | 07: Encrypted ERC-20 Token | 5h | Full ERC-20 with approve/transferFrom |
 | 08: Testing & Debugging | 4h | 10+ test suite for ERC-20 |

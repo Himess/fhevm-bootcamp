@@ -116,11 +116,50 @@ In a multi-contract architecture, Contract A wants to pass an encrypted value to
 
 ---
 
+### Question 11
+
+What does `FHE.makePubliclyDecryptable(handle)` do?
+
+- A) Decrypts the value on-chain and stores it as plaintext
+- B) Makes the ciphertext decryptable by any address ✅
+- C) Removes all existing ACL permissions
+- D) Transfers ownership of the handle
+
+> `FHE.makePubliclyDecryptable(handle)` adds universal read access to the ciphertext. Any address can then decrypt it. The encrypted handle still exists — the value is not stored as plaintext on-chain.
+
+---
+
+### Question 12
+
+After computing `c = FHE.add(a, b)`, who has ACL access to `c`?
+
+- A) Everyone who had access to `a` and `b`
+- B) Only the contract (automatically)
+- C) Nobody — ACL must be explicitly set for the new handle ✅
+- D) The transaction sender automatically gets access
+
+> Every FHE operation creates a NEW ciphertext handle. The new handle has NO ACL permissions by default. You must explicitly call `FHE.allowThis(c)` and `FHE.allow(c, address)` after every operation.
+
+---
+
+### Question 13
+
+What is the purpose of `FHE.allowTransient(handle, address)`?
+
+- A) Grants permanent access that expires after 24 hours
+- B) Grants access only within the current transaction ✅
+- C) Grants read-only access (cannot use in computations)
+- D) Grants access to all handles owned by the contract
+
+> `FHE.allowTransient` grants temporary access valid only within the current transaction. This is essential for inter-contract calls where Contract A passes an encrypted handle to Contract B for processing within a single transaction.
+
+---
+
 ## Scoring
 
 | Score | Rating |
 |-------|--------|
-| 10/10 | Excellent — You are ready for Module 06! |
-| 7-9/10 | Good — Review the items you missed. |
-| 4-6/10 | Fair — Re-read the lesson before proceeding. |
-| 0-3/10 | Needs work — Go through the lesson and exercise again. |
+| 13/13 | Excellent — You are ready for Module 06! |
+| 10-12/13 | Good — Review the items you missed. |
+| 6-9/13 | Fair — Re-read the lesson before proceeding. |
+| 0-5/13 | Needs work — Go through the lesson and exercise again. |

@@ -14,32 +14,32 @@ contract SecureInput is ZamaEthereumConfig {
     event InputStored(address indexed sender, string inputType);
 
     /// @notice Store an encrypted uint8 from external input
-    function storeUint8(externalEuint8 encValue, bytes calldata proof) external {
-        _storedUint8 = FHE.fromExternal(encValue, proof);
+    function storeUint8(externalEuint8 encValue, bytes calldata inputProof) external {
+        _storedUint8 = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_storedUint8);
         FHE.allow(_storedUint8, msg.sender);
         emit InputStored(msg.sender, "uint8");
     }
 
     /// @notice Store an encrypted uint32 from external input
-    function storeUint32(externalEuint32 encValue, bytes calldata proof) external {
-        _storedUint32 = FHE.fromExternal(encValue, proof);
+    function storeUint32(externalEuint32 encValue, bytes calldata inputProof) external {
+        _storedUint32 = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_storedUint32);
         FHE.allow(_storedUint32, msg.sender);
         emit InputStored(msg.sender, "uint32");
     }
 
     /// @notice Store an encrypted uint64 from external input
-    function storeUint64(externalEuint64 encValue, bytes calldata proof) external {
-        _storedUint64 = FHE.fromExternal(encValue, proof);
+    function storeUint64(externalEuint64 encValue, bytes calldata inputProof) external {
+        _storedUint64 = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_storedUint64);
         FHE.allow(_storedUint64, msg.sender);
         emit InputStored(msg.sender, "uint64");
     }
 
     /// @notice Store an encrypted bool from external input
-    function storeBool(externalEbool encValue, bytes calldata proof) external {
-        _storedBool = FHE.fromExternal(encValue, proof);
+    function storeBool(externalEbool encValue, bytes calldata inputProof) external {
+        _storedBool = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_storedBool);
         FHE.allow(_storedBool, msg.sender);
         emit InputStored(msg.sender, "bool");

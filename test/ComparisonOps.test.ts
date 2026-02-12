@@ -56,4 +56,32 @@ describe("ComparisonOps", function () {
     const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
     expect(clear).to.equal(true);
   });
+
+  it("ge: 20 >= 10 should be true", async function () {
+    await (await contract.geOp(20, 10)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(true);
+  });
+
+  it("ge: 10 >= 10 should be true (equal case)", async function () {
+    await (await contract.geOp(10, 10)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(true);
+  });
+
+  it("lt: 20 < 10 should be false", async function () {
+    await (await contract.ltOp(20, 10)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(false);
+  });
+
+  it("gt: 10 > 20 should be false", async function () {
+    await (await contract.gtOp(10, 20)).wait();
+    const handle = await contract.getResult();
+    const clear = await fhevm.userDecryptEbool(handle, contractAddress, deployer);
+    expect(clear).to.equal(false);
+  });
 });

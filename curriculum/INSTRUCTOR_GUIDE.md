@@ -265,7 +265,7 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 
 ---
 
-### Module 05: Comparison & Conditional Logic
+### Module 05: Access Control (ACL)
 
 **Duration:** 4 hours
 **Teaching Style:** Live coding + refactoring exercise
