@@ -25,8 +25,8 @@ Create a contract with the following features:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract ConfidentialToken is ZamaEthereumConfig {
     address public owner;

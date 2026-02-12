@@ -22,8 +22,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [ConditionalDemo.sol](../../contracts/ConditionalDemo.sol), [EncryptedMinMax.sol](../../contracts/EncryptedMinMax.sol)
+- Tests: [ConditionalDemo.test.ts](../../test/ConditionalDemo.test.ts), [EncryptedMinMax.test.ts](../../test/EncryptedMinMax.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

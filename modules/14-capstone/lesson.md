@@ -86,8 +86,8 @@ The voter's entire token balance is used as the vote weight. If they vote Yes, t
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 interface IGovernanceToken {
     function balanceOf(address account) external view returns (euint64);

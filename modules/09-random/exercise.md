@@ -25,8 +25,8 @@ Create a contract that simulates rolling a fair six-sided die. The result (1 thr
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint8} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedDiceRoller is ZamaEthereumConfig {
     mapping(address => euint8) private _lastRoll;
@@ -123,8 +123,8 @@ Create a contract that generates two independent encrypted random `euint32` valu
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract RandomPairGenerator is ZamaEthereumConfig {
     struct RandomPair {
@@ -228,8 +228,8 @@ Implement a coin flip contract that returns an encrypted boolean result. The con
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedCoinFlip is ZamaEthereumConfig {
     mapping(address => ebool) private _lastFlip;
@@ -364,8 +364,8 @@ Build a full encrypted lottery contract. Players enter the lottery and receive e
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedLottery is ZamaEthereumConfig {
     address public owner;

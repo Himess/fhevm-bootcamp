@@ -51,9 +51,9 @@ Public decryption reveals the plaintext to everyone on the blockchain. Use it wh
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
-import "@fhevm/solidity/gateway/GatewayConfig.sol";
+import {FHE, euint64} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract AuctionReveal is ZamaEthereumConfig, GatewayConfig {
     euint64 private _highestBid;
@@ -281,9 +281,9 @@ This ensures:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
-import "@fhevm/solidity/gateway/GatewayConfig.sol";
+import {FHE, ebool, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract CoinFlip is ZamaEthereumConfig, GatewayConfig {
     struct Game {

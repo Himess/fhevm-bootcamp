@@ -26,9 +26,9 @@ Create an auction contract with these features:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
-import "@fhevm/solidity/gateway/GatewayConfig.sol";
+import {FHE, euint64, eaddress, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
     address public owner;

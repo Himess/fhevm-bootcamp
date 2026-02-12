@@ -34,8 +34,8 @@ The contract should:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, ebool, euint8, euint16, euint64, eaddress} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedProfile is ZamaEthereumConfig {
     address public owner;

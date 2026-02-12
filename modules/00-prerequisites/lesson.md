@@ -200,6 +200,7 @@ pragma solidity ^0.8.24;
 
 contract Ownable {
     address public owner;
+    uint256 public fee;
 
     error NotOwner();
 

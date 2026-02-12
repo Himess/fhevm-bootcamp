@@ -24,8 +24,8 @@ Extend the ConfidentialERC20 from Module 11 with DAO access support.
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract GovernanceToken is ZamaEthereumConfig {
     string public name;
@@ -103,8 +103,8 @@ contract GovernanceToken is ZamaEthereumConfig {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 interface IGovernanceToken {
     function balanceOf(address account) external view returns (euint64);

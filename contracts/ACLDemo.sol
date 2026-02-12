@@ -44,4 +44,12 @@ contract ACLDemo is ZamaEthereumConfig {
     function checkAccess() external view returns (bool) {
         return FHE.isSenderAllowed(_ownerSecret);
     }
+
+    /// @notice Grant transient access to the secret for a single transaction
+    /// @dev allowTransient grants access only within the current transaction.
+    ///      The recipient can use the value in the same tx (e.g., via a callback)
+    ///      but NOT in subsequent transactions.
+    function grantTransientAccess(address to) external onlyOwner {
+        FHE.allowTransient(_ownerSecret, to);
+    }
 }

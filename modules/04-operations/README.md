@@ -22,8 +22,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [ArithmeticOps.sol](../../contracts/ArithmeticOps.sol), [BitwiseOps.sol](../../contracts/BitwiseOps.sol), [ComparisonOps.sol](../../contracts/ComparisonOps.sol)
+- Tests: [ArithmeticOps.test.ts](../../test/ArithmeticOps.test.ts), [BitwiseOps.test.ts](../../test/BitwiseOps.test.ts), [ComparisonOps.test.ts](../../test/ComparisonOps.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

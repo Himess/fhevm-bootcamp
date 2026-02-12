@@ -264,8 +264,8 @@ Each `FHE.select()` has a gas cost. Restructure logic to use fewer selects when 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract BidValidator is ZamaEthereumConfig {
     euint64 private _minBid;

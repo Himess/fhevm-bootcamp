@@ -107,10 +107,13 @@ FHEVM provides random generation functions for all major encrypted types:
 | Function | Return Type | Range | Description |
 |----------|-------------|-------|-------------|
 | `FHE.randEbool()` | `ebool` | true/false | Encrypted random boolean |
+| `FHE.randEuint4()` | `euint4` | 0 – 15 | Encrypted random 4-bit integer |
 | `FHE.randEuint8()` | `euint8` | 0 – 255 | Encrypted random 8-bit integer |
 | `FHE.randEuint16()` | `euint16` | 0 – 65,535 | Encrypted random 16-bit integer |
 | `FHE.randEuint32()` | `euint32` | 0 – 4,294,967,295 | Encrypted random 32-bit integer |
 | `FHE.randEuint64()` | `euint64` | 0 – 18,446,744,073,709,551,615 | Encrypted random 64-bit integer |
+| `FHE.randEuint128()` | `euint128` | 0 – 2^128 - 1 | Encrypted random 128-bit integer |
+| `FHE.randEuint256()` | `euint256` | 0 – 2^256 - 1 | Encrypted random 256-bit integer |
 
 ### Basic Usage
 
@@ -727,7 +730,7 @@ function playGame(externalEuint8 calldata encryptedGuess, bytes calldata proof) 
 Request decryption of a random result through the Gateway:
 
 ```solidity
-import "@fhevm/solidity/gateway/GatewayConfig.sol";
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract RevealableRandom is ZamaEthereumConfig, GatewayConfig {
     euint32 private _encryptedResult;
@@ -764,10 +767,13 @@ contract RevealableRandom is ZamaEthereumConfig, GatewayConfig {
 | Concept | Details |
 |---------|---------|
 | **`FHE.randEbool()`** | Encrypted random boolean (true/false) |
+| **`FHE.randEuint4()`** | Encrypted random 4-bit integer (0–15) |
 | **`FHE.randEuint8()`** | Encrypted random 8-bit integer (0–255) |
 | **`FHE.randEuint16()`** | Encrypted random 16-bit integer (0–65,535) |
 | **`FHE.randEuint32()`** | Encrypted random 32-bit integer (0–4.29B) |
 | **`FHE.randEuint64()`** | Encrypted random 64-bit integer (0–18.4Q) |
+| **`FHE.randEuint128()`** | Encrypted random 128-bit integer (0–2^128-1) |
+| **`FHE.randEuint256()`** | Encrypted random 256-bit integer (0–2^256-1) |
 | **`FHE.rem(value, max)`** | Bound random to range [0, max) |
 | **ACL required** | Always call `FHE.allowThis()` and `FHE.allow()` after generation |
 | **Synchronous** | Random values available in the same transaction |

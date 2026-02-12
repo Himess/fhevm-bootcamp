@@ -22,8 +22,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [HelloFHEVM.sol](../../contracts/HelloFHEVM.sol)
+- Tests: [HelloFHEVM.test.ts](../../test/HelloFHEVM.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

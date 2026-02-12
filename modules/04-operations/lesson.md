@@ -320,8 +320,8 @@ function safeSub(euint32 a, euint32 b) internal returns (euint32) {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedCalculator is ZamaEthereumConfig {
     euint32 private _result;

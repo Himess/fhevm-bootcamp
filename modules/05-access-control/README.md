@@ -23,8 +23,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [ACLDemo.sol](../../contracts/ACLDemo.sol), [MultiUserVault.sol](../../contracts/MultiUserVault.sol)
+- Tests: [ACLDemo.test.ts](../../test/ACLDemo.test.ts), [MultiUserVault.test.ts](../../test/MultiUserVault.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

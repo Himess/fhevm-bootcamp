@@ -26,8 +26,8 @@ Create a contract where users can deposit and withdraw encrypted amounts with th
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedVault is ZamaEthereumConfig {
     mapping(address => euint64) private _balances;

@@ -22,8 +22,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [PublicDecrypt.sol](../../contracts/PublicDecrypt.sol), [UserDecrypt.sol](../../contracts/UserDecrypt.sol)
+- Tests: [PublicDecrypt.test.ts](../../test/PublicDecrypt.test.ts), [UserDecrypt.test.ts](../../test/UserDecrypt.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

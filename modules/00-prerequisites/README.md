@@ -38,6 +38,10 @@ By completing this module you will be able to:
 | [Slides](slides/slides.md) | Presentation slides (Marp format) |
 | [Exercise](exercise.md) | Hands-on: Build a SimpleVault contract |
 | [Quiz](quiz.md) | 10 multiple-choice review questions |
+| [SimpleStorage.sol](../../contracts/SimpleStorage.sol) | Example contract: SimpleStorage |
+| [BasicToken.sol](../../contracts/BasicToken.sol) | Example contract: BasicToken |
+| [SimpleStorage.test.ts](../../test/SimpleStorage.test.ts) | Test: SimpleStorage |
+| [BasicToken.test.ts](../../test/BasicToken.test.ts) | Test: BasicToken |
 
 ---
 

@@ -23,8 +23,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [ConfidentialDAO.sol](../../contracts/ConfidentialDAO.sol)
+- Tests: [ConfidentialDAO.test.ts](../../test/ConfidentialDAO.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

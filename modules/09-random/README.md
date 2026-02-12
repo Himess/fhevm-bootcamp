@@ -27,8 +27,13 @@ By the end of this module, you will be able to:
 
 ## Contracts
 
-- `contracts/RandomDemo.sol` - Random number generation demos
-- `contracts/EncryptedLottery.sol` - Encrypted lottery (buy ticket, draw winner, claim)
+- [RandomDemo.sol](../../contracts/RandomDemo.sol) - Random number generation demos
+- [EncryptedLottery.sol](../../contracts/EncryptedLottery.sol) - Encrypted lottery (buy ticket, draw winner, claim)
+
+## Tests
+
+- [RandomDemo.test.ts](../../test/RandomDemo.test.ts)
+- [EncryptedLottery.test.ts](../../test/EncryptedLottery.test.ts)
 
 ## Key Concepts
 

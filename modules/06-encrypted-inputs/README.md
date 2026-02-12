@@ -22,8 +22,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [SecureInput.sol](../../contracts/SecureInput.sol)
+- Tests: [SecureInput.test.ts](../../test/SecureInput.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

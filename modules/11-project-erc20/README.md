@@ -23,8 +23,8 @@ By the end of this module, you will be able to:
 
 - [Lesson](./lesson.md)
 - [Slides](./slides/slides.md)
-- [Contracts](./contracts/)
-- [Tests](./test/)
+- Contracts: [ConfidentialERC20.sol](../../contracts/ConfidentialERC20.sol)
+- Tests: [ConfidentialERC20.test.ts](../../test/ConfidentialERC20.test.ts)
 - [Exercise](./exercise.md)
 - [Quiz](./quiz.md)
 

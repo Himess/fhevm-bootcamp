@@ -25,8 +25,8 @@ Build a contract called `EncryptedGreeting` that:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
+import {FHE, ebool, euint8} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract EncryptedGreeting is ZamaEthereumConfig {
     ebool private _isSet;

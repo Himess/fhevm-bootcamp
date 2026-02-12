@@ -38,9 +38,9 @@ Contract  ◄─callback──  Gateway  ◄──result───  KMS
 # Public Decryption: Setup
 
 ```solidity
-import "@fhevm/solidity/lib/FHE.sol";
-import "@fhevm/solidity/config/ZamaConfig.sol";
-import "@fhevm/solidity/gateway/GatewayConfig.sol";
+import {FHE, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract MyContract is ZamaEthereumConfig, GatewayConfig {
     // Now has access to Gateway.requestDecryption()
