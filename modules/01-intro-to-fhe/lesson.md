@@ -585,7 +585,99 @@ In a traditional on-chain auction, all bids are visible. With FHE:
 
 ---
 
-## 10. Summary
+## 10. Real-World Milestones: FHE in Production
+
+The concepts taught in this bootcamp are not just theoretical -- they are already powering production systems on Ethereum mainnet. This section covers the most significant real-world FHE milestones to date.
+
+### 10.1 The $ZAMA Token and Encrypted ICO (January 2026)
+
+In January 2026, Zama conducted the **first encrypted ICO on Ethereum** -- a confidential sealed-bid Dutch auction where bid amounts were encrypted using FHE. This was the first production-scale demonstration of FHE on Ethereum mainnet.
+
+**How it worked (technically):**
+
+The auction used a sealed-bid Dutch auction mechanism where:
+1. Participants submitted bids with **public price** but **encrypted amounts**
+2. The clearing price was calculated **homomorphically, directly on encrypted data**
+3. No participant, bot, or organizer could see individual bid amounts
+4. After the auction closed, only the aggregate results were decrypted
+
+This is exactly the pattern you will learn in **Module 13 (Sealed-Bid Auctions)** -- but deployed at Ethereum mainnet scale.
+
+**Auction Results (January 21-24, 2026):**
+
+| Metric | Value |
+|--------|-------|
+| Total Value Shielded | $121.3M |
+| Total Committed | $118.5M |
+| Unique Bidders | 11,103 |
+| Total Bids Executed | 24,697 |
+| Clearing Price | $0.05 per ZAMA |
+| Oversubscription | 218% (2.8B tokens demanded, 880M available) |
+| Refund Ratio | 62.89% |
+
+**Key achievement:** The Zama auction app became the **most-used application on Ethereum on January 24th** -- surpassing USDT, USDC, and Uniswap in transaction volume. It took only 3 days to reach $100M+ in Total Value Shielded, a milestone that took other privacy protocols years.
+
+### 10.2 The $ZAMA Token
+
+The $ZAMA token launched on **February 2, 2026** across major exchanges (Kraken, OKX, KuCoin, with Coinbase support pending).
+
+**Token utility:**
+- Pay for **encryption and decryption** operations on the Zama Protocol
+- Reward **operators and stakers** for running and securing the network
+- All fees are **burned**, while rewards follow a yearly emission schedule
+
+**Contract addresses:**
+- Ethereum: `0xa12cc123ba206d4031d1c7f6223d1c2ec249f4f3`
+
+**Key resources:**
+- Staking: staking.zama.org
+- Bridge: bridge.zama.org
+
+### 10.3 First Confidential USDT Transfer on Ethereum
+
+With the mainnet launch, Zama completed the **first confidential USDT (cUSDT) transfer** on Ethereum -- proving that FHE can handle real-world token transfers at production scale. The protocol maintained zero downtime and kept up with Ethereum's throughput, proving FHE is production-ready for financial applications.
+
+### 10.4 Zama Developer Program Winners
+
+The Zama Developer Program has awarded **685 developers** across 6 seasons with **$106,000** in prizes. Here are notable winning projects that demonstrate real-world FHE applications:
+
+| Project | Track | Prize | Description |
+|---------|-------|-------|-------------|
+| **Zama School** (MadeleineAguil) | Builder | $5,000 | Educational platform demonstrating FHE through interactive examples |
+| **Hello FHE Tutorial** (realchriswilder) | Builder | $3,000 | Step-by-step guide for privacy-preserving dApps |
+| **FHE Guessing Game** (NecipAkgz) | Bounty | $2,000 | Rock-Paper-Scissors game using Zama Protocol |
+| **Agora** | Builder | - | Privacy-focused governance system |
+| **AlphaEngine** | Builder | - | Uniswap V4 privacy hook integration |
+| **Siphon Protocol** | Builder | - | DeFi privacy layer with FHE + ZK proofs |
+| **Uniquity** | Builder | - | Privacy-first identity verification |
+| **Encrypted Wordle** | Bounty | - | On-chain word game using FHE |
+
+**Current tracks:**
+- **Builder Track** ($10,000): Create complete end-to-end demo apps using fhEVM
+- **Bounty Track** ($10,000): Build Hardhat-based fhEVM example repositories
+- **Startup Track**: Rolling applications for FHE-based startups
+
+Learn more and apply: [zama.org/developer-hub](https://www.zama.org/developer-hub)
+
+### 10.5 Why This Matters for You
+
+Every concept in this bootcamp maps directly to what was used in production:
+
+| Bootcamp Module | Production Usage |
+|-----------------|-----------------|
+| Module 03: Encrypted Types | Encrypted bid amounts in the auction |
+| Module 05: ACL | Controlling who can see bid data |
+| Module 06: Encrypted Inputs | Users submitting encrypted bids |
+| Module 08: Conditional Logic | Homomorphic clearing price calculation |
+| Module 11: Confidential ERC-20 | Confidential USDT (cUSDT) transfers |
+| Module 12: Private Voting | Sealed-bid mechanism (encrypted tallies) |
+| Module 13: Sealed-Bid Auction | The entire auction mechanism |
+
+By completing this bootcamp, you will have the skills to build applications like the ones that processed $121M in encrypted value on Ethereum mainnet.
+
+---
+
+## 11. Summary
 
 ### Key Concepts
 

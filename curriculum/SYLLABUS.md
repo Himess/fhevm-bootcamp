@@ -2,7 +2,7 @@
 
 **Version:** 2.0
 **Total Modules:** 15 (Modules 00 through 14)
-**Total Duration:** ~46 hours
+**Total Duration:** ~63 hours
 **API Version:** New FHEVM API (`FHE` library, `externalEuintXX` inputs, `FHE.fromExternal(value, proof)`)
 
 ---
@@ -136,7 +136,7 @@ By the end of this module, students will be able to:
 - The Gateway: decryption oracle and callback mechanism
 - `ZamaEthereumConfig` base contract and configuration
 - Development environment setup: Hardhat, fhEVM plugin, fhevmjs
-- Local devnet vs Zama devnet vs mainnet considerations
+- Local devnet vs Ethereum Sepolia vs mainnet considerations
 - First contract: compile, deploy, interact
 
 ### Hands-on Activities

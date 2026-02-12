@@ -94,7 +94,7 @@ This bootcamp consists of **15 modules** organized into four progressive phases.
 | 13 | [Sealed-Bid Auction](modules/13-project-auction/) | Advanced | 4 hrs | Applications |
 | 14 | [Capstone: Confidential DAO](modules/14-capstone/) | Advanced | 5 hrs | Capstone |
 
-**Total Duration: ~46 hours**
+**Total Duration: ~63 hours**
 
 ### Phase Breakdown
 
@@ -204,7 +204,7 @@ fhevm-bootcamp/
 | Development Framework | Hardhat + fhEVM plugin |
 | Testing | Hardhat test / Foundry (mock mode) |
 | Frontend Encryption | `fhevmjs` client library |
-| Network | Zama devnet / local fhEVM node |
+| Network | Ethereum Sepolia / local fhEVM node |
 
 ---
 

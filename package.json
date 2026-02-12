@@ -10,7 +10,7 @@
     "clean": "rimraf artifacts cache types",
     "build": "npm run clean && npm run compile",
     "deploy:local": "hardhat run scripts/deploy-all.ts --network hardhat",
-    "deploy:zama": "hardhat run scripts/deploy-all.ts --network zama",
+    "deploy:sepolia": "hardhat run scripts/deploy-all.ts --network sepolia",
     "slides:build": "node scripts/build-slides.js",
     "lint:sol": "hardhat compile"
   },

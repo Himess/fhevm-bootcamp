@@ -31,7 +31,7 @@ By the end of this module, you will be able to:
 
 - **Hardhat + FHEVM plugin** — The primary development framework
 - **`@fhevm/solidity`** — The Solidity library providing `FHE` operations
-- **`ZamaEthereumConfig`** — Pre-built configuration for the Zama devnet
+- **`ZamaEthereumConfig`** — Pre-built configuration for the Ethereum Sepolia network
 - **Local devnet** — A local FHEVM-enabled node for testing
 
 ## Next Module

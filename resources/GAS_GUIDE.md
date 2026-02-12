@@ -377,7 +377,7 @@ console.log(`Transfer gas used: ${receipt.gasUsed.toString()}`);
 
 The following gas measurements were captured from our test suite using `REPORT_GAS=true npx hardhat test` on the local fhEVM mock environment (146 tests, all passing).
 
-> **Note:** These numbers reflect the local mock environment. On the actual Zama devnet or mainnet, costs will differ due to the real FHE coprocessor overhead.
+> **Note:** These numbers reflect the local mock environment. On the actual Ethereum Sepolia or mainnet, costs will differ due to the real FHE coprocessor overhead.
 
 ### Function Call Gas Costs
 

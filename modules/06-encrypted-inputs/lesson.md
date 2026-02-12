@@ -118,8 +118,10 @@ The client first retrieves the network's FHE public key:
 ```javascript
 import { createFhevmInstance } from "fhevmjs";
 
+const provider = new BrowserProvider(window.ethereum);
 const instance = await createFhevmInstance({
-  networkUrl: "https://devnet.zama.ai",
+  networkUrl: await provider.send("eth_chainId", []),
+  gatewayUrl: "https://gateway.zama.ai",
 });
 ```
 

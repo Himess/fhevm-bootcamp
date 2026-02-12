@@ -126,7 +126,7 @@ graph LR
     subgraph "Infrastructure Layer"
         IN1[Hardhat<br/>Development framework]
         IN2[fhEVM Node<br/>Local dev chain]
-        IN3[Zama Devnet<br/>Test network]
+        IN3[Ethereum Sepolia<br/>Test network]
     end
 
     subgraph "Cryptographic Layer"

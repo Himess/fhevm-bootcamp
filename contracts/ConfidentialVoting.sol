@@ -89,6 +89,25 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         return proposals[proposalId].noVotes;
     }
 
+    /// @notice Reveal the voting result after the deadline
+    /// @dev Makes encrypted tallies publicly decryptable via FHE.makePubliclyDecryptable()
+    function revealResult(uint256 proposalId) external onlyOwner {
+        require(proposalId < proposalCount, "Invalid proposal");
+        require(block.timestamp > proposals[proposalId].deadline, "Voting not ended");
+        require(!proposals[proposalId].revealed, "Already revealed");
+
+        proposals[proposalId].revealed = true;
+
+        FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
+        FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
+
+        // Note: In production with Gateway, you would use:
+        // Gateway.requestDecryption([yesVotes, noVotes], callbackSelector, ...)
+        // and handle the result in a callback function.
+        // Here we use makePubliclyDecryptable which marks the values for
+        // off-chain decryption by anyone via the KMS.
+    }
+
     /// @notice Check if voting deadline has passed
     function isVotingEnded(uint256 proposalId) external view returns (bool) {
         return block.timestamp > proposals[proposalId].deadline;

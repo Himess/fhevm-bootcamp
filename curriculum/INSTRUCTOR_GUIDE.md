@@ -31,7 +31,7 @@ This guide provides teaching notes, discussion prompts, time management tips, co
 - Send a "Welcome" email with schedule, prerequisites checklist, and reading material (optional: Module 00 lecture notes as pre-reading).
 - Confirm TA availability and assign module responsibilities.
 - Set up the shared repository with starter code for all exercises.
-- Test network connectivity to Zama devnet from the venue (if in-person).
+- Test network connectivity to Ethereum Sepolia from the venue (if in-person).
 
 **Day Before:**
 - Verify all student machines have the environment ready (send a quick "compile check" script).
@@ -709,7 +709,7 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 | `npm install` fails with ERESOLVE | Dependency conflicts | Use `npm install --legacy-peer-deps` |
 | Hardhat compile error: "pragma" | Wrong Solidity version | Ensure `hardhat.config.ts` specifies `0.8.24` |
 | "Cannot find module fhevm" | Incomplete install | Delete `node_modules`, run `npm install` again |
-| Gateway timeout during decryption | Network issue / devnet down | Check Zama devnet status; fall back to mock mode |
+| Gateway timeout during decryption | Network issue / Sepolia down | Check Ethereum Sepolia status; fall back to mock mode |
 | "Out of gas" on FHE operations | Gas limit too low | Increase gas limit in hardhat config (30M+) |
 | TypeScript errors in tests | Missing type declarations | Install `@types/mocha`, `@types/chai` |
 | Node.js version error | Node < 20 | Upgrade Node.js using nvm: `nvm install 20` |
