@@ -373,6 +373,121 @@ console.log(`Transfer gas used: ${receipt.gasUsed.toString()}`);
 
 ---
 
+## Real Benchmark Results
+
+The following gas measurements were captured from our test suite using `REPORT_GAS=true npx hardhat test` on the local fhEVM mock environment (146 tests, all passing).
+
+> **Note:** These numbers reflect the local mock environment. On the actual Zama devnet or mainnet, costs will differ due to the real FHE coprocessor overhead.
+
+### Function Call Gas Costs
+
+| Contract | Function | Min Gas | Max Gas | Avg Gas | Calls |
+|---|---|---|---|---|---|
+| **ArithmeticOps** | addEncrypted | - | - | 137,766 | 2 |
+| | mulEncrypted | - | - | 137,749 | 2 |
+| | subEncrypted | - | - | 137,760 | 2 |
+| **BitwiseOps** | andOp | - | - | 137,694 | 2 |
+| | orOp | - | - | 137,684 | 2 |
+| | xorOp | 137,705 | 137,717 | 137,711 | 4 |
+| | notOp | - | - | 127,150 | 2 |
+| **ComparisonOps** | eqOp | - | - | 137,958 | 4 |
+| | neOp | - | - | 138,002 | 2 |
+| | gtOp | - | - | 137,657 | 2 |
+| | ltOp | - | - | 137,746 | 2 |
+| | leOp | - | - | 137,722 | 2 |
+| **ConditionalDemo** | selectDemo | 146,522 | 146,525 | 146,524 | 4 |
+| | clampValue | - | - | 181,721 | 6 |
+| **ConfidentialERC20** | mint | 116,279 | 136,167 | 120,257 | 10 |
+| | transfer | 243,226 | 316,581 | 292,129 | 6 |
+| | transferFrom | - | - | 446,434 | 2 |
+| | approve | - | - | 218,076 | 2 |
+| **ConfidentialVoting** | createProposal | 201,304 | 201,376 | 201,338 | 10 |
+| | vote | 290,547 | 295,159 | 292,082 | 12 |
+| **ConfidentialDAO** | createProposal | 242,025 | 242,037 | 242,034 | 8 |
+| | mintTokens | 118,045 | 155,057 | 139,695 | 10 |
+| | vote | 290,553 | 295,165 | 291,706 | 8 |
+| **SealedBidAuction** | createAuction | 223,586 | 243,498 | 225,826 | 18 |
+| | bid | 383,880 | 400,992 | 395,860 | 20 |
+| | endAuction | - | - | 122,972 | 2 |
+| | withdrawDeposit | - | - | 35,110 | 2 |
+| **EncryptedLottery** | buyTicket | 76,161 | 93,261 | 87,561 | 24 |
+| | drawWinner | 162,215 | 179,315 | 170,765 | 4 |
+| | claimPrize | - | - | 31,779 | 2 |
+| | revealWinner | - | - | 34,571 | 2 |
+| **EncryptedMinMax** | findMin | - | - | 150,183 | 4 |
+| | findMax | - | - | 150,082 | 2 |
+| | findMinOfThree | - | - | 181,767 | 2 |
+| | sortTwo | - | - | 236,961 | 2 |
+| **HelloFHEVM** | increment | 189,393 | 211,766 | 206,167 | 8 |
+| **SimpleCounter** | increment | 189,635 | 212,008 | 208,273 | 12 |
+| **MultiUserVault** | deposit | 189,836 | 212,287 | 209,478 | 16 |
+| | withdraw | 221,820 | 221,832 | 221,826 | 4 |
+| **PublicDecrypt** | setValue | 121,955 | 141,855 | 131,905 | 8 |
+| | setEncryptedValue | - | - | 212,594 | 2 |
+| | makePublic | - | - | 67,503 | 2 |
+| | compare | - | - | 95,460 | 2 |
+| **SecureInput** | storeUint8 | - | - | 191,394 | 2 |
+| | storeUint32 | - | - | 191,397 | 4 |
+| | storeUint64 | - | - | 191,373 | 2 |
+| | storeBool | - | - | 191,422 | 4 |
+| **RandomDemo** | generateRandom8 | - | - | 125,694 | 2 |
+| | generateRandom32 | - | - | 125,751 | 2 |
+| | generateRandom64 | - | - | 125,822 | 2 |
+| | randomInRange | - | - | 135,625 | 2 |
+| **TypeConversions** | plaintextToEncrypted | - | - | 118,589 | 2 |
+| | upcast8to32 | 128,107 | 128,119 | 128,115 | 6 |
+| | upcast16to64 | - | - | 128,186 | 2 |
+| | compareEqual | - | - | 137,879 | 4 |
+| **EncryptedTypes** | setUint8 | - | - | 118,462 | 4 |
+| | setUint16 | - | - | 118,479 | 2 |
+| | setUint32 | 118,503 | 118,539 | 118,521 | 4 |
+| | setUint64 | - | - | 118,587 | 2 |
+| **UserDecrypt** | storeSecret | 190,623 | 190,647 | 190,641 | 8 |
+| | shareSecret | - | - | 60,600 | 2 |
+
+### Deployment Gas Costs
+
+| Contract | Deployment Gas | % of Block Limit |
+|---|---|---|
+| SimpleStorage | 161,790 | 0.3% |
+| EncryptedTypes | 488,385 | 0.8% |
+| ACLDemo | 506,044 | 0.8% |
+| TypeConversions | 517,826 | 0.9% |
+| UserDecrypt | 527,122 | 0.9% |
+| BitwiseOps | 541,503 | 0.9% |
+| ConditionalDemo | 532,134 | 0.9% |
+| SimpleCounter | 547,547 | 0.9% |
+| HelloFHEVM | 571,040 | 1.0% |
+| RandomDemo | 577,126 | 1.0% |
+| EncryptedMinMax | 580,384 | 1.0% |
+| BasicToken | 600,537 | 1.0% |
+| ComparisonOps | 630,242 | 1.1% |
+| SecureInput | 699,577 | 1.2% |
+| PublicDecrypt | 724,522 | 1.2% |
+| MultiUserVault | 726,382 | 1.2% |
+| ArithmeticOps | 746,423 | 1.2% |
+| EncryptedLottery | 954,264 | 1.6% |
+| ConfidentialVoting | 1,131,076 | 1.9% |
+| ConfidentialERC20 | 1,244,733 | 2.1% |
+| ConfidentialDAO | 1,414,927 | 2.4% |
+| SealedBidAuction | 1,514,479 | 2.5% |
+
+### Key Takeaways from Benchmarks
+
+1. **Most expensive function:** `ConfidentialERC20.transferFrom()` at ~446k gas -- involves balance check, allowance check, two balance updates, and allowance update, all encrypted.
+
+2. **Voting costs ~290k gas** per vote across both ConfidentialVoting and ConfidentialDAO -- consistent overhead for the `FHE.select()` + `FHE.add()` pattern.
+
+3. **Sealed-bid auction bids cost ~396k gas** -- includes encrypted comparison (`FHE.gt`), two `FHE.select` operations (bid + bidder), and ACL updates.
+
+4. **Basic FHE ops are ~118-138k gas** in the mock environment -- this represents the baseline cost for any single homomorphic operation.
+
+5. **Deployment costs scale with complexity** -- simple contracts (SimpleStorage: 162k) vs complex ones (SealedBidAuction: 1.5M), but all stay under 3% of the block gas limit.
+
+6. **`FHE.fromExternal()` with proof adds ~70-90k gas** on top of basic operations -- visible in the difference between `setValue` (~132k) and `setEncryptedValue` (~213k) in PublicDecrypt.
+
+---
+
 ## Future Outlook
 
 FHE gas costs are expected to decrease significantly over time due to:
