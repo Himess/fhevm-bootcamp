@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { ethers, fhevm } from "hardhat";
+import { FhevmType } from "@fhevm/hardhat-plugin";
 
 describe("SealedBidAuction", function () {
   let auction: any;
@@ -125,8 +126,23 @@ describe("SealedBidAuction", function () {
       await auction.connect(bob).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
+    // Advance time past deadline
+    await ethers.provider.send("evm_increaseTime", [3601]);
+    await ethers.provider.send("evm_mine", []);
+    await (await auction.endAuction(0)).wait();
+
+    // Verify highest bid handle exists (makePubliclyDecryptable called by endAuction)
     const highestHandle = await auction.getHighestBid(0);
     expect(highestHandle).to.not.equal(ethers.ZeroHash);
+
+    // Verify individual bids via user decrypt (bidders have ACL access to their own bids)
+    const aliceBidHandle = await auction.connect(alice).getMyBid(0);
+    const aliceBid = await fhevm.userDecryptEuint(FhevmType.euint64, aliceBidHandle, auctionAddress, alice);
+    expect(aliceBid).to.equal(100n);
+
+    const bobBidHandle = await auction.connect(bob).getMyBid(0);
+    const bobBid = await fhevm.userDecryptEuint(FhevmType.euint64, bobBidHandle, auctionAddress, bob);
+    expect(bobBid).to.equal(200n);
   });
 
   it("should track highest bidder (eaddress)", async function () {

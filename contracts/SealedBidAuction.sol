@@ -131,7 +131,8 @@ contract SealedBidAuction is ZamaEthereumConfig {
         require(amount > 0, "No deposit");
 
         deposits[auctionId][msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
+        (bool sent,) = payable(msg.sender).call{value: amount}("");
+        require(sent, "Transfer failed");
         emit DepositWithdrawn(auctionId, msg.sender, amount);
     }
 

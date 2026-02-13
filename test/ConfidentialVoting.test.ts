@@ -69,7 +69,7 @@ describe("ConfidentialVoting", function () {
   });
 
   it("should tally yes and no votes correctly", async function () {
-    await (await voting.createProposal("Tally Test", 3600)).wait();
+    await (await voting.createProposal("Tally Test", 100)).wait();
 
     // Alice votes yes
     const encYes = await fhevm
@@ -92,7 +92,16 @@ describe("ConfidentialVoting", function () {
       .encrypt();
     await (await voting.connect(charlie).vote(0, encYes2.handles[0], encYes2.inputProof)).wait();
 
-    // Verify yes = 2, no = 1
+    // Advance time past deadline
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+
+    // Reveal results (makes tallies publicly decryptable)
+    await (await voting.revealResult(0)).wait();
+
+    // Verify tallies exist (handles are non-zero after votes + reveal)
+    // Note: In mock environment, makePubliclyDecryptable does not grant userDecrypt ACL.
+    // On real network, these would be decryptable via Gateway or public KMS decryption.
     const yesHandle = await voting.getYesVotes(0);
     const noHandle = await voting.getNoVotes(0);
     expect(yesHandle).to.not.equal(ethers.ZeroHash);

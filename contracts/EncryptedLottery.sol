@@ -75,6 +75,9 @@ contract EncryptedLottery is ZamaEthereumConfig {
         uint256 prize = address(this).balance;
         require(prize > 0, "No prize");
 
+        // CEI pattern: clear winner before external call to prevent reentrancy
+        winner = address(0);
+
         (bool sent,) = msg.sender.call{value: prize}("");
         require(sent, "Transfer failed");
         emit PrizeClaimed(msg.sender, prize);

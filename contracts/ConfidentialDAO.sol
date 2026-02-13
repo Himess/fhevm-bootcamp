@@ -53,10 +53,21 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     /// @notice Mint governance tokens
     function mintTokens(address to, uint64 amount) external onlyAdmin {
         totalTokenSupply += amount;
-        _tokenBalances[to] = FHE.add(_tokenBalances[to], amount);
+        _initBalance(to);
+        _tokenBalances[to] = FHE.add(_tokenBalances[to], FHE.asEuint64(amount));
         FHE.allowThis(_tokenBalances[to]);
         FHE.allow(_tokenBalances[to], to);
         emit TokensMinted(to, amount);
+    }
+
+    mapping(address => bool) private _initialized;
+
+    function _initBalance(address account) internal {
+        if (!_initialized[account]) {
+            _tokenBalances[account] = FHE.asEuint64(0);
+            FHE.allowThis(_tokenBalances[account]);
+            _initialized[account] = true;
+        }
     }
 
     /// @notice Get encrypted token balance
@@ -65,6 +76,9 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     }
 
     /// @notice Create a treasury spending proposal
+    /// @dev PROPOSAL_THRESHOLD cannot be enforced on-chain with encrypted balances
+    /// because ebool cannot be used in require(). In production, consider requiring
+    /// a governance NFT or a plaintext ETH deposit to gate proposal creation.
     function createProposal(
         string calldata description,
         address payable recipient,
@@ -125,6 +139,21 @@ contract ConfidentialDAO is ZamaEthereumConfig {
         proposals[proposalId].revealed = true;
         FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
         FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
+    }
+
+    /// @notice Execute a finalized proposal (transfer treasury funds to recipient)
+    function executeProposal(uint256 proposalId) external onlyAdmin {
+        require(proposalId < proposalCount, "Invalid proposal");
+        require(proposals[proposalId].revealed, "Not finalized");
+        require(!proposals[proposalId].executed, "Already executed");
+        require(address(this).balance >= proposals[proposalId].amount, "Insufficient treasury");
+
+        proposals[proposalId].executed = true;
+
+        (bool sent,) = proposals[proposalId].recipient.call{value: proposals[proposalId].amount}("");
+        require(sent, "Transfer failed");
+
+        emit ProposalExecuted(proposalId);
     }
 
     /// @notice Get treasury balance

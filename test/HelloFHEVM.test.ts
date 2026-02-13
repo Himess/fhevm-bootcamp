@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { ethers, fhevm } from "hardhat";
+import { FhevmType } from "@fhevm/hardhat-plugin";
 
 describe("HelloFHEVM", function () {
   let contract: any;
@@ -35,6 +36,9 @@ describe("HelloFHEVM", function () {
 
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);
+
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, counter, contractAddress, deployer);
+    expect(clear).to.equal(5n);
   });
 
   it("should allow multiple increments", async function () {
@@ -54,6 +58,9 @@ describe("HelloFHEVM", function () {
 
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);
+
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, counter, contractAddress, deployer);
+    expect(clear).to.equal(10n);
   });
 
   it("should allow different users to increment", async function () {
@@ -70,6 +77,9 @@ describe("HelloFHEVM", function () {
 
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);
+
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, counter, contractAddress, alice);
+    expect(clear).to.equal(7n);
   });
 
   it("should emit CounterIncremented event", async function () {

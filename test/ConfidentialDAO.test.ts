@@ -28,6 +28,10 @@ describe("ConfidentialDAO", function () {
   it("should mint governance tokens", async function () {
     await (await dao.mintTokens(alice.address, 1000)).wait();
     expect(await dao.totalTokenSupply()).to.equal(1000n);
+
+    const handle = await dao.tokenBalanceOf(alice.address);
+    const bal = await fhevm.userDecryptEuint(FhevmType.euint64, handle, daoAddress, alice);
+    expect(bal).to.equal(1000n);
   });
 
   it("should reject non-admin minting", async function () {
@@ -82,7 +86,7 @@ describe("ConfidentialDAO", function () {
   it("should track encrypted yes/no votes", async function () {
     await (await dao.mintTokens(alice.address, 500)).wait();
     await (await dao.mintTokens(bob.address, 500)).wait();
-    await (await dao.createProposal("Vote Test", admin.address, 50, 3600)).wait();
+    await (await dao.createProposal("Vote Test", admin.address, 50, 100)).wait();
 
     // Alice votes yes (1)
     const encAlice = await fhevm
@@ -98,6 +102,14 @@ describe("ConfidentialDAO", function () {
       .encrypt();
     await (await dao.connect(bob).vote(0, encBob.handles[0], encBob.inputProof)).wait();
 
+    // Advance time past deadline and finalize
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+    await (await dao.finalizeProposal(0)).wait();
+
+    // Verify tallies exist (handles are non-zero after votes + finalize)
+    // Note: In mock environment, makePubliclyDecryptable does not grant userDecrypt ACL.
+    // On real network, these would be decryptable via Gateway or public KMS decryption.
     const yesHandle = await dao.getYesVotes(0);
     const noHandle = await dao.getNoVotes(0);
     expect(yesHandle).to.not.equal(ethers.ZeroHash);
@@ -141,5 +153,31 @@ describe("ConfidentialDAO", function () {
   it("should accept treasury funding", async function () {
     await admin.sendTransaction({ to: daoAddress, value: ethers.parseEther("1.0") });
     expect(await dao.treasuryBalance()).to.equal(ethers.parseEther("1.0"));
+  });
+
+  it("should execute proposal and transfer treasury", async function () {
+    // Fund the DAO treasury
+    await admin.sendTransaction({ to: daoAddress, value: ethers.parseEther("1.0") });
+
+    // Create proposal to send 0.5 ETH to bob
+    await (await dao.createProposal("Send to Bob", bob.address, ethers.parseEther("0.5"), 100)).wait();
+
+    // Alice votes yes
+    await (await dao.mintTokens(alice.address, 500)).wait();
+    const enc = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
+    await (await dao.connect(alice).vote(0, enc.handles[0], enc.inputProof)).wait();
+
+    // Advance time past deadline and finalize
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+    await (await dao.finalizeProposal(0)).wait();
+
+    // Execute
+    const bobBalBefore = await ethers.provider.getBalance(bob.address);
+    await (await dao.executeProposal(0)).wait();
+    const bobBalAfter = await ethers.provider.getBalance(bob.address);
+
+    expect(bobBalAfter - bobBalBefore).to.equal(ethers.parseEther("0.5"));
+    expect(await dao.treasuryBalance()).to.equal(ethers.parseEther("0.5"));
   });
 });
