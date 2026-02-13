@@ -12,8 +12,8 @@ contract MultiUserVault is ZamaEthereumConfig {
     event Withdrawn(address indexed user);
 
     /// @notice Deposit an encrypted amount
-    function deposit(externalEuint64 encAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encAmount, proof);
+    function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encAmount, inputProof);
         _deposits[msg.sender] = FHE.add(_deposits[msg.sender], amount);
         FHE.allowThis(_deposits[msg.sender]);
         FHE.allow(_deposits[msg.sender], msg.sender);
@@ -26,8 +26,8 @@ contract MultiUserVault is ZamaEthereumConfig {
     }
 
     /// @notice Withdraw: subtracts min(amount, balance) to prevent underflow
-    function withdraw(externalEuint64 encAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encAmount, proof);
+    function withdraw(externalEuint64 encAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encAmount, inputProof);
         ebool hasEnough = FHE.ge(_deposits[msg.sender], amount);
         euint64 withdrawAmount = FHE.select(hasEnough, amount, FHE.asEuint64(0));
         _deposits[msg.sender] = FHE.sub(_deposits[msg.sender], withdrawAmount);

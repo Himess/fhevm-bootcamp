@@ -32,14 +32,14 @@ What does a failed transfer do in the no-revert pattern?
 
 ### Question 3
 
-Why does `balanceOf()` take no parameters in a confidential ERC-20?
+Why does `balanceOf()` return `euint64` instead of `uint256` in a confidential ERC-20?
 
 - A) To save gas
-- B) Because only `msg.sender` can decrypt their own balance -- querying others is useless ✅
-- C) Because Solidity does not allow address parameters
-- D) Because the function is view-only
+- B) Because the balance is stored as an encrypted value, and only users with ACL access can decrypt it ✅
+- C) Because Solidity does not support uint256 with encryption
+- D) Because uint256 is too large for FHE operations
 
-> Since balances are encrypted and only the owner has ACL access, there is no point in letting anyone query another address's encrypted balance.
+> Encrypted balances are stored as `euint64`. The `balanceOf()` function returns this encrypted handle, which can only be decrypted by addresses that have been granted ACL access (typically the balance owner).
 
 ---
 

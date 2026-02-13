@@ -71,15 +71,15 @@ contract SealedBidAuction is ZamaEthereumConfig {
     /// @notice Place an encrypted bid with ETH deposit
     /// @param auctionId The auction to bid on
     /// @param encBid The encrypted bid amount
-    /// @param proof The proof for the encrypted input
-    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) external payable {
+    /// @param inputProof The proof for the encrypted input
+    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata inputProof) external payable {
         require(auctionId < auctionCount, "Invalid auction");
         require(block.timestamp <= auctions[auctionId].deadline, "Bidding ended");
         require(!auctions[auctionId].ended, "Auction ended");
         require(!hasBid[auctionId][msg.sender], "Already bid");
         require(msg.value > 0, "Must deposit ETH");
 
-        euint64 newBid = FHE.fromExternal(encBid, proof);
+        euint64 newBid = FHE.fromExternal(encBid, inputProof);
 
         // Store the bid
         _bids[auctionId][msg.sender] = newBid;

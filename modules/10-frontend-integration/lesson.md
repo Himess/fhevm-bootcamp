@@ -152,6 +152,7 @@ Available input methods:
 - `input.add32(value)` -- encrypt a uint32
 - `input.add64(value)` -- encrypt a uint64
 - `input.add128(value)` -- encrypt a uint128
+- `input.add256(value)` -- encrypt a uint256
 - `input.addAddress(value)` -- encrypt an address
 
 ---
@@ -307,6 +308,7 @@ When encrypted data crosses the contract boundary (from frontend to contract), i
 | `externalEuint32` | `euint32` | `FHE.fromExternal(val, proof)` |
 | `externalEuint64` | `euint64` | `FHE.fromExternal(val, proof)` |
 | `externalEuint128` | `euint128` | `FHE.fromExternal(val, proof)` |
+| `externalEuint256` | `euint256` | `FHE.fromExternal(val, proof)` |
 | `externalEaddress` | `eaddress` | `FHE.fromExternal(val, proof)` |
 
 The pattern is always:
@@ -372,6 +374,47 @@ async function handleIncrement() {
   await refreshCounter();
 }
 ```
+
+---
+
+## Frontend vs. Hardhat Test: Decryption Differences
+
+The encryption flow is the same in both environments, but **decryption differs**:
+
+| Environment | SDK | Decrypt Method |
+|-------------|-----|----------------|
+| **Browser (Frontend)** | `fhevmjs` | `instance.reencrypt()` with keypair + EIP-712 signature |
+| **Hardhat Tests** | `@fhevm/hardhat-plugin` | `fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddr, signer)` |
+
+In Hardhat tests, the `fhevm` object is available via `import { ethers, fhevm } from "hardhat"` and provides a simpler API for testing purposes:
+
+```typescript
+import { ethers, fhevm } from "hardhat";
+import { FhevmType } from "@fhevm/hardhat-plugin";
+
+// Decrypt in tests
+const clear = await fhevm.userDecryptEuint(
+  FhevmType.euint32,
+  encryptedHandle,
+  contractAddress,
+  signer
+);
+```
+
+The `FhevmType` enum maps to the encrypted types: `FhevmType.ebool`, `FhevmType.euint8`, `FhevmType.euint16`, `FhevmType.euint32`, `FhevmType.euint64`, `FhevmType.euint128`, `FhevmType.euint256`, `FhevmType.eaddress`.
+
+---
+
+### Alternative: Public Decryption
+
+For values that should be readable by **everyone** (e.g., auction results, vote tallies), use `FHE.makePubliclyDecryptable()` instead of the re-encryption flow:
+
+```solidity
+// In the contract
+FHE.makePubliclyDecryptable(encryptedResult);
+```
+
+After calling `makePubliclyDecryptable()`, any user can decrypt the value without needing ACL access or the re-encryption protocol. This is simpler but removes privacy — use it only for values that should become public.
 
 ---
 

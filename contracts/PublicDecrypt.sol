@@ -50,8 +50,8 @@ contract PublicDecrypt is ZamaEthereumConfig {
     }
 
     /// @notice Store an encrypted value from encrypted input
-    function setEncryptedValue(externalEuint32 encValue, bytes calldata proof) external {
-        _encryptedValue = FHE.fromExternal(encValue, proof);
+    function setEncryptedValue(externalEuint32 encValue, bytes calldata inputProof) external {
+        _encryptedValue = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_encryptedValue);
         FHE.allow(_encryptedValue, msg.sender);
         hasValue = true;

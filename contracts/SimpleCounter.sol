@@ -11,8 +11,8 @@ contract SimpleCounter is ZamaEthereumConfig {
     event CountIncremented(address indexed user);
 
     /// @notice Increment caller's counter by encrypted value
-    function increment(externalEuint32 encValue, bytes calldata proof) external {
-        euint32 value = FHE.fromExternal(encValue, proof);
+    function increment(externalEuint32 encValue, bytes calldata inputProof) external {
+        euint32 value = FHE.fromExternal(encValue, inputProof);
         _counts[msg.sender] = FHE.add(_counts[msg.sender], value);
         FHE.allowThis(_counts[msg.sender]);
         FHE.allow(_counts[msg.sender], msg.sender);

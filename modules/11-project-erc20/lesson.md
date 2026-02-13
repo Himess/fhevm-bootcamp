@@ -239,6 +239,8 @@ The `transferFrom` checks both:
 
 Both must pass (using `FHE.and()`), or the transfer sends 0.
 
+> **Design Note:** Our simplified `allowance(address owner)` uses `msg.sender` as the implicit spender. An alternative design accepts both parameters: `allowance(address owner, address spender)`, which is closer to the ERC-20 standard but requires additional ACL considerations.
+
 ---
 
 ## 8. Minting Pattern
@@ -284,6 +286,22 @@ async function getBalance(account: string): Promise<number> {
   return Number(decryptedValue);
 }
 ```
+
+---
+
+## ERC-20 Compatibility Tradeoffs
+
+Our Confidential ERC-20 intentionally breaks standard ERC-20 compatibility:
+
+| Feature | Standard ERC-20 | Confidential ERC-20 |
+|---------|----------------|---------------------|
+| `balanceOf` return | `uint256` | `euint64` |
+| `transfer` amount param | `uint256` | `externalEuint64 + proof` |
+| Transfer events | Include amount | No amount (would leak data) |
+| Failed transfer | Reverts | Returns silently (0 transfer) |
+| `totalSupply` | Public | Can be public or encrypted |
+
+These changes are necessary for privacy but mean the contract cannot be used with existing ERC-20 tooling (DEX routers, block explorers, etc.) without adaptation.
 
 ---
 

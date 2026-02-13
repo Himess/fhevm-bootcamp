@@ -12,8 +12,8 @@ contract UserDecrypt is ZamaEthereumConfig {
     event SecretStored(address indexed user);
 
     /// @notice User stores their own encrypted secret
-    function storeSecret(externalEuint32 encValue, bytes calldata proof) external {
-        _userSecrets[msg.sender] = FHE.fromExternal(encValue, proof);
+    function storeSecret(externalEuint32 encValue, bytes calldata inputProof) external {
+        _userSecrets[msg.sender] = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_userSecrets[msg.sender]);
         FHE.allow(_userSecrets[msg.sender], msg.sender);
         emit SecretStored(msg.sender);
