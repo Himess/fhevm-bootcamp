@@ -40,6 +40,26 @@ balance = FHE.select(hasEnough, newBalance, balance);
 
 ---
 
+## 1.5 Comparison Operators Reference
+
+All encrypted comparison operators return `ebool`:
+
+| Operator | Description | Example | Returns |
+|----------|-------------|---------|---------|
+| `FHE.eq(a, b)` | Equal | `FHE.eq(encAge, FHE.asEuint32(18))` | `ebool` |
+| `FHE.ne(a, b)` | Not equal | `FHE.ne(encStatus, FHE.asEuint8(0))` | `ebool` |
+| `FHE.lt(a, b)` | Less than | `FHE.lt(encBid, encReserve)` | `ebool` |
+| `FHE.le(a, b)` | Less than or equal | `FHE.le(encAge, FHE.asEuint32(65))` | `ebool` |
+| `FHE.gt(a, b)` | Greater than | `FHE.gt(encBalance, encCost)` | `ebool` |
+| `FHE.ge(a, b)` | Greater than or equal | `FHE.ge(encBalance, encPrice)` | `ebool` |
+
+> **Type restrictions:**
+> - `euint256` only supports `FHE.eq()` and `FHE.ne()` — NO ordering comparisons (`lt`/`le`/`gt`/`ge`)
+> - `eaddress` only supports `FHE.eq()` and `FHE.ne()`
+> - Cross-type comparisons are supported with auto-upcast (e.g., `FHE.gt(euint32, euint64)` → result is `ebool`)
+
+---
+
 ## 2. `FHE.select()` — The Encrypted Ternary
 
 ### Syntax

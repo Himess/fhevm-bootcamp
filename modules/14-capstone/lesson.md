@@ -11,6 +11,8 @@ This capstone project brings together every concept from the bootcamp into a sin
 
 This is a challenging project that combines encrypted types, operations, ACL, conditional logic, decryption, and frontend integration.
 
+> **Architecture Note:** This lesson teaches a **two-contract architecture** (GovernanceToken + ConfidentialDAO) with weighted voting for educational purposes — it demonstrates cross-contract ACL, interface patterns, and advanced FHE composition. The reference implementation in `contracts/ConfidentialDAO.sol` uses a **simplified monolithic architecture** (single contract, unweighted votes) that is easier to test and deploy. Both approaches are valid; the two-contract version is the "stretch goal" for students who want a deeper challenge.
+
 ---
 
 ## 1. System Architecture
@@ -61,11 +63,11 @@ When a user wants to vote, they first grant the DAO contract access to their tok
 Unlike Module 12's simple Yes/No voting (each vote = 1), the DAO uses **weighted voting** where your vote power equals your token balance:
 
 ```solidity
-function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata proof) external {
+function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata inputProof) external {
     // Get the voter's token balance (DAO must have ACL access)
     euint64 weight = governanceToken.balanceOf(msg.sender);
 
-    ebool voteYes = FHE.fromExternal(encryptedVote, proof);
+    ebool voteYes = FHE.fromExternal(encryptedVote, inputProof);
 
     euint64 zero = FHE.asEuint64(0);
     euint64 yesWeight = FHE.select(voteYes, weight, zero);
@@ -167,7 +169,7 @@ contract ConfidentialDAO is ZamaEthereumConfig {
         return proposalId;
     }
 
-    function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata inputProof) external {
         Proposal storage p = proposals[proposalId];
         require(p.exists, "Proposal does not exist");
         require(block.timestamp >= p.startTime, "Voting not started");
@@ -180,7 +182,7 @@ contract ConfidentialDAO is ZamaEthereumConfig {
         // The voter must have previously granted ACL to this contract
         euint64 weight = governanceToken.balanceOf(msg.sender);
 
-        ebool voteYes = FHE.fromExternal(encryptedVote, proof);
+        ebool voteYes = FHE.fromExternal(encryptedVote, inputProof);
         euint64 zero = FHE.asEuint64(0);
 
         euint64 yesWeight = FHE.select(voteYes, weight, zero);
@@ -203,9 +205,9 @@ contract ConfidentialDAO is ZamaEthereumConfig {
 
         p.finalized = true;
 
-        // Grant ACL to admin for decryption
-        FHE.allow(p.yesVotes, admin);
-        FHE.allow(p.noVotes, admin);
+        // Make vote tallies publicly decryptable
+        FHE.makePubliclyDecryptable(p.yesVotes);
+        FHE.makePubliclyDecryptable(p.noVotes);
 
         emit ProposalFinalized(proposalId);
     }
@@ -295,7 +297,7 @@ Phase 2: Vote
 
 Phase 3: Finalize
   - Admin finalizes after voting ends
-  - Decrypts yes/no tallies via gateway
+  - Makes vote tallies publicly decryptable
 
 Phase 4: Execute
   - Admin submits decrypted tallies
@@ -342,7 +344,7 @@ The admin cannot:
 - See individual votes (no ACL)
 - Execute rejected proposals (yes > no check)
 
-For a trustless design, replace the admin role with an on-chain decryption callback.
+For a trustless design, consider using `FHE.makePubliclyDecryptable()` so anyone can verify vote tallies, and add on-chain execution logic based on the decrypted results.
 
 ### Treasury Drain
 
@@ -394,7 +396,7 @@ await dao.vote(proposalId, encrypted.handles[0], encrypted.inputProof);
 
 // Admin: finalize and execute
 await dao.finalize(proposalId);
-// ... decrypt via gateway ...
+// ... decrypt via userDecryptEuint in tests ...
 await dao.executeProposal(proposalId, yesVotes, noVotes);
 ```
 
@@ -447,7 +449,7 @@ The Confidential DAO combines all FHEVM concepts:
 | 04: Operations | `FHE.add()`, `FHE.gt()` |
 | 05: ACL | `FHE.allow()`, `FHE.allowThis()`, cross-contract ACL |
 | 06: Inputs | `externalEbool`, `FHE.fromExternal()` |
-| 07: Decryption | Gateway re-encryption for tallies |
+| 07: Decryption | `makePubliclyDecryptable()` for tallies |
 | 08: Conditional Logic | `FHE.select()` for weighted voting |
 | 10: Frontend | fhevmjs integration |
 | 11: ERC-20 | Governance token with encrypted balances |

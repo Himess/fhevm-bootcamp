@@ -566,7 +566,7 @@ euint8 result = FHE.add(FHE.rem(FHE.randEuint8(), 6), FHE.asEuint8(1));
 // Avoid: unnecessary intermediate steps
 euint8 raw = FHE.randEuint8();
 euint8 temp1 = FHE.rem(raw, 12);
-euint8 temp2 = FHE.div(temp1, FHE.asEuint8(2));  // Extra operations
+euint8 temp2 = FHE.div(temp1, 2);  // Extra operations (div is scalar-only)
 ```
 
 **Tip 4: Use `FHE.randEbool()` for binary decisions**
@@ -682,7 +682,7 @@ function broken() public {
     // if (value > 100) { ... }       // Cannot branch on encrypted values
 }
 
-// CORRECT: Use encrypted operations or Gateway decryption
+// CORRECT: Use encrypted operations or makePubliclyDecryptable for reveal
 function correct() public {
     euint32 rand = FHE.randEuint32();
     ebool isLarge = FHE.gt(rand, FHE.asEuint32(100));

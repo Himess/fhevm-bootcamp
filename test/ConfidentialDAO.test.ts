@@ -104,6 +104,40 @@ describe("ConfidentialDAO", function () {
     expect(noHandle).to.not.equal(ethers.ZeroHash);
   });
 
+  it("should finalize proposal after deadline", async function () {
+    await (await dao.mintTokens(alice.address, 500)).wait();
+    // Create proposal with 1 second duration
+    await (await dao.createProposal("Finalize Test", bob.address, 0, 1)).wait();
+
+    // Alice votes
+    const enc = await fhevm
+      .createEncryptedInput(daoAddress, alice.address)
+      .add8(1)
+      .encrypt();
+    await (await dao.connect(alice).vote(0, enc.handles[0], enc.inputProof)).wait();
+
+    // Wait for deadline to pass
+    await ethers.provider.send("evm_increaseTime", [2]);
+    await ethers.provider.send("evm_mine", []);
+
+    // Finalize
+    await (await dao.finalizeProposal(0)).wait();
+
+    // Verify revealed flag is true
+    const proposal = await dao.proposals(0);
+    expect(proposal.revealed).to.equal(true);
+  });
+
+  it("should reject finalize before deadline", async function () {
+    await (await dao.createProposal("Early Finalize", bob.address, 0, 3600)).wait();
+    try {
+      await dao.finalizeProposal(0);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Voting ongoing");
+    }
+  });
+
   it("should accept treasury funding", async function () {
     await admin.sendTransaction({ to: daoAddress, value: ethers.parseEther("1.0") });
     expect(await dao.treasuryBalance()).to.equal(ethers.parseEther("1.0"));

@@ -28,6 +28,23 @@ An `ebool` is **encrypted** -- the EVM cannot read it.
 
 ---
 
+# Comparison Operators
+
+All return `ebool` (encrypted boolean):
+
+| Operator | Meaning |
+|----------|---------|
+| `FHE.eq(a, b)` | a == b |
+| `FHE.ne(a, b)` | a != b |
+| `FHE.lt(a, b)` | a < b |
+| `FHE.le(a, b)` | a <= b |
+| `FHE.gt(a, b)` | a > b |
+| `FHE.ge(a, b)` | a >= b |
+
+`euint256` and `eaddress`: only `eq` / `ne`
+
+---
+
 # The Solution: `FHE.select()`
 
 ```solidity

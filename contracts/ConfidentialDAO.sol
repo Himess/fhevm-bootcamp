@@ -116,6 +116,17 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     /// @notice Fund the DAO treasury
     receive() external payable {}
 
+    /// @notice Finalize voting and make results publicly decryptable
+    function finalizeProposal(uint256 proposalId) external onlyAdmin {
+        require(proposalId < proposalCount, "Invalid proposal");
+        require(block.timestamp > proposals[proposalId].deadline, "Voting ongoing");
+        require(!proposals[proposalId].revealed, "Already revealed");
+
+        proposals[proposalId].revealed = true;
+        FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
+        FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
+    }
+
     /// @notice Get treasury balance
     function treasuryBalance() external view returns (uint256) {
         return address(this).balance;

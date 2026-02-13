@@ -271,32 +271,32 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Teaching Style:** Live coding + refactoring exercise
 
 **Key Teaching Points:**
-- This is the most important conceptual module after Module 00. The branchless mindset is essential.
-- Start by showing plaintext code with if/else, then show why it fails with encrypted values, then show the select-based solution.
-- The `FHE.select(condition, a, b)` pattern is the encrypted ternary: `condition ? a : b` where condition is `ebool`.
-- Show nested selects for multi-way branching. Warn about the gas cost scaling.
+- ACL (Access Control List) is how you manage WHO can see encrypted data. Every encrypted value has an access list.
+- The 5 core ACL functions: `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, `FHE.makePubliclyDecryptable()`, `FHE.isSenderAllowed()`.
+- After every state update (e.g., `_balance = FHE.add(_balance, value)`), you MUST re-set ACL because the handle changes.
+- `FHE.allowThis()` grants the contract itself access. `FHE.allow(handle, address)` grants a specific user access.
+- Show the "ACL reset after update" pattern — this is the #1 source of bugs for beginners.
 
 **Discussion Questions:**
-1. "Why can't you write `if (FHE.gt(a, b))` in Solidity? What type does `FHE.gt` return?"
-2. "If `FHE.select` always evaluates both branches, what are the gas implications?"
-3. "How would you implement a 4-way encrypted switch statement using selects?"
+1. "Why do you need to call `FHE.allowThis()` after every operation that updates an encrypted state variable?"
+2. "What is the difference between `FHE.allow()` and `FHE.allowTransient()`? When would you use each?"
+3. "How does `FHE.makePubliclyDecryptable()` differ from `FHE.allow()`? What are the security implications?"
 
 **Common Pitfalls:**
-- Students try to use `ebool` in an `if` statement. Explain that `ebool` is an encrypted ciphertext handle, not a Solidity `bool`.
-- Students forget that `FHE.select` requires all three arguments to be the same type.
-- Nested selects become confusing. Encourage students to use helper functions for complex logic.
+- Students forget to re-set ACL after updating an encrypted variable. The new ciphertext handle has NO permissions by default.
+- Students use `FHE.allow()` when `FHE.allowTransient()` would be more appropriate for intermediate values.
+- Students forget `FHE.allowThis()` on contract-owned state, causing subsequent operations on that variable to fail.
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Why branching fails with FHE | 20 min |
-| Comparison operations deep dive | 30 min |
-| Boolean logic with ebool | 20 min |
-| FHE.select pattern + live coding | 30 min |
-| Nested selects and multi-way branching | 20 min |
-| Exercise 1: Encrypted Clamp | 30 min |
-| Exercise 2: Eligibility Checker | 30 min |
-| Exercise 3: Branchless Refactoring | 25 min |
+| What is ACL and why it matters | 20 min |
+| The 5 ACL functions deep dive | 30 min |
+| ACL reset after update pattern | 25 min |
+| Live coding: ACLDemo contract | 30 min |
+| Cross-contract ACL patterns | 20 min |
+| Exercise 1: Multi-User Vault | 30 min |
+| Exercise 2: Confidential Token ACL | 25 min |
 | Quiz | 15 min |
 
 ---
