@@ -128,6 +128,8 @@ euint64 baseTotal = FHE.mul(_items[itemId].pricePerUnit, FHE.asEuint64(quantity)
 euint64 discounted = FHE.mul(baseTotal, multiplier);
 euint64 totalCost = FHE.div(discounted, 100);
 ```
+
+> **Note:** `FHE.div()` only accepts a **plaintext** second operand (e.g., `FHE.div(encVal, 100)`). You cannot divide by an encrypted value.
 </details>
 
 <details>

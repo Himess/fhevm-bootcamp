@@ -94,7 +94,7 @@ FHEVM generates randomness through the TFHE (Torus Fully Homomorphic Encryption)
 - **The contract itself** cannot read the value — it can only perform encrypted operations on it
 - **Observers** see only an opaque ciphertext handle, not the actual number
 
-This is the strongest form of on-chain randomness available: the random value exists, can be used in computations, but is never visible to any party until explicitly decrypted through the Gateway.
+This is the strongest form of on-chain randomness available: the random value exists, can be used in computations, but is never visible to any party until explicitly decrypted.
 
 ---
 
@@ -392,7 +392,7 @@ contract EncryptedDiceRoller is ZamaEthereumConfig {
 2. **`FHE.rem(raw, 6)`** reduces it to the range 0–5 (encrypted modulo)
 3. **`FHE.add(..., 1)`** shifts the range to 1–6
 4. The result is stored and ACL permissions are set
-5. The player can later decrypt their roll via reencryption (client-side) or request public decryption through the Gateway
+5. The player can later decrypt their roll via reencryption (client-side) or the contract can call `FHE.makePubliclyDecryptable()` for public reveal
 
 Nobody — not the contract, not the validator, not other players — can see the dice result until it is explicitly decrypted.
 
@@ -426,7 +426,7 @@ function drawWinner() external onlyOwner {
 1. Players buy tickets          → buyTicket() (payable)
 2. Deadline passes              → No more ticket sales
 3. Owner draws winner           → drawWinner() generates encrypted random index
-4. Owner decrypts index         → Gateway decryption reveals winner index
+4. Owner decrypts index         → makePubliclyDecryptable() reveals winner index
 5. Owner reveals winner         → revealWinner(index) stores winner address
 6. Winner claims prize          → claimPrize() sends ETH balance
 ```
@@ -440,7 +440,7 @@ function drawWinner() external onlyOwner {
 | Player front-runs the draw | Random is generated in the draw tx, not predictable |
 | Miner/validator manipulation | Encrypted value is hidden from block producers |
 
-The owner must commit to the draw before knowing the outcome. The encrypted random index is only revealed through the Gateway decryption process after the draw is finalized.
+The owner must commit to the draw before knowing the outcome. The encrypted random index is only revealed through `makePubliclyDecryptable()` after the draw is finalized.
 
 ---
 
@@ -616,11 +616,11 @@ This is complex, requires multiple rounds of interaction, and fails if any playe
 
 ### Decryption Timing
 
-The random value remains encrypted until you explicitly request decryption through the Gateway. Design your contract so that:
+The random value remains encrypted until you explicitly make it publicly decryptable or grant ACL access. Design your contract so that:
 
 - All game-changing state updates happen **before** decryption
 - The random value cannot be used to gain an advantage between generation and reveal
-- Decryption results are handled atomically in the callback
+- Decryption results are handled carefully after reveal
 
 ---
 
@@ -753,38 +753,27 @@ function playGame(externalEuint8 calldata encryptedGuess, bytes calldata proof) 
 
 ### Random + Decryption (Module 07)
 
-Request decryption of a random result through the Gateway:
+Make a random result publicly decryptable or share via ACL:
 
 ```solidity
-import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
-
-contract RevealableRandom is ZamaEthereumConfig, GatewayConfig {
+contract RevealableRandom is ZamaEthereumConfig {
     euint32 private _encryptedResult;
-    uint32 public revealedResult;
+    bool public revealed;
 
     function generate() public {
         _encryptedResult = FHE.rem(FHE.randEuint32(), 100);
         FHE.allowThis(_encryptedResult);
+        FHE.allow(_encryptedResult, msg.sender);
     }
 
-    function requestReveal() public {
-        uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(_encryptedResult);
-
-        Gateway.requestDecryption(
-            cts,
-            this.revealCallback.selector,
-            0,
-            block.timestamp + 100,
-            false
-        );
-    }
-
-    function revealCallback(uint256 /*requestId*/, uint32 value) public onlyGateway {
-        revealedResult = value;
+    function revealPublicly() public {
+        FHE.makePubliclyDecryptable(_encryptedResult);
+        revealed = true;
     }
 }
 ```
+
+After `makePubliclyDecryptable()`, any user can decrypt the result client-side via reencryption.
 
 ---
 

@@ -120,7 +120,7 @@ The result is encrypted -- nobody knows the roll until decryption.
 # Example: Encrypted Lottery
 
 ```solidity
-contract EncryptedLottery is ZamaEthereumConfig, GatewayConfig {
+contract EncryptedLottery is ZamaEthereumConfig {
     address[] public players;
     euint32 private _winnerIndex;
 
@@ -128,19 +128,13 @@ contract EncryptedLottery is ZamaEthereumConfig, GatewayConfig {
         euint32 random = FHE.randEuint32();
         _winnerIndex = FHE.rem(random, uint32(players.length));
         FHE.allowThis(_winnerIndex);
+        FHE.allow(_winnerIndex, msg.sender);
     }
 
-    function requestReveal() public onlyOwner {
-        uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(_winnerIndex);
-        Gateway.requestDecryption(
-            cts, this.revealCb.selector,
-            0, block.timestamp + 100, false
-        );
+    function revealWinner() public onlyOwner {
+        FHE.makePubliclyDecryptable(_winnerIndex);
+        // Winner index can now be decrypted by anyone
     }
-
-    function revealCb(uint256 reqId, uint32 idx)
-        public onlyGateway { /* reveal winner */ }
 }
 ```
 
@@ -229,14 +223,14 @@ Attributes are hidden until the owner reveals them.
 
 ---
 
-# Congratulations!
+# Core Concepts Complete!
 
-You have completed the core FHEVM Bootcamp curriculum!
-
-You can now build confidential smart contracts with:
+You now have the foundational skills for FHEVM development:
 - Encrypted types and operations
 - Access control (ACL)
 - Encrypted inputs with ZK proofs
 - Decryption patterns
 - Conditional logic
 - On-chain randomness
+
+Next: Project modules (ERC-20, Voting, Auction, Capstone)

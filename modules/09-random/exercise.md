@@ -76,10 +76,10 @@ contract EncryptedDiceRoller is ZamaEthereumConfig {
 ```solidity
 euint8 random = FHE.randEuint8();
 euint8 zeroToFive = FHE.rem(random, 6);
-euint8 diceResult = FHE.add(zeroToFive, 1);
+euint8 diceResult = FHE.add(zeroToFive, FHE.asEuint8(1));
 ```
 
-`FHE.rem(value, 6)` returns a value in `[0, 5]`. Adding `1` shifts it to `[1, 6]`, which maps to a standard die face.
+`FHE.rem(value, 6)` returns a value in `[0, 5]`. Adding `FHE.asEuint8(1)` shifts the range to `[1, 6]`, which maps to a standard die face.
 </details>
 
 <details>
@@ -89,7 +89,7 @@ euint8 diceResult = FHE.add(zeroToFive, 1);
 function roll() public {
     euint8 random = FHE.randEuint8();
     euint8 zeroToFive = FHE.rem(random, 6);
-    euint8 diceResult = FHE.add(zeroToFive, 1);
+    euint8 diceResult = FHE.add(zeroToFive, FHE.asEuint8(1));
 
     _lastRoll[msg.sender] = diceResult;
 
@@ -461,7 +461,7 @@ contract EncryptedLottery is ZamaEthereumConfig {
         return _tickets[msg.sender];
     }
 
-    /// @notice Get the encrypted winner index (owner only, for decryption via gateway).
+    /// @notice Get the encrypted winner index (owner only, for decryption).
     function getWinnerIndex() public view returns (euint32) {
         require(winnerSelected, "Winner not selected");
         require(FHE.isSenderAllowed(_winnerIndex), "No access");
@@ -528,16 +528,18 @@ function closeLotteryAndPickWinner() public onlyOwner {
 ```
 
 The winner index is an encrypted `euint32` in the range `[0, players.length)`. Nobody, including the owner, knows the winner until the encrypted index is decrypted through the FHEVM gateway. The owner is granted ACL so they can initiate the decryption request.
+
+> **Tip:** If `players.length` happens to be a power of 2, you could use the bounded overload `FHE.randEuint32(uint32(players.length))` instead of `FHE.rem()` for better efficiency. However, since player counts are rarely guaranteed to be powers of 2, `FHE.rem()` is the general-purpose approach.
 </details>
 
 <details>
 <summary>Hint 3: Resolving the winner after decryption</summary>
 
-After the owner decrypts `_winnerIndex` through the gateway and obtains the plaintext index value, they can call `getPlayer(index)` to find the winner's address. The full flow is:
+After the owner makes `_winnerIndex` publicly decryptable, anyone can decrypt the winner index client-side. The full flow is:
 
 1. Owner calls `closeLotteryAndPickWinner()` -- generates encrypted winner index
-2. Owner requests decryption of `_winnerIndex` via the FHEVM gateway
-3. Gateway callback returns the plaintext index (e.g., `3`)
+2. Owner calls `FHE.makePubliclyDecryptable(_winnerIndex)` to allow public decryption
+3. Client-side decryption reveals the plaintext index (e.g., `3`)
 4. Owner calls `getPlayer(3)` to get the winner's address
 
 This two-phase approach ensures the winner cannot be known until the explicit reveal step.

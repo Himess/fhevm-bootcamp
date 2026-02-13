@@ -60,6 +60,7 @@ FHE.select(condition, valueIfTrue, valueIfFalse)
 - `valueIfTrue` and `valueIfFalse` must be the **same type**
 - The return type matches the value types
 - The condition must be an `ebool`
+- Works with **all** encrypted types: `euint8`, `euint16`, `euint32`, `euint64`, `euint128`, `euint256`, `ebool`, `eaddress`
 
 ### Basic Examples
 
