@@ -50,8 +50,8 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
         return _balances[account];
     }
 
-    function transfer(externalEuint64 encryptedAmount, bytes calldata proof, address to) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function transfer(externalEuint64 encryptedAmount, bytes calldata inputProof, address to) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
         // TODO: Call _transfer(msg.sender, to, amount)
         // TODO: Emit Transfer event (no amount!)
     }
@@ -67,8 +67,8 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
         // TODO: FHE.allowThis() and FHE.allow() for both from and to
     }
 
-    function approve(externalEuint64 encryptedAmount, bytes calldata proof, address spender) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function approve(externalEuint64 encryptedAmount, bytes calldata inputProof, address spender) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
         // TODO: Set _allowances[msg.sender][spender] = amount
         // TODO: FHE.allowThis() the allowance
@@ -83,10 +83,10 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
     function transferFrom(
         address from,
         externalEuint64 encryptedAmount,
-        bytes calldata proof,
+        bytes calldata inputProof,
         address to
     ) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
         // TODO: Check allowance >= amount using FHE.ge()
         // TODO: Check balance >= amount using FHE.ge()
@@ -174,8 +174,8 @@ function _transfer(address from, address to, euint64 amount) internal {
 <summary>Hint 3: transferFrom (double check)</summary>
 
 ```solidity
-function transferFrom(address from, externalEuint64 encryptedAmount, bytes calldata proof, address to) external {
-    euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+function transferFrom(address from, externalEuint64 encryptedAmount, bytes calldata inputProof, address to) external {
+    euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
     euint64 currentAllowance = _allowances[from][msg.sender];
     ebool hasAllowance = FHE.ge(currentAllowance, amount);

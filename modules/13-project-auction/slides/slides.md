@@ -59,7 +59,7 @@ Auction ends -> winner revealed
 # Core: Encrypted Bid Comparison
 
 ```solidity
-euint64 newBid = FHE.fromExternal(encBid, proof);
+euint64 newBid = FHE.fromExternal(encBid, inputProof);
 
 // Is this bid higher than current highest?
 ebool isHigher = FHE.gt(newBid, _highestBid[auctionId]);
@@ -147,12 +147,12 @@ function createAuction(
 function bid(
     uint256 auctionId,
     externalEuint64 encBid,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external payable {
     require(!hasBid[auctionId][msg.sender], "Already bid");
     require(msg.value > 0, "Must deposit ETH");
 
-    euint64 newBid = FHE.fromExternal(encBid, proof);
+    euint64 newBid = FHE.fromExternal(encBid, inputProof);
     deposits[auctionId][msg.sender] = msg.value;
 
     ebool isHigher = FHE.gt(newBid, _highestBid[auctionId]);

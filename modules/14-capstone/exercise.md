@@ -75,8 +75,8 @@ contract GovernanceToken is ZamaEthereumConfig {
         // TODO: FHE.allow(_balances[msg.sender], dao) to grant the DAO contract read access
     }
 
-    function transfer(address to, externalEuint64 encryptedAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function transfer(address to, externalEuint64 encryptedAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
         _transfer(msg.sender, to, amount);
     }
 
@@ -169,14 +169,14 @@ contract ConfidentialDAO is ZamaEthereumConfig {
         return proposalId;
     }
 
-    function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata inputProof) external {
         Proposal storage p = proposals[proposalId];
 
         // TODO: Validate: exists, active period, not already voted
         // TODO: Mark as voted
 
         // TODO: Get voter's token balance from governanceToken.balanceOf(msg.sender)
-        // TODO: Convert encryptedVote with FHE.fromExternal(encryptedVote, proof)
+        // TODO: Convert encryptedVote with FHE.fromExternal(encryptedVote, inputProof)
 
         // TODO: Weighted vote:
         //   yesWeight = FHE.select(voteYes, weight, zero)
@@ -191,7 +191,7 @@ contract ConfidentialDAO is ZamaEthereumConfig {
 
         // TODO: Validate: exists, voting ended, not finalized
         // TODO: Set finalized = true
-        // TODO: FHE.allow() both tallies for admin
+        // TODO: Mark both tallies as publicly decryptable using FHE.makePubliclyDecryptable()
         // TODO: Emit ProposalFinalized event
     }
 
@@ -253,7 +253,7 @@ This is the most complex function:
 ### Step 4: ConfidentialDAO - finalize
 
 1. Validate timing
-2. Grant ACL to admin
+2. Make tallies publicly decryptable
 
 ### Step 5: ConfidentialDAO - executeProposal
 
@@ -279,7 +279,7 @@ function grantDAOAccess(address dao) public {
 <summary>Hint 2: vote function</summary>
 
 ```solidity
-function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata proof) external {
+function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata inputProof) external {
     Proposal storage p = proposals[proposalId];
     require(p.exists, "No proposal");
     require(block.timestamp >= p.startTime, "Not started");
@@ -289,7 +289,7 @@ function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata pr
     _hasVoted[proposalId][msg.sender] = true;
 
     euint64 weight = governanceToken.balanceOf(msg.sender);
-    ebool voteYes = FHE.fromExternal(encryptedVote, proof);
+    ebool voteYes = FHE.fromExternal(encryptedVote, inputProof);
     euint64 zero = FHE.asEuint64(0);
 
     euint64 yesWeight = FHE.select(voteYes, weight, zero);
@@ -357,7 +357,7 @@ function executeProposal(
 - [ ] Weighted voting works using `FHE.select()` with token balances
 - [ ] Duplicate voting is prevented
 - [ ] Time-bounded voting works correctly
-- [ ] Finalization grants ACL to admin for decryption
+- [ ] Finalization makes tallies publicly decryptable
 - [ ] Execution transfers ETH only for approved proposals
 - [ ] All encrypted values have proper ACL calls
 - [ ] Events are emitted at each lifecycle stage

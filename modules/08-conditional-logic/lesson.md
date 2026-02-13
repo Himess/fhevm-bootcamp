@@ -302,8 +302,8 @@ contract BidValidator is ZamaEthereumConfig {
         FHE.allowThis(_currentHighest);
     }
 
-    function validateAndSubmitBid(externalEuint64 calldata encBid, bytes calldata proof) external {
-        euint64 bid = FHE.fromExternal(encBid, proof);
+    function validateAndSubmitBid(externalEuint64 encBid, bytes calldata inputProof) external {
+        euint64 bid = FHE.fromExternal(encBid, inputProof);
 
         ebool aboveMin = FHE.ge(bid, _minBid);
         ebool belowMax = FHE.le(bid, _maxBid);

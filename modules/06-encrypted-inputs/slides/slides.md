@@ -85,10 +85,10 @@ Takes the encrypted input and its ZK proof. Internally: validates ZK proof, regi
 # Client-Side: Encryption Flow
 
 ```javascript
-import { createFhevmInstance } from "fhevmjs";
+import { createInstance } from "fhevmjs";
 
 // 1. Create FHEVM instance
-const instance = await createFhevmInstance({ networkUrl });
+const instance = await createInstance({ networkUrl });
 
 // 2. Create encrypted input
 const input = await instance.input.createEncryptedInput(

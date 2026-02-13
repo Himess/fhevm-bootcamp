@@ -65,12 +65,12 @@ The DAO needs to read token balances for vote weighting.
 ```solidity
 function vote(
     uint256 proposalId, externalEbool encVote,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
     euint64 weight =
         governanceToken.balanceOf(msg.sender);
 
-    ebool voteYes = FHE.fromExternal(encVote, proof);
+    ebool voteYes = FHE.fromExternal(encVote, inputProof);
     euint64 zero = FHE.asEuint64(0);
 
     euint64 yesWeight =
@@ -110,7 +110,7 @@ Phase 2: Vote
 
 Phase 3: Finalize
   - Admin finalizes after deadline
-  - Grants ACL for decryption
+  - Makes tallies publicly decryptable
 
 Phase 4: Execute
   - If yes > no: ETH transferred
@@ -170,7 +170,7 @@ function executeProposal(
 | 04 | `FHE.add()`, `FHE.gt()` |
 | 05 | Cross-contract ACL |
 | 06 | `externalEbool`, `FHE.fromExternal()` |
-| 07 | Gateway decryption |
+| 07 | Public decryption (makePubliclyDecryptable) |
 | 08 | `FHE.select()` weighted voting |
 | 10 | fhevmjs frontend |
 | 11 | Governance token |

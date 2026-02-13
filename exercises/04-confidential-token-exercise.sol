@@ -32,7 +32,7 @@ contract ConfidentialTokenExercise is ZamaEthereumConfig {
     /// - Use FHE.select() to transfer 0 if insufficient
     /// - Update both sender and receiver balances
     /// - Set ACL for both
-    function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+    function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
         // YOUR CODE HERE
     }
 

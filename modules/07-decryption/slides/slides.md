@@ -177,8 +177,10 @@ import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
 contract Prod is ZamaEthereumConfig, GatewayConfig {
     function requestReveal() public {
+        // Gateway handles handle-to-uint256 conversion in production
+        // FHE.toUint256() does not exist
         uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(_value);
+        cts[0] = Gateway.toUint256(_value);
         Gateway.requestDecryption(
             cts, this.cb.selector, 0,
             block.timestamp + 100, false

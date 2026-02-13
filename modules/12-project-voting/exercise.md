@@ -58,13 +58,13 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         // TODO: Emit ProposalCreated event with id, description, and deadline
     }
 
-    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
         // TODO: Require proposalId < proposalCount ("Invalid proposal")
         // TODO: Require block.timestamp <= proposals[proposalId].deadline ("Voting ended")
         // TODO: Require voter has not already voted
         // TODO: Mark voter as having voted
 
-        // TODO: Convert encVote using FHE.fromExternal(encVote, proof) -> euint8 voteValue
+        // TODO: Convert encVote using FHE.fromExternal(encVote, inputProof) -> euint8 voteValue
         // TODO: Compare with 1 to get ebool: ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1))
         // TODO: Create euint32 oneVote = FHE.asEuint32(1) and zeroVote = FHE.asEuint32(0)
         // TODO: Use FHE.select(isYes, oneVote, zeroVote) for yes increment
@@ -106,7 +106,7 @@ contract ConfidentialVoting is ZamaEthereumConfig {
 This is the core function:
 1. Validate: proposalId is valid, deadline has not passed, voter has not voted
 2. Mark voter as having voted
-3. Convert `externalEuint8` with `FHE.fromExternal(encVote, proof)` to get `euint8 voteValue`
+3. Convert `externalEuint8` with `FHE.fromExternal(encVote, inputProof)` to get `euint8 voteValue`
 4. Compare against 1: `ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1))`
 5. Use `FHE.select(isYes, oneVote, zeroVote)` for `yesIncrement`
 6. Use `FHE.select(isYes, zeroVote, oneVote)` for `noIncrement`
@@ -143,7 +143,7 @@ require(proposalId < proposalCount, "Invalid proposal");
 require(block.timestamp <= proposals[proposalId].deadline, "Voting ended");
 require(!hasVoted[proposalId][msg.sender], "Already voted");
 
-euint8 voteValue = FHE.fromExternal(encVote, proof);
+euint8 voteValue = FHE.fromExternal(encVote, inputProof);
 ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 
 euint32 oneVote = FHE.asEuint32(1);

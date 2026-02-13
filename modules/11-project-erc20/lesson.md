@@ -108,8 +108,8 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
         return _balances[account];
     }
 
-    function transfer(externalEuint64 encryptedAmount, bytes calldata proof, address to) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function transfer(externalEuint64 encryptedAmount, bytes calldata inputProof, address to) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
         _transfer(msg.sender, to, amount);
         emit Transfer(msg.sender, to);
     }
@@ -131,8 +131,8 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
         FHE.allow(_balances[to], to);
     }
 
-    function approve(externalEuint64 encryptedAmount, bytes calldata proof, address spender) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function approve(externalEuint64 encryptedAmount, bytes calldata inputProof, address spender) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
         _allowances[msg.sender][spender] = amount;
         FHE.allowThis(_allowances[msg.sender][spender]);
         FHE.allow(_allowances[msg.sender][spender], msg.sender);
@@ -144,8 +144,8 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
         return _allowances[owner][msg.sender];
     }
 
-    function transferFrom(address from, externalEuint64 encryptedAmount, bytes calldata proof, address to) external {
-        euint64 amount = FHE.fromExternal(encryptedAmount, proof);
+    function transferFrom(address from, externalEuint64 encryptedAmount, bytes calldata inputProof, address to) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
         // Check allowance
         euint64 currentAllowance = _allowances[from][msg.sender];

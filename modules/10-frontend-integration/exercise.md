@@ -55,7 +55,7 @@ import { initFhevm } from "./fhevm";
 
 const COUNTER_ADDRESS = "YOUR_DEPLOYED_ADDRESS";
 const COUNTER_ABI = [
-  "function increment(bytes32 encValue, bytes calldata proof) external",
+  "function increment(bytes32 encValue, bytes calldata inputProof) external",
   "function getMyCount() external view returns (uint256)",
 ];
 

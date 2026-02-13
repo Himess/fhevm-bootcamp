@@ -19,8 +19,8 @@ contract HelloFHESolution is ZamaEthereumConfig {
         FHE.allow(_secret, msg.sender);
     }
 
-    function setSecretEncrypted(externalEuint32 encValue, bytes calldata proof) external {
-        _secret = FHE.fromExternal(encValue, proof);
+    function setSecretEncrypted(externalEuint32 encValue, bytes calldata inputProof) external {
+        _secret = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_secret);
         FHE.allow(_secret, msg.sender);
     }

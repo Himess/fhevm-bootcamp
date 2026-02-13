@@ -112,10 +112,10 @@ function myFunction(
 The client first retrieves the network's FHE public key:
 
 ```javascript
-import { createFhevmInstance } from "fhevmjs";
+import { createInstance } from "fhevmjs";
 
 const provider = new BrowserProvider(window.ethereum);
-const instance = await createFhevmInstance({
+const instance = await createInstance({
   networkUrl: await provider.send("eth_chainId", []),
   gatewayUrl: "https://gateway.zama.ai",
 });
@@ -219,7 +219,7 @@ contract SealedBidAuction is ZamaEthereumConfig {
 ### Client Code
 
 ```javascript
-import { createFhevmInstance } from "fhevmjs";
+import { createInstance } from "fhevmjs";
 import { ethers } from "ethers";
 
 async function submitBid(contractAddress, bidAmount) {
@@ -228,7 +228,7 @@ async function submitBid(contractAddress, bidAmount) {
     const userAddress = await signer.getAddress();
 
     // Create FHEVM instance
-    const instance = await createFhevmInstance({
+    const instance = await createInstance({
         networkUrl: provider,
     });
 

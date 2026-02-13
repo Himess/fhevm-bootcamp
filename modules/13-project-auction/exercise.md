@@ -73,14 +73,14 @@ contract SealedBidAuction is ZamaEthereumConfig {
         // TODO: Emit AuctionCreated event
     }
 
-    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) external payable {
+    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata inputProof) external payable {
         // TODO: Require auctionId is valid (< auctionCount)
         // TODO: Require auction deadline has not passed
         // TODO: Require auction has not ended
         // TODO: Require sender has not already bid (hasBid mapping)
         // TODO: Require msg.value > 0 (ETH deposit)
 
-        // TODO: Convert encBid with FHE.fromExternal(encBid, proof) -- 2 params
+        // TODO: Convert encBid with FHE.fromExternal(encBid, inputProof) -- 2 params
         // TODO: Store bid in _bids mapping with ACL (allowThis + allow for sender)
         // TODO: Store deposit amount in deposits mapping
 
@@ -150,7 +150,7 @@ Initialize the encrypted highest bid and bidder for the new auction:
 
 This is the core function:
 1. Validate auction id, deadline, duplicate bids, and ETH deposit
-2. Convert encrypted input: `FHE.fromExternal(encBid, proof)` (2 parameters)
+2. Convert encrypted input: `FHE.fromExternal(encBid, inputProof)` (2 parameters)
 3. Store the bid with ACL and record the deposit
 4. Compare with `FHE.gt(newBid, _highestBid[auctionId])`
 5. Update `_highestBid` with `FHE.select()`
@@ -192,14 +192,14 @@ emit AuctionCreated(id, item, auctions[id].deadline, reservePrice);
 <summary>Hint 2: bid function</summary>
 
 ```solidity
-function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) external payable {
+function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata inputProof) external payable {
     require(auctionId < auctionCount, "Invalid auction");
     require(block.timestamp <= auctions[auctionId].deadline, "Bidding ended");
     require(!auctions[auctionId].ended, "Auction ended");
     require(!hasBid[auctionId][msg.sender], "Already bid");
     require(msg.value > 0, "Must deposit ETH");
 
-    euint64 newBid = FHE.fromExternal(encBid, proof);
+    euint64 newBid = FHE.fromExternal(encBid, inputProof);
 
     _bids[auctionId][msg.sender] = newBid;
     FHE.allowThis(_bids[auctionId][msg.sender]);
@@ -280,7 +280,7 @@ function withdrawDeposit(uint256 auctionId) external {
 
 - [ ] Contract compiles without errors
 - [ ] `createAuction()` initializes encrypted highest bid and bidder with `FHE.asEuint64(0)` and `FHE.asEaddress(address(0))`
-- [ ] `bid()` uses `FHE.fromExternal(encBid, proof)` with 2 parameters
+- [ ] `bid()` uses `FHE.fromExternal(encBid, inputProof)` with 2 parameters
 - [ ] Bids are compared with `FHE.gt()` and updated with `FHE.select()`
 - [ ] Highest bidder uses `FHE.select(isHigher, FHE.asEaddress(msg.sender), _highestBidder[auctionId])`
 - [ ] One bid per address per auction is enforced

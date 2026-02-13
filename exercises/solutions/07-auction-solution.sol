@@ -21,12 +21,12 @@ contract AuctionSolution is ZamaEthereumConfig {
         FHE.allowThis(_highestBid);
     }
 
-    function placeBid(externalEuint64 encBid, bytes calldata proof) external {
+    function placeBid(externalEuint64 encBid, bytes calldata inputProof) external {
         require(block.timestamp <= deadline, "Bidding ended");
         require(!ended, "Auction ended");
         require(!hasBid[msg.sender], "Already bid");
 
-        euint64 newBid = FHE.fromExternal(encBid, proof);
+        euint64 newBid = FHE.fromExternal(encBid, inputProof);
         _bids[msg.sender] = newBid;
         FHE.allowThis(_bids[msg.sender]);
         FHE.allow(_bids[msg.sender], msg.sender);

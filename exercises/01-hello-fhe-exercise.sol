@@ -22,7 +22,7 @@ contract HelloFHEExercise is ZamaEthereumConfig {
 
     /// TODO 2: Accept encrypted input from user
     /// Hint: Use FHE.fromExternal() with externalEuint32 and proof
-    function setSecretEncrypted(externalEuint32 encValue, bytes calldata proof) external {
+    function setSecretEncrypted(externalEuint32 encValue, bytes calldata inputProof) external {
         // YOUR CODE HERE
     }
 

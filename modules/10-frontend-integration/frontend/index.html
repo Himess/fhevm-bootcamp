@@ -109,7 +109,7 @@
     // Configuration - update these after deploying SimpleCounter
     const CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS_HERE";
     const CONTRACT_ABI = [
-      "function increment(bytes32 encValue, bytes calldata proof) external",
+      "function increment(bytes32 encValue, bytes calldata inputProof) external",
       "function getMyCount() external view returns (uint256)",
       "event CountIncremented(address indexed user)"
     ];

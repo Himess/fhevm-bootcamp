@@ -190,8 +190,8 @@ contract UserDecrypt is ZamaEthereumConfig {
     mapping(address => euint32) private _userSecrets;
 
     // Store own encrypted secret
-    function storeSecret(externalEuint32 encValue, bytes calldata proof) external {
-        _userSecrets[msg.sender] = FHE.fromExternal(encValue, proof);
+    function storeSecret(externalEuint32 encValue, bytes calldata inputProof) external {
+        _userSecrets[msg.sender] = FHE.fromExternal(encValue, inputProof);
         FHE.allowThis(_userSecrets[msg.sender]);
         FHE.allow(_userSecrets[msg.sender], msg.sender);
     }
@@ -303,8 +303,11 @@ contract ProductionDecrypt is ZamaEthereumConfig, GatewayConfig {
     uint64 public revealedValue;
 
     function requestReveal() public {
+        // In production, the Gateway handles converting encrypted handles
+        // to uint256[] and coordinating decryption with the KMS.
+        // FHE.toUint256() does not exist — the Gateway manages handle conversion.
         uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(_encryptedValue);
+        cts[0] = Gateway.toUint256(_encryptedValue);
 
         Gateway.requestDecryption(
             cts,

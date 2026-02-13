@@ -24,8 +24,8 @@ contract ConfidentialTokenSolution is ZamaEthereumConfig {
         FHE.allow(_balances[to], to);
     }
 
-    function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encAmount, proof);
+    function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encAmount, inputProof);
 
         // Check balance without reverting
         ebool hasBalance = FHE.ge(_balances[msg.sender], amount);

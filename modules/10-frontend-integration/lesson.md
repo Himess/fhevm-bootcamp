@@ -23,7 +23,7 @@ Browser (React + fhevmjs)
     v
 FHEVM Contract
     |
-    |-- 4. FHE.fromExternal(input, proof) converts to euintXX
+    |-- 4. FHE.fromExternal(input, inputProof) converts to euintXX
     |-- 5. Perform FHE operations
     |-- 6. Store encrypted results with ACL
     |
@@ -97,8 +97,8 @@ contract SimpleCounter is ZamaEthereumConfig {
 
     event CountIncremented(address indexed user);
 
-    function increment(externalEuint32 encValue, bytes calldata proof) external {
-        euint32 value = FHE.fromExternal(encValue, proof);
+    function increment(externalEuint32 encValue, bytes calldata inputProof) external {
+        euint32 value = FHE.fromExternal(encValue, inputProof);
         _counts[msg.sender] = FHE.add(_counts[msg.sender], value);
         FHE.allowThis(_counts[msg.sender]);
         FHE.allow(_counts[msg.sender], msg.sender);
@@ -113,8 +113,8 @@ contract SimpleCounter is ZamaEthereumConfig {
 
 Key points:
 - The contract uses a per-user `mapping(address => euint32)` so each user has their own private counter
-- The `increment` function accepts `externalEuint32` and `bytes calldata proof` -- these are the encrypted handle and input proof that come from the frontend
-- `FHE.fromExternal(encValue, proof)` converts the external type to a usable `euint32`
+- The `increment` function accepts `externalEuint32` and `bytes calldata inputProof` -- these are the encrypted handle and input proof that come from the frontend
+- `FHE.fromExternal(encValue, inputProof)` converts the external type to a usable `euint32`
 - `getMyCount()` returns the caller's encrypted count handle (for re-encryption/decryption)
 - ACL is set for both the contract (`allowThis`) and the user (`allow`)
 
@@ -163,7 +163,7 @@ Available input methods:
 import { Contract, BrowserProvider } from "ethers";
 
 const COUNTER_ABI = [
-  "function increment(bytes32 encValue, bytes calldata proof) external",
+  "function increment(bytes32 encValue, bytes calldata inputProof) external",
   "function getMyCount() external view returns (uint256)",
 ];
 
@@ -302,18 +302,18 @@ When encrypted data crosses the contract boundary (from frontend to contract), i
 
 | External Type | Internal Type | Conversion |
 |--------------|---------------|------------|
-| `externalEbool` | `ebool` | `FHE.fromExternal(val, proof)` |
-| `externalEuint8` | `euint8` | `FHE.fromExternal(val, proof)` |
-| `externalEuint16` | `euint16` | `FHE.fromExternal(val, proof)` |
-| `externalEuint32` | `euint32` | `FHE.fromExternal(val, proof)` |
-| `externalEuint64` | `euint64` | `FHE.fromExternal(val, proof)` |
-| `externalEuint128` | `euint128` | `FHE.fromExternal(val, proof)` |
-| `externalEuint256` | `euint256` | `FHE.fromExternal(val, proof)` |
-| `externalEaddress` | `eaddress` | `FHE.fromExternal(val, proof)` |
+| `externalEbool` | `ebool` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint8` | `euint8` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint16` | `euint16` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint32` | `euint32` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint64` | `euint64` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint128` | `euint128` | `FHE.fromExternal(val, inputProof)` |
+| `externalEuint256` | `euint256` | `FHE.fromExternal(val, inputProof)` |
+| `externalEaddress` | `eaddress` | `FHE.fromExternal(val, inputProof)` |
 
 The pattern is always:
-1. Contract function parameters: `externalEuintXX` and `bytes calldata proof`
-2. First line inside function: `euintXX val = FHE.fromExternal(externalVal, proof);`
+1. Contract function parameters: `externalEuintXX` and `bytes calldata inputProof`
+2. First line inside function: `euintXX val = FHE.fromExternal(externalVal, inputProof);`
 3. Then use `val` normally with FHE operations
 
 ---
@@ -422,7 +422,7 @@ After calling `makePubliclyDecryptable()`, any user can decrypt the value withou
 
 - **fhevmjs** provides the client-side tools for encrypting inputs and decrypting outputs
 - Use `createEncryptedInput()` to encrypt values bound to a specific contract and user
-- Contract parameters use `externalEuintXX` and `bytes calldata proof` types; convert with `FHE.fromExternal(val, proof)`
+- Contract parameters use `externalEuintXX` and `bytes calldata inputProof` types; convert with `FHE.fromExternal(val, inputProof)`
 - Decryption requires EIP-712 signatures to prove ACL access
 - The gateway re-encrypts ciphertexts for the user's temporary keypair
 - Always initialize the FHE instance before performing any operations

@@ -12,8 +12,8 @@ contract ACLSolution is ZamaEthereumConfig {
         owner = msg.sender;
     }
 
-    function deposit(externalEuint64 encAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encAmount, proof);
+    function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encAmount, inputProof);
         _balances[msg.sender] = FHE.add(_balances[msg.sender], amount);
         FHE.allowThis(_balances[msg.sender]);
         FHE.allow(_balances[msg.sender], msg.sender);

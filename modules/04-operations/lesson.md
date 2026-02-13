@@ -311,8 +311,8 @@ Not all operations are available for all encrypted types:
 | le, lt, ge, gt | ✅ | ❌ | ❌ | ❌ |
 | eq, ne | ✅ | ✅ | ✅ | ✅ |
 | and, or, xor | ✅ | ✅ | ❌ | ✅ |
-| not, neg | ✅ | ❌ | ❌ | ✅ (not) |
-| shl, shr, rotl, rotr | ✅ | ❌ | ❌ | ❌ |
+| not, neg | ✅ | ✅ | ❌ | ✅ (not) |
+| shl, shr, rotl, rotr | ✅ | ✅ | ❌ | ❌ |
 | select | ✅ | ✅ | ✅ | ✅ |
 
 > 💡 `euint256` is primarily useful for storing large hashes/IDs with equality checks.

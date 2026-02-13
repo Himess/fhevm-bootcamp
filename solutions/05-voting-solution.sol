@@ -30,11 +30,11 @@ contract VotingSolution is ZamaEthereumConfig {
         FHE.allowThis(p.noVotes);
     }
 
-    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
         require(proposalId < proposals.length, "Invalid proposal");
         require(!hasVoted[proposalId][msg.sender], "Already voted");
 
-        euint8 voteValue = FHE.fromExternal(encVote, proof);
+        euint8 voteValue = FHE.fromExternal(encVote, inputProof);
         ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 
         euint32 one = FHE.asEuint32(1);

@@ -740,8 +740,8 @@ function randomReward() public {
 Combine user input with randomness:
 
 ```solidity
-function playGame(externalEuint8 calldata encryptedGuess, bytes calldata proof) external {
-    euint8 guess = FHE.fromExternal(encryptedGuess, proof);
+function playGame(externalEuint8 encryptedGuess, bytes calldata inputProof) external {
+    euint8 guess = FHE.fromExternal(encryptedGuess, inputProof);
     euint8 target = FHE.rem(FHE.randEuint8(), 10);  // 0-9
 
     ebool correct = FHE.eq(guess, target);

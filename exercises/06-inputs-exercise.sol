@@ -21,7 +21,7 @@ contract InputExercise is ZamaEthereumConfig {
     /// - Convert the external input using FHE.fromExternal()
     /// - Add it to the sender's balance
     /// - Update ACL for both the balance and totalDeposits
-    function deposit(externalEuint64 encAmount, bytes calldata proof) external {
+    function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
         // YOUR CODE HERE
     }
 

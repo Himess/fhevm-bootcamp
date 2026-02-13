@@ -109,12 +109,12 @@ contract ConfidentialVoting is ZamaEthereumConfig {
     }
 
     /// @notice Cast an encrypted vote (0 = no, 1 = yes)
-    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
         require(proposalId < proposalCount, "Invalid proposal");
         require(block.timestamp <= proposals[proposalId].deadline, "Voting ended");
         require(!hasVoted[proposalId][msg.sender], "Already voted");
 
-        euint8 voteValue = FHE.fromExternal(encVote, proof);
+        euint8 voteValue = FHE.fromExternal(encVote, inputProof);
         ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 
         // Increment yes or no tally using select
@@ -159,7 +159,7 @@ contract ConfidentialVoting is ZamaEthereumConfig {
 ## 5. The Vote Function in Detail
 
 ```solidity
-function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata proof) external {
+function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
 ```
 
 The voter sends an encrypted `euint8` value:
@@ -178,7 +178,7 @@ const tx = await contract.vote(proposalId, encrypted.handles[0], encrypted.input
 Inside the contract, the encrypted `euint8` is compared against `1` to produce an `ebool`:
 
 ```solidity
-euint8 voteValue = FHE.fromExternal(encVote, proof);
+euint8 voteValue = FHE.fromExternal(encVote, inputProof);
 ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 
 euint32 oneVote = FHE.asEuint32(1);
@@ -261,8 +261,8 @@ struct MultiProposal {
     uint8 optionCount;
 }
 
-function voteMulti(uint256 proposalId, externalEuint8 encChoice, bytes calldata proof) external {
-    euint8 choice = FHE.fromExternal(encChoice, proof);
+function voteMulti(uint256 proposalId, externalEuint8 encChoice, bytes calldata inputProof) external {
+    euint8 choice = FHE.fromExternal(encChoice, inputProof);
 
     for (uint8 i = 0; i < p.optionCount; i++) {
         ebool isThisOption = FHE.eq(choice, FHE.asEuint8(i));

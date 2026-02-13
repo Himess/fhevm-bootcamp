@@ -30,7 +30,7 @@ By the end of this module, you will be able to:
 
 ## Key Concepts
 
-- **Encrypted Tallies** -- Vote counts stored as `euint64`, invisible during voting
+- **Encrypted Tallies** -- Vote counts stored as `euint32`, invisible during voting
 - **Duplicate Prevention** -- `mapping(address => bool)` tracks who has voted
 - **`FHE.select()` for Vote Counting** -- Add 1 to the chosen option, 0 to others
 - **Time-Bounded Voting** -- Start and end timestamps control the voting window

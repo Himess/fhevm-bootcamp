@@ -30,7 +30,7 @@ contract AuctionExercise is ZamaEthereumConfig {
     /// - Update highest bid using FHE.gt() + FHE.select()
     /// - Track bidder in the bidders array
     /// - Set proper ACL
-    function placeBid(externalEuint64 encBid, bytes calldata proof) external {
+    function placeBid(externalEuint64 encBid, bytes calldata inputProof) external {
         // YOUR CODE HERE
     }
 

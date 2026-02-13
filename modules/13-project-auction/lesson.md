@@ -145,14 +145,14 @@ contract SealedBidAuction is ZamaEthereumConfig {
         emit AuctionCreated(id, item, auctions[id].deadline, reservePrice);
     }
 
-    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) external payable {
+    function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata inputProof) external payable {
         require(auctionId < auctionCount, "Invalid auction");
         require(block.timestamp <= auctions[auctionId].deadline, "Bidding ended");
         require(!auctions[auctionId].ended, "Auction ended");
         require(!hasBid[auctionId][msg.sender], "Already bid");
         require(msg.value > 0, "Must deposit ETH");
 
-        euint64 newBid = FHE.fromExternal(encBid, proof);
+        euint64 newBid = FHE.fromExternal(encBid, inputProof);
 
         _bids[auctionId][msg.sender] = newBid;
         FHE.allowThis(_bids[auctionId][msg.sender]);
@@ -259,11 +259,11 @@ Key points:
 The core logic of the auction is in the `bid()` function:
 
 ```solidity
-function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) external payable {
+function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata inputProof) external payable {
     require(msg.value > 0, "Must deposit ETH");
     require(!hasBid[auctionId][msg.sender], "Already bid");
 
-    euint64 newBid = FHE.fromExternal(encBid, proof);
+    euint64 newBid = FHE.fromExternal(encBid, inputProof);
 
     // Compare: is this bid higher than the current highest?
     ebool isHigher = FHE.gt(newBid, _highestBid[auctionId]);
@@ -281,7 +281,7 @@ function bid(uint256 auctionId, externalEuint64 encBid, bytes calldata proof) ex
 ```
 
 Key observations:
-- `FHE.fromExternal(encBid, proof)` takes exactly 2 parameters (the encrypted handle and the proof)
+- `FHE.fromExternal(encBid, inputProof)` takes exactly 2 parameters (the encrypted handle and the proof)
 - The comparison and selection happen entirely on encrypted data
 - Neither the bidder nor observers know if their bid is currently the highest
 - Both `_highestBid` and `_highestBidder` are updated atomically
@@ -447,7 +447,7 @@ The `reservePrice` is stored per auction. It can be checked against the decrypte
 - Sealed-bid auctions with FHE eliminate front-running and bid sniping
 - `createAuction()` sets up item, duration, and reserve price; supports multiple auctions
 - `bid()` requires an ETH deposit and enforces one-bid-per-user
-- `FHE.fromExternal(encBid, proof)` converts external encrypted input (2 parameters)
+- `FHE.fromExternal(encBid, inputProof)` converts external encrypted input (2 parameters)
 - `FHE.gt()` compares bids without revealing values
 - `FHE.select()` updates the highest bid and bidder atomically
 - `eaddress` keeps the winner's identity encrypted: `FHE.select(isHigher, FHE.asEaddress(msg.sender), _highestBidder[auctionId])`

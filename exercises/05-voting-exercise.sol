@@ -34,7 +34,7 @@ contract VotingExercise is ZamaEthereumConfig {
     /// - Use FHE.eq() to check if vote is yes
     /// - Use FHE.select() to add 1 to yes or no
     /// - Update ACL
-    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata proof) external {
+    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
         require(proposalId < proposals.length, "Invalid proposal");
         require(!hasVoted[proposalId][msg.sender], "Already voted");
         // YOUR CODE HERE
