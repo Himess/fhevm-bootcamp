@@ -133,18 +133,16 @@ A structured security review checklist for FHE smart contracts. Use this during 
 
 ## 4. Decryption Safety
 
-### 4.1 Gateway Decryption
+### 4.1 Decryption Pattern
 
-- [ ] **Callback functions are protected with `onlyGateway` (or equivalent) modifier.**
-  Without this, anyone could call the callback with fake decrypted values.
+- [ ] **Decryption uses `FHE.makePubliclyDecryptable()` only for values that should be public.**
+  Only call `makePubliclyDecryptable` when the value genuinely needs to be revealed on-chain. For user-specific reads, prefer `FHE.sealoutput()` instead.
 
 - [ ] **Decrypted values are not stored in public storage variables.**
   Storing `uint256 public revealedValue` permanently exposes the decrypted data.
 
-- [ ] **The contract handles the case where the Gateway callback is delayed or never arrives.**
-  What happens if the Gateway goes down? Is the contract stuck in a waiting state?
-
-- [ ] **Request IDs are validated in callbacks to prevent confusion between different decryption requests.**
+- [ ] **The contract enforces access control before calling `FHE.makePubliclyDecryptable()`.**
+  Without proper checks, unauthorized callers could trigger decryption of sensitive values.
 
 ### 4.2 Decryption Timing
 
@@ -230,8 +228,8 @@ A structured security review checklist for FHE smart contracts. Use this during 
 
 ### 7.1 Trust Assumptions
 
-- [ ] **Trust assumptions about the Gateway are documented.**
-  The Gateway is a semi-trusted component. What happens if it is compromised?
+- [ ] **Trust assumptions about the decryption mechanism are documented.**
+  Understand who can trigger `FHE.makePubliclyDecryptable()` and under what conditions. What happens if decryption is triggered prematurely?
 
 - [ ] **Trust assumptions about the coprocessor are documented.**
   The coprocessor processes encrypted data but should not be able to decrypt it. Verify this assumption.
@@ -327,7 +325,7 @@ When completing a security review, document findings using this structure:
 3. **Never emit encrypted data in plaintext events.** Design events carefully.
 4. **Ensure all code paths consume the same gas.** Gas differences are a side channel.
 5. **Use `externalEuintXX` for inputs, `FHE.fromExternal()` for conversion.** Do not accept `euintXX` directly.
-6. **Guard decryption callbacks with `onlyGateway`.** Validate request IDs.
+6. **ACL access is verified with `FHE.isSenderAllowed()` before returning encrypted values.** Only decrypt with `FHE.makePubliclyDecryptable()` when truly necessary.
 7. **Use the smallest encrypted type that fits.** Save gas, reduce attack surface.
 8. **Handle overflow/underflow explicitly.** FHE wraps silently.
 9. **Document your threat model.** What is protected? What is not? What are the trust assumptions?

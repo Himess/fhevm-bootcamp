@@ -21,7 +21,7 @@ graph TD
     end
 
     subgraph "Phase 3: Reveal"
-        CLOSE[Owner closes voting period] --> REQUEST[Gateway.requestDecryption<br/>for each candidate tally]
+        CLOSE[Owner closes voting period] --> REQUEST[FHE.makePubliclyDecryptable<br/>for each candidate tally]
         REQUEST --> KMS[KMS threshold decryption<br/>reveals final counts]
         KMS --> CALLBACK[Callback stores<br/>plaintext results]
         CALLBACK --> PUBLIC[Results are now public<br/>individual votes remain private]
@@ -120,20 +120,19 @@ graph LR
 sequenceDiagram
     participant Owner as Contract Owner
     participant Contract as Voting Contract
-    participant GW as Gateway
     participant KMS as KMS
 
     Owner->>Contract: revealResults()
     Contract->>Contract: require(votingEnded)
 
-    Contract->>GW: Gateway.requestDecryption(<br/>[yesCount, noCount],<br/>callbackSelector)
+    Contract->>Contract: FHE.makePubliclyDecryptable(<br/>yesCount, noCount)
 
-    GW->>KMS: Decrypt yesCount handle
-    KMS-->>GW: plaintext yes value
-    GW->>KMS: Decrypt noCount handle
-    KMS-->>GW: plaintext no value
+    Contract->>KMS: Decrypt yesCount handle
+    KMS-->>Contract: plaintext yes value
+    Contract->>KMS: Decrypt noCount handle
+    KMS-->>Contract: plaintext no value
 
-    GW->>Contract: decryptionCallback(requestId,<br/>yesPlaintext, noPlaintext)
+    Contract->>Contract: decryptionCallback(requestId,<br/>yesPlaintext, noPlaintext)
     Contract->>Contract: Store results publicly
     Contract->>Contract: Emit ResultsRevealed event
 

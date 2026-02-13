@@ -291,11 +291,16 @@ function isRich() public view returns (ebool) {
 
 ---
 
-## 9. Advanced: Gateway Callback Pattern (Production)
+## 9. Advanced: Legacy Gateway Pattern (Pre-v0.9)
+
+> ⚠️ **WARNING:** The Gateway callback pattern shown below was used in fhEVM v0.8 and earlier.
+> In the current version (v0.9+), use `FHE.makePubliclyDecryptable()` as shown in Section 5.
+> This section is included for historical reference only — do NOT use this pattern in new contracts.
 
 In production fhEVM networks, a **Gateway** service coordinates decryption between the blockchain and the KMS (Key Management Service). This uses an **asynchronous callback pattern**:
 
 ```solidity
+// LEGACY — v0.8 only
 // PRODUCTION ONLY — Gateway not available in Hardhat development environment
 import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 

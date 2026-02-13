@@ -26,6 +26,10 @@ async function main() {
     { name: "ConfidentialERC20", args: ["ConfToken", "CFT"] },
     { name: "ConfidentialVoting" },
     { name: "SealedBidAuction" },
+    { name: "EncryptedLottery", args: [ethers.parseEther("0.01"), 3600] },
+    { name: "EncryptedMarketplace" },
+    { name: "PrivateVoting", args: [3] },
+    { name: "RevealableAuction" },
     { name: "ConfidentialDAO", args: ["BootcampDAO"] },
   ];
 

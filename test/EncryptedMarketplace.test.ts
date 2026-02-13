@@ -125,4 +125,30 @@ describe("EncryptedMarketplace", function () {
     const sellerBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
     expect(sellerBalance).to.equal(500n);
   });
+
+  it("should withdraw funds from balance", async function () {
+    // Buyer deposits 10000
+    await (await contract.connect(buyer).deposit(10000)).wait();
+
+    // Withdraw 3000
+    await (await contract.connect(buyer).withdraw(3000)).wait();
+
+    // Balance should be 7000
+    const handle = await contract.connect(buyer).getBalance();
+    const balance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, buyer);
+    expect(balance).to.equal(7000n);
+  });
+
+  it("should withdraw 0 on insufficient balance (no revert)", async function () {
+    // Buyer deposits 100
+    await (await contract.connect(buyer).deposit(100)).wait();
+
+    // Try to withdraw 500 — silently withdraws 0
+    await (await contract.connect(buyer).withdraw(500)).wait();
+
+    // Balance should remain 100
+    const handle = await contract.connect(buyer).getBalance();
+    const balance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, buyer);
+    expect(balance).to.equal(100n);
+  });
 });

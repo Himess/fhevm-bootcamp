@@ -167,11 +167,16 @@ Keep data encrypted as long as possible.
 
 ---
 
-# Advanced: Gateway (Production)
+# Advanced: Legacy Gateway Pattern (Pre-v0.9)
+
+> ⚠️ **WARNING:** The Gateway callback pattern shown below was used in fhEVM v0.8 and earlier.
+> In the current version (v0.9+), use `FHE.makePubliclyDecryptable()` as shown in Section 5.
+> This section is included for historical reference only — do NOT use this pattern in new contracts.
 
 In production networks, a **Gateway** service handles async decryption:
 
 ```solidity
+// LEGACY — v0.8 only
 // PRODUCTION ONLY — not available in Hardhat
 import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 

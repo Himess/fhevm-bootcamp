@@ -14,10 +14,10 @@
     "slides:build": "node scripts/build-slides.js",
     "lint:sol": "echo 'Use npx hardhat compile to check Solidity syntax'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["fhe", "fhevm", "zama", "bootcamp", "solidity", "encryption", "privacy"],
+  "author": "FHEVM Bootcamp Contributors",
+  "license": "MIT",
+  "description": "Comprehensive bootcamp curriculum for building confidential smart contracts with Zama fhEVM",
   "devDependencies": {
     "@fhevm/hardhat-plugin": "^0.4.0",
     "@marp-team/marp-cli": "^4.2.3",
@@ -31,7 +31,6 @@
     "@types/chai": "^4.3.20",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.19.33",
-    "@zama-fhe/relayer-sdk": "^0.4.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^8.0.2",
     "cross-env": "^7.0.3",
@@ -47,7 +46,6 @@
   },
   "dependencies": {
     "@fhevm/mock-utils": "^0.4.0",
-    "@fhevm/solidity": "^0.10.0",
-    "encrypted-types": "^0.0.4"
+    "@fhevm/solidity": "^0.10.0"
   }
 }

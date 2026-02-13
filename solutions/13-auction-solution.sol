@@ -1,3 +1,6 @@
+// SOLUTION: Module 13 - Sealed-Bid Auction
+// This is the complete implementation of the SealedBidAuction.
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 

@@ -254,35 +254,36 @@ FHE.allowThis(result);
 ```solidity
 uint256 public revealedBalance;  // PUBLIC storage!
 
-function revealCallback(uint256 requestID, uint64 decryptedValue) external onlyGateway {
-    revealedBalance = decryptedValue;  // Now anyone can read it forever
+function revealBalance(euint64 encBalance) external {
+    FHE.makePubliclyDecryptable(encBalance);
+    revealedBalance = FHE.decrypt(encBalance);  // Now anyone can read it forever
 }
 ```
 
 ### Why It Is Wrong
 
-Storing a decrypted value in public storage permanently exposes it. Anyone can read public storage variables. If the goal was temporary access, this defeats the purpose of encryption.
+Storing a decrypted value in public storage permanently exposes it. Anyone can read public storage variables. If the goal was temporary access, this defeats the purpose of encryption. Additionally, calling `FHE.makePubliclyDecryptable()` on sensitive values exposes them to all on-chain observers.
 
 ### Correct
 
 ```solidity
-mapping(uint256 => uint64) private revealedValues;  // Private storage
-mapping(uint256 => address) private revealRequesters;
-
-function revealCallback(uint256 requestID, uint64 decryptedValue) external onlyGateway {
-    revealedValues[requestID] = decryptedValue;
-    // Emit event only to the requester (or use a pull pattern)
-    emit ValueRevealed(revealRequesters[requestID], requestID);
+// Option A: Use re-encryption so the value never appears in plaintext on-chain
+function getBalance(address user) external view returns (bytes memory) {
+    require(FHE.isSenderAllowed(balances[user]), "Not authorized");
+    return FHE.sealoutput(balances[user], msg.sender);
 }
 
-// Only the requester can read their revealed value
-function getRevealedValue(uint256 requestID) external view returns (uint64) {
-    require(msg.sender == revealRequesters[requestID], "Not your request");
-    return revealedValues[requestID];
+// Option B: If on-chain decryption is truly needed, restrict access and use private storage
+mapping(address => uint64) private revealedValues;
+
+function revealMyBalance() external {
+    require(FHE.isSenderAllowed(balances[msg.sender]), "Not authorized");
+    FHE.makePubliclyDecryptable(balances[msg.sender]);
+    // Value is now decryptable but stored privately
 }
 ```
 
-**Even better:** Use re-encryption (`FHE.sealoutput`) so the value never appears in plaintext on-chain.
+**Best practice:** Use re-encryption (`FHE.sealoutput`) so the value never appears in plaintext on-chain. Only use `FHE.makePubliclyDecryptable()` for values that genuinely need to be public (e.g., final auction results, game outcomes).
 
 ---
 
@@ -527,37 +528,38 @@ contract TokenB {
 
 ---
 
-## Pitfall 14: Expecting Synchronous Decryption
+## Pitfall 14: Incorrect Decryption Pattern
 
 ### Wrong
 
 ```solidity
 function revealAndUse() external {
-    // Request decryption
-    Gateway.requestDecryption(...);
-
-    // WRONG: The decrypted value is NOT available yet!
-    // The callback has not been called yet.
-    doSomethingWith(revealedValue);  // revealedValue is still 0/stale
+    // WRONG: Trying to use an encrypted value as if it were plaintext
+    uint256 value = uint256(encryptedValue);  // This does NOT decrypt!
+    doSomethingWith(value);  // Using a ciphertext handle, not the actual value
 }
 ```
 
 ### Why It Is Wrong
 
-Decryption via the Gateway is asynchronous. The `requestDecryption` call sends a request to the Gateway, which processes it and calls back the contract in a separate transaction. The decrypted value is not available until the callback executes.
+Encrypted values cannot be directly cast to plaintext types. A ciphertext handle is not the actual value --- casting it gives you the internal handle ID, not the decrypted data. Decryption must be done explicitly using the proper FHE API.
 
 ### Correct
 
 ```solidity
-function requestReveal() external {
-    uint256[] memory cts = new uint256[](1);
-    cts[0] = Gateway.toUint256(encryptedValue);
-    Gateway.requestDecryption(cts, this.revealCallback.selector, 0, block.timestamp + 100, false);
+// Option A: Make the value publicly decryptable (use only when the value should be public)
+function revealResult(euint64 encResult) external {
+    require(msg.sender == owner, "Only owner can reveal");
+    FHE.makePubliclyDecryptable(encResult);
+    // The value is now marked for public decryption
+    // It can be read by anyone once decrypted
 }
 
-function revealCallback(uint256 requestID, uint32 decryptedValue) external onlyGateway {
-    // NOW the value is available
-    doSomethingWith(decryptedValue);
+// Option B: Use sealoutput for user-specific private reads (preferred)
+function getMyBalance() external view returns (bytes memory) {
+    require(FHE.isSenderAllowed(balances[msg.sender]), "Not authorized");
+    return FHE.sealoutput(balances[msg.sender], msg.sender);
+    // Only the caller can decrypt this sealed output client-side
 }
 ```
 
@@ -580,4 +582,4 @@ function revealCallback(uint256 requestID, uint32 decryptedValue) external onlyG
 | 11 | Oversized types | Wasted gas | Use smallest sufficient type |
 | 12 | Gas leakage | Side-channel attack | Uniform execution paths |
 | 13 | Missing cross-contract ACL | Unauthorized access | `FHE.allowTransient()` before return |
-| 14 | Synchronous decryption | Stale data | Use callback pattern |
+| 14 | Incorrect decryption pattern | Wrong data / no decryption | Use `FHE.makePubliclyDecryptable()` or `FHE.sealoutput()` |

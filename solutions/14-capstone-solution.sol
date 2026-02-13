@@ -1,3 +1,6 @@
+// SOLUTION: Module 14 - Capstone Confidential DAO
+// This is the complete implementation of the ConfidentialDAO.
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 

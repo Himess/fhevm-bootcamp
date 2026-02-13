@@ -5,7 +5,7 @@
 - **25 test files** - 210/210 tests passing
 - **15 learning modules** (00-14) - Each with README, lesson, slides, exercise, quiz
 - **6 architecture diagrams** - Mermaid format
-- **11 exercise templates** + **11 solutions** - For hands-on learning
+- **12 exercise templates** + **13 solutions** - For hands-on learning
 - **CI/CD pipelines** - GitHub Actions for test + slides build
 - **Deployment scripts** - For local and Ethereum Sepolia
 - **Setup script** - Automated environment setup (scripts/setup.sh)
@@ -36,7 +36,10 @@
 | 19 | ConfidentialERC20.sol | 11 | Compiles + Tests |
 | 20 | ConfidentialVoting.sol | 12 | Compiles + Tests |
 | 21 | SealedBidAuction.sol | 13 | Compiles + Tests |
-| 22 | ConfidentialDAO.sol | 14 | Compiles + Tests |
+| 22 | EncryptedMarketplace.sol | 08 | Compiles + Tests |
+| 23 | RevealableAuction.sol | 07 | Compiles + Tests |
+| 24 | PrivateVoting.sol | 08 | Compiles + Tests |
+| 25 | ConfidentialDAO.sol | 14 | Compiles + Tests |
 
 ## Test Results
 ```
@@ -49,7 +52,7 @@
 2. **Shift operations** (shl, shr, rotl, rotr) ARE available in the FHEVM API for all euint types. BitwiseOps.sol includes: and, or, xor, not, shl, shr, rotl, rotr.
 3. **Frontend demo** (Module 10) is a UI mockup. Full fhevmjs integration requires connecting to Ethereum Sepolia.
 4. **Chai matchers** (emit, revertedWith) don't work with the fhevm plugin. Tests use manual event/revert checking.
-5. **On-chain deployment** - 21 contracts deployed to Ethereum Sepolia (see README.md for addresses).
+5. **On-chain deployment** - 25 contracts deployed to Ethereum Sepolia (see README.md for addresses).
 
 ## API Notes (Important for Instructors)
 The FHEVM API changed significantly. The bootcamp uses the **current** API:

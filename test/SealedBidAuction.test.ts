@@ -182,25 +182,48 @@ describe("SealedBidAuction", function () {
     }
   });
 
-  it("should allow deposit withdrawal after auction ends", async function () {
-    await (await auction.createAuction("Withdraw Test", 1, 0)).wait();
+  it("should allow non-winner deposit withdrawal and block winner withdrawal", async function () {
+    await (await auction.createAuction("Withdraw Test", 100, 0)).wait();
 
-    const enc = await fhevm
+    // Alice bids 500
+    const enc1 = await fhevm
       .createEncryptedInput(auctionAddress, alice.address)
       .add64(500)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("1.0") })
+      await auction.connect(alice).bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("1.0") })
+    ).wait();
+
+    // Bob bids 1000 (higher)
+    const enc2 = await fhevm
+      .createEncryptedInput(auctionAddress, bob.address)
+      .add64(1000)
+      .encrypt();
+    await (
+      await auction.connect(bob).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("1.0") })
     ).wait();
 
     // Wait for deadline to pass
-    await ethers.provider.send("evm_increaseTime", [10]);
+    await ethers.provider.send("evm_increaseTime", [101]);
     await ethers.provider.send("evm_mine", []);
 
-    // End auction
+    // End auction and finalize with bob as winner
     await (await auction.endAuction(0)).wait();
+    await (await auction.finalizeAuction(0, bob.address, 1000)).wait();
 
-    // Withdraw deposit (winner not set so anyone can withdraw)
+    // Verify winner is set
+    expect(await auction.winner(0)).to.equal(bob.address);
+    expect(await auction.winningBidAmount(0)).to.equal(1000n);
+
+    // Winner (bob) cannot withdraw
+    try {
+      await auction.connect(bob).withdrawDeposit(0);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Winner cannot withdraw");
+    }
+
+    // Non-winner (alice) can withdraw
     const balBefore = await ethers.provider.getBalance(alice.address);
     const tx = await auction.connect(alice).withdrawDeposit(0);
     const receipt = await tx.wait();

@@ -117,8 +117,8 @@ We offer three pacing options to fit different schedules:
 
 | Path | Duration | Pace | Best For |
 |---|---|---|---|
-| **Intensive** | 1 week (5 days) | Full-time, ~12 hrs/day | Bootcamp cohorts, dedicated learners |
-| **Part-Time** | 4 weeks | ~16 hrs/week | Working professionals |
+| **Intensive** | 1 week (5 days) | Full-time, ~9 hrs/day | Bootcamp cohorts, dedicated learners |
+| **Part-Time** | 4 weeks | ~12 hrs/week | Working professionals |
 | **Self-Paced** | Flexible | Your schedule | Independent learners |
 
 See [curriculum/LEARNING_PATHS.md](curriculum/LEARNING_PATHS.md) for detailed schedules.
@@ -179,8 +179,8 @@ fhevm-bootcamp/
 │   ├── GAS_GUIDE.md                   # Gas cost reference
 │   ├── SECURITY_CHECKLIST.md          # Audit checklist
 │   └── GLOSSARY.md                    # A-Z terminology
-├── exercises/                         # 11 exercise starter templates
-├── solutions/                         # 11 complete solutions
+├── exercises/                         # 12 exercise starter templates
+├── solutions/                         # 13 complete solutions
 ├── diagrams/                          # 6 architecture diagrams (Mermaid)
 └── scripts/
     ├── deploy-all.ts                  # Deploy all contracts

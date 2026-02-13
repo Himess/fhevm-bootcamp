@@ -162,7 +162,7 @@ Students learn every encrypted type available in fhEVM, from `ebool` to `euint25
 
 By the end of this module, students will be able to:
 
-1. List all encrypted types (`ebool`, `euint4` through `euint256`, `eaddress`, `ebytes64/128/256`) and their plaintext equivalents.
+1. List all encrypted types (`ebool`, `euint8` through `euint256`, `eaddress`) and their plaintext equivalents.
 2. Declare and initialize encrypted state variables in Solidity contracts.
 3. Cast between encrypted types using `FHE.asEuintXX()` functions.
 4. Explain overflow/wrapping behavior and range limitations for each type.
@@ -171,9 +171,8 @@ By the end of this module, students will be able to:
 ### Topics Covered
 
 - Encrypted boolean: `ebool`
-- Encrypted unsigned integers: `euint4`, `euint8`, `euint16`, `euint32`, `euint64`, `euint128`, `euint256`
+- Encrypted unsigned integers: `euint8`, `euint16`, `euint32`, `euint64`, `euint128`, `euint256`
 - Encrypted address: `eaddress`
-- Encrypted byte arrays: `ebytes64`, `ebytes128`, `ebytes256`
 - Type casting: `FHE.asEuint8()`, `FHE.asEuint32()`, etc.
 - Wrapping behavior on overflow/underflow
 - Plaintext-to-encrypted conversion: `FHE.asEuint32(plaintextValue)`
@@ -294,7 +293,7 @@ By the end of this module, students will be able to:
 ### Topics Covered
 
 - Client-side encryption with `fhevmjs`: `createInstance()`, `encrypt()`, contract integration
-- The `externalEuintXX` type family: `externalEbool`, `externalEuint4` through `externalEuint256`, `externalEaddress`, `externalEbytes64` through `externalEbytes256`
+- The `externalEuintXX` type family: `externalEbool`, `externalEuint8` through `externalEuint256`, `externalEaddress`
 - Converting inputs: `FHE.fromExternal(externalEuint32, proof)` returns `euint32`
 - ZKP proofs: ensuring input validity without revealing values
 - Input validation on encrypted data: range bounds, non-zero assertions
@@ -334,7 +333,8 @@ By the end of this module, students will be able to:
 ### Topics Covered
 
 - The Gateway: decryption oracle architecture
-- Requesting decryption: `Gateway.requestDecryption()`
+- Requesting decryption: `FHE.makePubliclyDecryptable()`
+  - *Note: `Gateway.requestDecryption()` was the pre-v0.9 method and is now deprecated.*
 - Callback functions: receiving decrypted values asynchronously
 - Callback validation: ensuring only the Gateway can call back
 - Re-encryption: `FHE.sealoutput()` for user-specific encrypted returns

@@ -114,6 +114,12 @@ describe("ConfidentialDAO", function () {
     const noHandle = await dao.getNoVotes(0);
     expect(yesHandle).to.not.equal(ethers.ZeroHash);
     expect(noHandle).to.not.equal(ethers.ZeroHash);
+
+    // Set results (simulates off-chain decryption + callback)
+    await (await dao.setResults(0, 1, 1)).wait();
+    const proposal = await dao.proposals(0);
+    expect(proposal.yesResult).to.equal(1n);
+    expect(proposal.noResult).to.equal(1n);
   });
 
   it("should finalize proposal after deadline", async function () {
@@ -121,7 +127,7 @@ describe("ConfidentialDAO", function () {
     // Create proposal with 1 second duration
     await (await dao.createProposal("Finalize Test", bob.address, 0, 1)).wait();
 
-    // Alice votes
+    // Alice votes yes
     const enc = await fhevm
       .createEncryptedInput(daoAddress, alice.address)
       .add8(1)
@@ -132,12 +138,17 @@ describe("ConfidentialDAO", function () {
     await ethers.provider.send("evm_increaseTime", [2]);
     await ethers.provider.send("evm_mine", []);
 
-    // Finalize
+    // Finalize (makePubliclyDecryptable)
     await (await dao.finalizeProposal(0)).wait();
+
+    // Set results (admin provides decrypted values)
+    await (await dao.setResults(0, 1, 0)).wait();
 
     // Verify revealed flag is true
     const proposal = await dao.proposals(0);
     expect(proposal.revealed).to.equal(true);
+    expect(proposal.yesResult).to.equal(1n);
+    expect(proposal.noResult).to.equal(0n);
   });
 
   it("should reject finalize before deadline", async function () {
@@ -167,10 +178,11 @@ describe("ConfidentialDAO", function () {
     const enc = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
     await (await dao.connect(alice).vote(0, enc.handles[0], enc.inputProof)).wait();
 
-    // Advance time past deadline and finalize
+    // Advance time past deadline, finalize, and set results
     await ethers.provider.send("evm_increaseTime", [101]);
     await ethers.provider.send("evm_mine", []);
     await (await dao.finalizeProposal(0)).wait();
+    await (await dao.setResults(0, 1, 0)).wait(); // 1 yes, 0 no → passes
 
     // Execute
     const bobBalBefore = await ethers.provider.getBalance(bob.address);

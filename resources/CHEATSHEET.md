@@ -32,7 +32,6 @@ contract MyContract is ZamaEthereumConfig {
 
 | Type | Bits | Range | Plaintext Equivalent |
 |---|---|---|---|
-| `euint4` | 4 | 0 -- 15 | `uint8` (conceptually 4-bit) |
 | `euint8` | 8 | 0 -- 255 | `uint8` |
 | `euint16` | 16 | 0 -- 65,535 | `uint16` |
 | `euint32` | 32 | 0 -- 4,294,967,295 | `uint32` |
@@ -46,20 +45,11 @@ contract MyContract is ZamaEthereumConfig {
 |---|---|---|
 | `eaddress` | Encrypted Ethereum address | `address` |
 
-### Byte Arrays
-
-| Type | Size | Plaintext Equivalent |
-|---|---|---|
-| `ebytes64` | 64 bytes | `bytes` |
-| `ebytes128` | 128 bytes | `bytes` |
-| `ebytes256` | 256 bytes | `bytes` |
-
 ### External Input Types (for function parameters)
 
 | External Type | Converts To |
 |---|---|
 | `externalEbool` | `ebool` |
-| `externalEuint4` | `euint4` |
 | `externalEuint8` | `euint8` |
 | `externalEuint16` | `euint16` |
 | `externalEuint32` | `euint32` |
@@ -67,9 +57,6 @@ contract MyContract is ZamaEthereumConfig {
 | `externalEuint128` | `euint128` |
 | `externalEuint256` | `euint256` |
 | `externalEaddress` | `eaddress` |
-| `externalEbytes64` | `ebytes64` |
-| `externalEbytes128` | `ebytes128` |
-| `externalEbytes256` | `ebytes256` |
 
 ---
 
@@ -78,8 +65,8 @@ contract MyContract is ZamaEthereumConfig {
 Convert external encrypted inputs to internal encrypted types:
 
 ```solidity
-function receiveInput(externalEuint32 encInput, bytes calldata proof) external {
-    euint32 value = FHE.fromExternal(encInput, proof);
+function receiveInput(externalEuint32 encInput, bytes calldata inputProof) external {
+    euint32 value = FHE.fromExternal(encInput, inputProof);
     // Now 'value' can be used in FHE operations
     FHE.allowThis(value);
 }
@@ -87,18 +74,14 @@ function receiveInput(externalEuint32 encInput, bytes calldata proof) external {
 
 | Function | Input | Output |
 |---|---|---|
-| `FHE.fromExternal(externalEbool, proof)` | `externalEbool, bytes calldata proof` | `ebool` |
-| `FHE.fromExternal(externalEuint4, proof)` | `externalEuint4, bytes calldata proof` | `euint4` |
-| `FHE.fromExternal(externalEuint8, proof)` | `externalEuint8, bytes calldata proof` | `euint8` |
-| `FHE.fromExternal(externalEuint16, proof)` | `externalEuint16, bytes calldata proof` | `euint16` |
-| `FHE.fromExternal(externalEuint32, proof)` | `externalEuint32, bytes calldata proof` | `euint32` |
-| `FHE.fromExternal(externalEuint64, proof)` | `externalEuint64, bytes calldata proof` | `euint64` |
-| `FHE.fromExternal(externalEuint128, proof)` | `externalEuint128, bytes calldata proof` | `euint128` |
-| `FHE.fromExternal(externalEuint256, proof)` | `externalEuint256, bytes calldata proof` | `euint256` |
-| `FHE.fromExternal(externalEaddress, proof)` | `externalEaddress, bytes calldata proof` | `eaddress` |
-| `FHE.fromExternal(externalEbytes64, proof)` | `externalEbytes64, bytes calldata proof` | `ebytes64` |
-| `FHE.fromExternal(externalEbytes128, proof)` | `externalEbytes128, bytes calldata proof` | `ebytes128` |
-| `FHE.fromExternal(externalEbytes256, proof)` | `externalEbytes256, bytes calldata proof` | `ebytes256` |
+| `FHE.fromExternal(externalEbool, inputProof)` | `externalEbool, bytes calldata inputProof` | `ebool` |
+| `FHE.fromExternal(externalEuint8, inputProof)` | `externalEuint8, bytes calldata inputProof` | `euint8` |
+| `FHE.fromExternal(externalEuint16, inputProof)` | `externalEuint16, bytes calldata inputProof` | `euint16` |
+| `FHE.fromExternal(externalEuint32, inputProof)` | `externalEuint32, bytes calldata inputProof` | `euint32` |
+| `FHE.fromExternal(externalEuint64, inputProof)` | `externalEuint64, bytes calldata inputProof` | `euint64` |
+| `FHE.fromExternal(externalEuint128, inputProof)` | `externalEuint128, bytes calldata inputProof` | `euint128` |
+| `FHE.fromExternal(externalEuint256, inputProof)` | `externalEuint256, bytes calldata inputProof` | `euint256` |
+| `FHE.fromExternal(externalEaddress, inputProof)` | `externalEaddress, bytes calldata inputProof` | `eaddress` |
 
 ---
 
@@ -115,7 +98,6 @@ eaddress encAddr = FHE.asEaddress(msg.sender);
 | Function | Input | Output |
 |---|---|---|
 | `FHE.asEbool(bool)` | `bool` | `ebool` |
-| `FHE.asEuint4(uint8)` | Plaintext value | `euint4` |
 | `FHE.asEuint8(uint8)` | Plaintext value | `euint8` |
 | `FHE.asEuint16(uint16)` | Plaintext value | `euint16` |
 | `FHE.asEuint32(uint32)` | Plaintext value | `euint32` |
@@ -252,7 +234,6 @@ Generate encrypted random values on-chain:
 | Function | Output Type |
 |---|---|
 | `FHE.randEbool()` | `ebool` |
-| `FHE.randEuint4()` | `euint4` |
 | `FHE.randEuint8()` | `euint8` |
 | `FHE.randEuint16()` | `euint16` |
 | `FHE.randEuint32()` | `euint32` |
@@ -312,20 +293,17 @@ function viewMyBalance() external view returns (bytes memory) {
 }
 ```
 
-### Gateway Decryption (On-Chain Reveal)
+### Public Decryption (On-Chain Reveal)
 
 ```solidity
-// Request async decryption via the Gateway
-// The Gateway calls back with the plaintext result
-uint256[] memory cts = new uint256[](1);
-cts[0] = Gateway.toUint256(encryptedValue);
-Gateway.requestDecryption(cts, this.myCallback.selector, 0, block.timestamp + 100, false);
+// Make a value publicly decryptable (current API)
+FHE.makePubliclyDecryptable(encryptedValue);
 
-function myCallback(uint256 requestID, uint32 decryptedValue) external onlyGateway {
-    // Use the decrypted value
-    revealedResult = decryptedValue;
-}
+// Check ACL access
+require(FHE.isSenderAllowed(encryptedValue), "No access");
 ```
+
+> **Note:** In earlier fhEVM versions (pre-v0.9), `Gateway.requestDecryption()` was used for asynchronous decryption. In the current version, use `FHE.makePubliclyDecryptable()` instead.
 
 ---
 
@@ -341,8 +319,8 @@ import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 contract ConfidentialToken is ZamaEthereumConfig {
     mapping(address => euint64) private balances;
 
-    function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
-        euint64 amount = FHE.fromExternal(encAmount, proof);
+    function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encAmount, inputProof);
 
         // Encrypted balance check
         ebool hasEnough = FHE.ge(balances[msg.sender], amount);
@@ -378,7 +356,7 @@ contract ConfidentialToken is ZamaEthereumConfig {
 
 1. **Always call `FHE.allowThis()` after storing an encrypted value.** The contract needs permission to read its own storage.
 2. **Never use `if` on encrypted values.** Use `FHE.select()` instead.
-3. **Use `externalEuintXX` and `bytes calldata proof` for function parameters**, then convert with `FHE.fromExternal(value, proof)`.
+3. **Use `externalEuintXX` and `bytes calldata inputProof` for function parameters**, then convert with `FHE.fromExternal(value, inputProof)`.
 4. **Both operands must match types** (or second operand is plaintext).
 5. **Overflow wraps silently.** There is no revert on overflow.
 6. **Use the smallest type that fits your data.** Gas cost scales with bit width.

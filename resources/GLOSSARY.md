@@ -77,13 +77,13 @@ The encrypted address type in fhEVM. Represents an encrypted Ethereum address. O
 The encrypted boolean type in fhEVM. Produced by comparison operations (e.g., `FHE.gt`, `FHE.eq`) and consumed by `FHE.select` and boolean logic operations (`FHE.and`, `FHE.or`, `FHE.not`).
 
 **ebytes64 / ebytes128 / ebytes256**
-Encrypted byte array types of fixed sizes (64, 128, or 256 bytes). Used for arbitrary encrypted data that does not fit the integer or address types.
+Encrypted byte array types of fixed sizes (64, 128, or 256 bytes). Used for arbitrary encrypted data that does not fit the integer or address types. Note: These types are defined in the type system but have limited FHE operation support in the current version.
 
 **Encrypted Ternary**
 See "FHE.select."
 
-**euint4 / euint8 / euint16 / euint32 / euint64 / euint128 / euint256**
-Encrypted unsigned integer types in fhEVM, representing 4-bit through 256-bit encrypted values. Larger types support larger value ranges but incur higher gas costs for operations.
+**euint8 / euint16 / euint32 / euint64 / euint128 / euint256**
+Encrypted unsigned integer types in fhEVM, representing 8-bit through 256-bit encrypted values. Larger types support larger value ranges but incur higher gas costs for operations.
 
 **externalEuintXX**
 The type used for encrypted inputs in external function parameters (e.g., `externalEuint32`, `externalEuint64`). These represent raw encrypted data submitted by users via `fhevmjs`. Must be converted to the corresponding `euintXX` type using `FHE.fromExternal()` before use in FHE operations.
@@ -159,8 +159,7 @@ The JavaScript/TypeScript client library for interacting with fhEVM. Handles cli
 **Gas (FHE context)**
 The unit of computational cost on the EVM. FHE operations are significantly more expensive in gas than plaintext operations because they involve complex mathematical computations on ciphertexts. Gas costs scale with bit width and operation complexity.
 
-**Gateway**
-The decryption oracle in fhEVM. When a contract requests decryption via `Gateway.requestDecryption()`, the Gateway orchestrates the distributed decryption process and calls back the contract with the plaintext result. The Gateway is a semi-trusted component.
+**Gateway** — In earlier fhEVM versions (pre-v0.9), an oracle service for asynchronous decryption via `Gateway.requestDecryption()`. In the current version, decryption uses `FHE.makePubliclyDecryptable()` instead. The Gateway remains relevant for advanced production use cases.
 
 **Gentry, Craig**
 The computer scientist who constructed the first Fully Homomorphic Encryption scheme in 2009, based on ideal lattices. His PhD thesis ("A Fully Homomorphic Encryption Scheme") is one of the most significant breakthroughs in modern cryptography.

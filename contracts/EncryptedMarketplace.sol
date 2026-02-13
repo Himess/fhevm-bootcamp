@@ -102,6 +102,18 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
         return FHE.div(discounted, 100);
     }
 
+    /// @notice Withdraw funds from marketplace balance
+    /// @dev Uses FHE.select to transfer 0 on insufficient balance (no revert = no info leak)
+    function withdraw(uint64 amount) external {
+        _initBalance(msg.sender);
+        euint64 encAmount = FHE.asEuint64(amount);
+        ebool hasFunds = FHE.ge(_balances[msg.sender], encAmount);
+        _balances[msg.sender] = FHE.select(hasFunds,
+            FHE.sub(_balances[msg.sender], encAmount), _balances[msg.sender]);
+        FHE.allowThis(_balances[msg.sender]);
+        FHE.allow(_balances[msg.sender], msg.sender);
+    }
+
     /// @notice Get own encrypted balance
     function getBalance() public view returns (euint64) {
         require(FHE.isSenderAllowed(_balances[msg.sender]), "No access");

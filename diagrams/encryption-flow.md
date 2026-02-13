@@ -90,29 +90,26 @@ sequenceDiagram
     participant User as User / dApp
     participant SDK as fhevmjs SDK
     participant Contract as Smart Contract
-    participant GW as Gateway
     participant KMS as Key Management Service
 
-    Note over User,KMS: === PATH A: Async Decryption (on-chain callback) ===
+    Note over User,KMS: === PATH A: Public Decryption (on-chain) ===
 
-    Contract->>Contract: 1. Gateway.requestDecryption(handles, callback)
-    Contract->>GW: 2. Emit decryption request event
-    GW->>KMS: 3. Forward handles to KMS
-    KMS->>KMS: 4. Threshold decryption<br/>(multiple key shares collaborate)
-    KMS->>GW: 5. Return plaintext value
-    GW->>Contract: 6. Call callback function<br/>with decrypted value
-    Contract->>Contract: 7. Process plaintext in callback
+    Contract->>Contract: 1. FHE.makePubliclyDecryptable(handles)
+    Contract->>KMS: 2. Emit decryption request event
+    KMS->>KMS: 3. Threshold decryption<br/>(multiple key shares collaborate)
+    KMS->>Contract: 4. Return plaintext value
+    Contract->>Contract: 5. Process plaintext result
 
     Note over User,KMS: === PATH B: Re-encryption (client-side view) ===
 
-    User->>SDK: 8. Generate keypair for re-encryption
-    SDK->>SDK: 9. Create EIP-712 signature<br/>(proves address ownership)
-    SDK->>GW: 10. Request re-encryption<br/>(handle, publicKey, signature)
-    GW->>GW: 11. ACL check:<br/>is msg.sender allowed?
-    GW->>KMS: 12. Re-encrypt under user's public key
-    KMS->>SDK: 13. Return re-encrypted ciphertext
-    SDK->>SDK: 14. Decrypt with local private key
-    SDK->>User: 15. Display plaintext value
+    User->>SDK: 6. Generate keypair for re-encryption
+    SDK->>SDK: 7. Create EIP-712 signature<br/>(proves address ownership)
+    SDK->>KMS: 8. Request re-encryption<br/>(handle, publicKey, signature)
+    KMS->>KMS: 9. ACL check:<br/>is msg.sender allowed?
+    KMS->>KMS: 10. Re-encrypt under user's public key
+    KMS->>SDK: 11. Return re-encrypted ciphertext
+    SDK->>SDK: 12. Decrypt with local private key
+    SDK->>User: 13. Display plaintext value
 ```
 
 ## Explanation

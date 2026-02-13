@@ -21,46 +21,46 @@ The following table provides approximate gas costs for FHE operations. Actual co
 
 ### Arithmetic Operations
 
-| Operation | euint4 | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
-|---|---|---|---|---|---|---|---|
-| `FHE.add` | ~50k | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
-| `FHE.sub` | ~50k | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
-| `FHE.mul` | ~100k | ~150k | ~250k | ~400k | ~700k | ~1.2M | ~2M |
-| `FHE.div` | ~150k | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
-| `FHE.rem` | ~150k | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
-| `FHE.neg` | ~40k | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
-| `FHE.min` | ~120k | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
-| `FHE.max` | ~120k | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
+| Operation | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
+|---|---|---|---|---|---|---|
+| `FHE.add` | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
+| `FHE.sub` | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
+| `FHE.mul` | ~150k | ~250k | ~400k | ~700k | ~1.2M | ~2M |
+| `FHE.div` | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
+| `FHE.rem` | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
+| `FHE.neg` | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
+| `FHE.min` | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
+| `FHE.max` | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
 
 ### Comparison Operations
 
-| Operation | euint4 | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
-|---|---|---|---|---|---|---|---|
-| `FHE.eq` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
-| `FHE.ne` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
-| `FHE.gt` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
-| `FHE.ge` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
-| `FHE.lt` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
-| `FHE.le` | ~80k | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| Operation | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
+|---|---|---|---|---|---|---|
+| `FHE.eq` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| `FHE.ne` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| `FHE.gt` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| `FHE.ge` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| `FHE.lt` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
+| `FHE.le` | ~120k | ~180k | ~280k | ~450k | ~800k | ~1.4M |
 
 ### Bitwise Operations
 
-| Operation | euint4 | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
-|---|---|---|---|---|---|---|---|
-| `FHE.and` | ~40k | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
-| `FHE.or` | ~40k | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
-| `FHE.xor` | ~40k | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
-| `FHE.not` | ~30k | ~50k | ~75k | ~120k | ~170k | ~300k | ~450k |
-| `FHE.shl` | ~60k | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
-| `FHE.shr` | ~60k | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
-| `FHE.rotl` | ~60k | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
-| `FHE.rotr` | ~60k | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
+| Operation | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
+|---|---|---|---|---|---|---|
+| `FHE.and` | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
+| `FHE.or` | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
+| `FHE.xor` | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
+| `FHE.not` | ~50k | ~75k | ~120k | ~170k | ~300k | ~450k |
+| `FHE.shl` | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
+| `FHE.shr` | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
+| `FHE.rotl` | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
+| `FHE.rotr` | ~90k | ~140k | ~220k | ~350k | ~600k | ~1M |
 
 ### Conditional Selection
 
-| Operation | euint4 | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
-|---|---|---|---|---|---|---|---|
-| `FHE.select` | ~50k | ~70k | ~100k | ~160k | ~230k | ~380k | ~560k |
+| Operation | euint8 | euint16 | euint32 | euint64 | euint128 | euint256 |
+|---|---|---|---|---|---|---|
+| `FHE.select` | ~70k | ~100k | ~160k | ~230k | ~380k | ~560k |
 
 ### Other Operations
 
@@ -109,7 +109,6 @@ Choosing the right encrypted type has the largest impact on gas costs.
 ### Decision Framework
 
 ```
-Does the value fit in 4 bits (0-15)?     -> Use euint4
 Does the value fit in 8 bits (0-255)?    -> Use euint8
 Does the value fit in 16 bits (0-65535)? -> Use euint16
 Does the value fit in 32 bits?           -> Use euint32
@@ -128,7 +127,7 @@ Does the value require > 64 bits?        -> Use euint128 or euint256
 | Timestamps | `euint32` or `euint64` | Unix timestamps fit in 32 bits until 2106 |
 | Prices | `euint32` or `euint64` | Depends on precision needed |
 | Addresses | `eaddress` | Fixed type, no choice |
-| Arbitrary data | `ebytes64/128/256` | Fixed sizes |
+| Arbitrary data | `ebytes64/128/256` | Fixed sizes (note: ebytes types are defined in the type system but have limited FHE operation support in the current version) |
 
 ### Gas Savings from Type Downsizing
 

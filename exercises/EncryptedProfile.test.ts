@@ -16,9 +16,10 @@ describe("EncryptedProfile", function () {
     expect(await contract.profileOwner()).to.equal(owner.address);
   });
 
-  // TODO: Add tests for setVerified, setAge, setScore
-  // TODO: Add tests for getVerified, getAge, getScore
-  // TODO: Add test for isAboveAge bonus challenge
+  // EXERCISE: Students should complete the following tests:
+  // - Test setVerified, setAge, setScore (store encrypted values)
+  // - Test getVerified, getAge, getScore (decrypt and verify)
+  // - Test isAboveAge bonus challenge (encrypted comparison)
 
   // Hint: For encrypted tests, use fhevm.createEncryptedInput() if accepting external input
   // For plaintext-accepting functions (like this exercise), just call directly

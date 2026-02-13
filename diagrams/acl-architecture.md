@@ -27,7 +27,7 @@ graph TD
 
     subgraph Operations
         FHE_OP[FHE Operation<br/>add / sub / mul / etc.]
-        DECRYPT[Gateway.requestDecryption]
+        DECRYPT[FHE.makePubliclyDecryptable]
         REENCRYPT[Re-encryption Request]
     end
 
