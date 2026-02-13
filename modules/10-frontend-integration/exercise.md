@@ -21,7 +21,7 @@ Create a new React + Vite project and install dependencies:
 ```bash
 npm create vite@latest fhevm-counter-app -- --template react-ts
 cd fhevm-counter-app
-npm install fhevmjs ethers
+npm install @zama-fhe/relayer-sdk ethers
 ```
 
 ---
@@ -32,13 +32,13 @@ Create a file `src/fhevm.ts` that exports an `initFhevm()` function:
 
 ```typescript
 // src/fhevm.ts
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 import { BrowserProvider } from "ethers";
 
 // TODO: Create a singleton FHE instance
 // 1. Check if instance already exists (avoid re-init)
 // 2. Create a BrowserProvider from window.ethereum
-// 3. Call createInstance() with networkUrl and gatewayUrl
+// 3. Call createInstance() with network and relayerUrl
 // 4. Return the instance
 ```
 
@@ -154,7 +154,7 @@ export default App;
 
 ## Step-by-Step Instructions
 
-1. **Task 2:** Initialize the FHE instance as a singleton. Use `createInstance()` from fhevmjs.
+1. **Task 2:** Initialize the FHE instance as a singleton. Use `createInstance()` from the Relayer SDK (`@zama-fhe/relayer-sdk`).
 2. **Task 3 - Encrypt:** Use `instance.createEncryptedInput(contractAddress, userAddress)`, call `input.add32(amount)`, then `input.encrypt()`.
 3. **Task 3 - Send:** Pass the encrypted handle and proof to `contract.increment(encrypted.handles[0], encrypted.inputProof)`.
 4. **Task 3 - Decrypt:** Use `instance.generateKeypair()`, `instance.createEIP712()`, `signer.signTypedData()`, and `instance.reencrypt()`.
@@ -174,8 +174,8 @@ export async function initFhevm() {
   if (fheInstance) return fheInstance;
   const provider = new BrowserProvider(window.ethereum);
   fheInstance = await createInstance({
-    networkUrl: await provider.send("eth_chainId", []),
-    gatewayUrl: "https://gateway.zama.ai",
+    network: await provider.send("eth_chainId", []),
+    relayerUrl: "https://gateway.zama.ai",
   });
   return fheInstance;
 }

@@ -75,7 +75,7 @@ Who performs the ZK proof verification when `FHE.fromExternal(input, proof)` is 
 Which client library is used for encrypting values before sending to FHEVM contracts?
 
 - A) `ethers.js`
-- B) `fhevmjs` ✅
+- B) Relayer SDK (`@zama-fhe/relayer-sdk`) ✅
 - C) `openzeppelin.js`
 - D) `web3.js`
 

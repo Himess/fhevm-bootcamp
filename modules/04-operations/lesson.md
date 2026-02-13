@@ -133,6 +133,8 @@ euint32 rightShifted = FHE.shr(value, 1);
 
 > ⚠️ **Important:** The shift amount (second parameter) must ALWAYS be `euint8` or `uint8`, regardless of the first operand's type.
 
+> **Shift Modulo:** The shift amount is taken modulo the bit width of the type. For example, `FHE.shl(euint8_val, 10)` is equivalent to `FHE.shl(euint8_val, 2)` because `10 mod 8 = 2`. This applies to `shl`, `shr`, `rotl`, and `rotr`.
+
 ### Shift Left: `FHE.shl()`
 
 ```solidity

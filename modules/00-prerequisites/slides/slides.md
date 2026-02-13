@@ -23,6 +23,10 @@ A refresher on Solidity fundamentals before diving into FHE
 - The ERC-20 token standard
 - Writing tests with Hardhat
 
+<!--
+Speaker notes: Give a quick overview of why these fundamentals matter before jumping into FHE. Reassure students that this is a refresher -- if they already know Solidity well, this module will be fast.
+-->
+
 ---
 
 # Solidity Data Types
@@ -42,6 +46,10 @@ A refresher on Solidity fundamentals before diving into FHE
 |----------|---------|----------------------------|
 | `string` | dynamic | `string name = "Token";`   |
 | `bytes`  | dynamic | `bytes data = hex"cafe";`  |
+
+<!--
+Speaker notes: Stress that uint256 is the default and most common integer type in Solidity. Mention that in FHEVM, these types will have encrypted equivalents -- this table will map directly to Module 03.
+-->
 
 ---
 
@@ -67,6 +75,10 @@ struct Proposal {
     bool    executed;
 }
 ```
+
+<!--
+Speaker notes: Emphasize that mappings cannot be iterated -- this is a common gotcha for new Solidity developers. The Proposal struct here foreshadows the voting contract in Module 12.
+-->
 
 ---
 
@@ -99,6 +111,10 @@ function transfer(address to, uint256 amount)
 
 Modifiers execute **left to right**.
 
+<!--
+Speaker notes: Walk through the modifier pattern step by step -- the underscore placeholder is where the function body runs. Mention that FHEVM contracts will use similar patterns for access control on encrypted data.
+-->
+
 ---
 
 # Events
@@ -122,6 +138,10 @@ function deposit() external payable {
 - Cheaper than storage (~375 gas + 8 gas/byte)
 - Up to **3 indexed parameters** per event
 
+<!--
+Speaker notes: Highlight that events are critical for frontend integration. In FHEVM, event design changes because you cannot include encrypted amounts in events -- this will be covered in Module 11.
+-->
+
 ---
 
 # ERC-20 Token Standard
@@ -143,6 +163,10 @@ function allowance(address owner, address spender) external view returns (uint25
 Owner --approve(spender, 100)--> Contract
 Spender --transferFrom(owner, recipient, 50)--> Contract
 ```
+
+<!--
+Speaker notes: Make sure students understand the approve-then-transferFrom flow since it will be replicated with encrypted allowances in Module 11. Ask: "Why does ERC-20 need two separate steps instead of one?"
+-->
 
 ---
 
@@ -173,6 +197,10 @@ describe("SimpleToken", function () {
 
 Run: `npx hardhat test`
 
+<!--
+Speaker notes: Briefly walk through describe/beforeEach/it structure. The same test pattern will be used throughout the bootcamp, with added FHE-specific helpers for encrypted inputs and decryption.
+-->
+
 ---
 
 # Exercise Preview
@@ -189,6 +217,10 @@ You will create a contract that:
 
 This exercise combines **all** the concepts from this module.
 
+<!--
+Speaker notes: Encourage students to attempt this without looking at the solution first. This vault pattern will be a foundation for the encrypted vault patterns they will build later with FHE.
+-->
+
 ---
 
 # Key Takeaways
@@ -201,6 +233,10 @@ This exercise combines **all** the concepts from this module.
 6. **ERC-20 is foundational** -- every DeFi protocol interacts with this standard
 7. **Test everything** -- Hardhat + Chai gives you a complete local testing environment
 
+<!--
+Speaker notes: Quickly recap each point and ask if there are any questions before moving on. Remind students that all of these patterns will carry forward into every FHEVM module.
+-->
+
 ---
 
 # Next Up
@@ -212,3 +248,7 @@ This exercise combines **all** the concepts from this module.
 - How FHEVM brings FHE to Solidity
 
 **See you in Module 01!**
+
+<!--
+Speaker notes: Transition to Module 01 by teasing the fundamental question: "What if we could compute on data without ever seeing it?" Let students take a short break if needed.
+-->

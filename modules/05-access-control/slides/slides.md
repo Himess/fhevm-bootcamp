@@ -22,6 +22,10 @@ On a public blockchain, encrypted data needs **permission management**.
 
 The ACL system answers all these questions.
 
+<!--
+Speaker notes: Frame ACL as the "permission system for encrypted data." In standard Solidity, anyone can read anything. In FHEVM, you must explicitly grant access. This is both the security model and the most common source of bugs.
+-->
+
 ---
 
 # ACL Overview
@@ -35,6 +39,10 @@ Handle 0xAABB...
 └── Allowed: Helper 0x9ABC...    (allowTransient, this tx only)
 ```
 
+<!--
+Speaker notes: Visualize the ACL as a list attached to each ciphertext handle. Every handle starts empty -- no one has access. This is different from file permissions where the creator has automatic access. In FHEVM, even the creator must explicitly grant themselves access.
+-->
+
 ---
 
 # The Five ACL Functions
@@ -46,6 +54,10 @@ Handle 0xAABB...
 | `FHE.allowTransient(h, addr)` | Temporary grant | Transaction only |
 | `FHE.makePubliclyDecryptable(h)` | Reveal to everyone | Persistent |
 | `FHE.isSenderAllowed(h)` | Check permission | N/A (view) |
+
+<!--
+Speaker notes: This is the complete ACL API -- five functions. Have students memorize these. The most used are allowThis and allow. allowTransient is for optimization, makePubliclyDecryptable is for reveals, and isSenderAllowed is for guarding view functions.
+-->
 
 ---
 
@@ -67,6 +79,10 @@ function update() public {
 }
 ```
 
+<!--
+Speaker notes: Point out both allowThis calls and explain why both are necessary. The constructor creates handle A, the update creates handle B. Without allowThis on handle B, the next call to update() will fail because the contract cannot read its own state.
+-->
+
 ---
 
 # Why Every Time?
@@ -81,6 +97,10 @@ After:   _value → handle 0xBBB  ACL: [empty!]
 ```
 
 The old handle's ACL does NOT transfer to the new handle.
+
+<!--
+Speaker notes: This diagram is the key insight of the entire ACL system. Draw it on a whiteboard if possible. The old handle 0xAAA still exists with its ACL, but _value now points to 0xBBB which has an empty ACL. This is why forgetting allowThis breaks contracts.
+-->
 
 ---
 
@@ -103,6 +123,10 @@ function deposit(uint64 amount) public {
 
 Users need `allow` to decrypt their own data.
 
+<!--
+Speaker notes: Walk through the deposit function. After the FHE.add creates a new balance, both allowThis and allow are needed. Without allow(newBal, msg.sender), the user could never decrypt their own balance -- they would have no way to see how many tokens they hold.
+-->
+
 ---
 
 # `FHE.allowTransient(handle, address)`
@@ -123,6 +147,10 @@ function forwardToProcessor(address proc) public {
 
 Saves gas by not persisting ACL entries.
 
+<!--
+Speaker notes: allowTransient is an optimization for inter-contract calls within a single transaction. It saves gas because the ACL entry is not written to storage. Use it when Contract A needs to pass a ciphertext to Contract B during the same tx but B does not need access later.
+-->
+
 ---
 
 # `FHE.isSenderAllowed(handle)`
@@ -138,6 +166,10 @@ function getMyBalance() public view returns (euint64) {
     return _balances[msg.sender];
 }
 ```
+
+<!--
+Speaker notes: isSenderAllowed is a guard function for view methods that return encrypted handles. Without this check, anyone could call getMyBalance for any address and get a handle, even if they cannot decrypt it. The check ensures only authorized callers get the handle.
+-->
 
 ---
 
@@ -160,6 +192,10 @@ function revealWinner() external onlyOwner {
 - Any value that should become public after a certain event
 
 > Irreversible — once public, anyone can decrypt
+
+<!--
+Speaker notes: Stress the irreversibility -- once makePubliclyDecryptable is called, you cannot take it back. This is appropriate for auction results, vote tallies, and game outcomes, but never for individual user data. Ask: "When would you NOT want to use this?"
+-->
 
 ---
 
@@ -186,6 +222,10 @@ function transfer(address to, uint64 amount) public {
 }
 ```
 
+<!--
+Speaker notes: This is the complete ACL pattern for a token transfer. Count the ACL calls: four in total -- allowThis and allow for both sender and receiver. This is verbose but necessary. Missing any one of these will break functionality for that user.
+-->
+
 ---
 
 # Pattern: Multi-Contract Composability
@@ -209,6 +249,10 @@ contract Auditor is ZamaEthereumConfig {
 }
 ```
 
+<!--
+Speaker notes: This pattern shows how two contracts can share encrypted data within one transaction using allowTransient. The Auditor calls auditAccess which grants temporary access, then immediately uses the ciphertext. After the transaction ends, the Auditor loses access. This is the foundation for composable FHEVM protocols.
+-->
+
 ---
 
 # Five ACL Rules
@@ -218,6 +262,10 @@ contract Auditor is ZamaEthereumConfig {
 3. ACL is **per-handle**, not per-variable
 4. There is **no revoke** — rotate data instead
 5. `allowTransient` is cheaper but **transaction-scoped**
+
+<!--
+Speaker notes: These five rules are the ACL "constitution." Rule 4 is especially important: there is no way to revoke access once granted. If you need to revoke, you must create a new encrypted value with a new ACL and stop using the old one. This is called "data rotation."
+-->
 
 ---
 
@@ -230,6 +278,10 @@ contract Auditor is ZamaEthereumConfig {
 | Using `allow` for temp needs | Wasted gas on persistent ACL |
 | Assuming old ACL carries over | Operations fail silently |
 
+<!--
+Speaker notes: Review each mistake and ask if students can explain why it causes problems. The silent failure is particularly dangerous -- operations on handles without ACL access do not revert, they just produce incorrect results. Testing is essential.
+-->
+
 ---
 
 # Summary
@@ -241,6 +293,10 @@ contract Auditor is ZamaEthereumConfig {
 - **`FHE.isSenderAllowed()`** — Guard access to encrypted returns
 - Every new handle = empty ACL (no inheritance)
 
+<!--
+Speaker notes: Summarize ACL as "explicit permission for everything." This module is dense but critical. Suggest students create a checklist: after every FHE operation that writes to state, add allowThis. After every user-facing value, add allow.
+-->
+
 ---
 
 # Next Up
@@ -248,3 +304,7 @@ contract Auditor is ZamaEthereumConfig {
 **Module 06: Encrypted Inputs & ZK Proofs**
 
 Learn how users send truly private data using `externalEuintXX` and `FHE.fromExternal()`.
+
+<!--
+Speaker notes: Transition by asking: "We covered ACL for data already on-chain, but how does private data GET on-chain in the first place?" Module 06 answers this with client-side encryption.
+-->

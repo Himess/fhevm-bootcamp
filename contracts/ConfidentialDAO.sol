@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, euint32, euint8, externalEuint64, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint64, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title ConfidentialDAO - Module 14 Capstone: DAO with encrypted voting + treasury

@@ -12,7 +12,7 @@ graph TD
     end
 
     subgraph "Phase 2: Casting Votes"
-        OPEN --> VOTER[Voter encrypts choice<br/>client-side via fhevmjs]
+        OPEN --> VOTER[Voter encrypts choice<br/>client-side via Relayer SDK]
         VOTER --> SUBMIT[Submit encrypted vote<br/>externalEbool encVote]
         SUBMIT --> VALIDATE[Contract validates:<br/>- voter has not voted<br/>- vote is valid]
         VALIDATE --> PROCESS[Process vote with FHE<br/>see detail below]

@@ -322,8 +322,8 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Teaching Style:** Full-stack live coding (client + contract)
 
 **Key Teaching Points:**
-- This is the first module where students touch the client side. Walk through fhevmjs setup carefully.
-- Show the full flow: `fhevmjs.encrypt()` on client -> `externalEuint32` parameter -> `FHE.fromExternal()` in contract.
+- This is the first module where students touch the client side. Walk through the Relayer SDK (`@zama-fhe/relayer-sdk`) setup carefully.
+- Show the full flow: Relayer SDK `encrypt()` on client -> `externalEuint32` parameter -> `FHE.fromExternal()` in contract.
 - Emphasize: `externalEuint32` is NOT the same as `euint32`. It is a raw encrypted input that must be converted.
 - Input validation on encrypted data is tricky --- you cannot check a range with `require()` because the value is encrypted.
 - Explain the role of ZK proofs in input verification: they ensure the encrypted input is well-formed without revealing the plaintext.
@@ -342,7 +342,7 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 | Segment | Duration |
 |---|---|
 | Client-side encryption overview | 20 min |
-| fhevmjs setup and API | 20 min |
+| Relayer SDK setup and API | 20 min |
 | externalEuintXX types and FHE.fromExternal() | 20 min |
 | ZK proof role in input validation | 15 min |
 | Exercise 1: Client Script | 30 min |
@@ -358,9 +358,8 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Teaching Style:** Lecture + live coding with devnet
 
 **Key Teaching Points:**
-- Decryption is asynchronous in production. This surprises students used to synchronous Solidity calls.
-- In the bootcamp dev environment, we use `FHE.makePubliclyDecryptable()` which simplifies the pattern (no Gateway callbacks needed in local mock mode).
-- Re-encryption (sealoutput) is different from on-chain decryption --- it produces a user-specific encrypted blob, not plaintext on-chain.
+- Public decryption uses `FHE.makePubliclyDecryptable()` to mark values for on-chain reveal by the decryption oracle.
+- Re-encryption (via ACL + client-side `instance.userDecrypt()`) is different from public decryption --- it produces a user-specific encrypted blob, not plaintext on-chain.
 - Discuss when to use each pattern: `makePubliclyDecryptable` for values that should become public, re-encryption for private viewing.
 
 **Discussion Questions:**
@@ -371,14 +370,14 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Common Pitfalls:**
 - Students expect decryption to be synchronous --- they write code that uses the decrypted result on the next line.
 - Students store decrypted values in public storage, defeating the purpose of encryption.
-- Confusion between the `makePubliclyDecryptable` pattern used in dev and the Gateway callback pattern used in production.
+- Confusion between public decryption (`makePubliclyDecryptable`) and re-encryption (ACL + `instance.userDecrypt()`) patterns.
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
 | Decryption architecture overview | 20 min |
 | makePubliclyDecryptable pattern | 25 min |
-| Re-encryption (sealoutput) | 20 min |
+| Re-encryption (ACL + userDecrypt) | 20 min |
 | Live coding: counter with reveal | 25 min |
 | Exercise 1: Counter with Reveal | 25 min |
 | Exercise 2: Private Balance Viewer | 25 min |
@@ -459,7 +458,7 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Teaching Style:** Full-stack live coding
 
 **Key Teaching Points:**
-- Connect fhevmjs to a React/frontend application.
+- Connect the Relayer SDK (`@zama-fhe/relayer-sdk`) to a React/frontend application.
 - Show the full user flow: connect wallet -> fetch FHE public key -> encrypt inputs -> send transaction -> view decrypted results.
 - Demonstrate re-encryption for private balance viewing in the UI.
 - Handle async patterns: waiting for transactions, polling for decryption results.
@@ -470,14 +469,14 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 3. "What should the UI show while an encrypted transaction is being processed?"
 
 **Common Pitfalls:**
-- Students forget to initialize fhevmjs before attempting encryption.
+- Students forget to initialize the Relayer SDK before attempting encryption.
 - Handling the async nature of FHE operations in React state management.
 - CORS issues when connecting to devnet from localhost.
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| fhevmjs frontend setup | 20 min |
+| Relayer SDK frontend setup | 20 min |
 | Wallet connection and FHE key fetching | 15 min |
 | Input encryption in the browser | 20 min |
 | Live coding: React component for encrypted transfer | 30 min |
@@ -686,7 +685,7 @@ A: No. External function parameters that receive encrypted data from users must 
 A: By design, encrypted contracts should use `FHE.select` instead of `require()` for conditions on encrypted data. The "silent fail" pattern means the operation proceeds but produces the "unchanged" result when conditions are not met. If you are testing, check the state after the transaction rather than expecting a revert.
 
 **Q: "How do I see the value of an encrypted variable during debugging?"**
-A: In the mock testing environment, you can use the decryption helpers provided by the Hardhat plugin. On a real network, you would use re-encryption (`FHE.sealoutput`) to get a user-specific view, or Gateway decryption to reveal the value on-chain.
+A: In the mock testing environment, you can use the decryption helpers provided by the Hardhat plugin. On a real network, you would use re-encryption (ACL + client-side `instance.userDecrypt()`) to get a user-specific view, or Gateway decryption to reveal the value on-chain.
 
 **Q: "Can I use Foundry instead of Hardhat?"**
 A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plugin provides mock encryption, decryption helpers, and devnet integration out of the box. Foundry can be used for basic compilation and testing, but the developer experience is less mature. We recommend Hardhat for this bootcamp.

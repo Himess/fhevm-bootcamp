@@ -1,3 +1,10 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Solidity](https://img.shields.io/badge/Solidity-0.8.27-363636?logo=solidity)
+![Tests](https://img.shields.io/badge/Tests-216%20passing-brightgreen)
+![Modules](https://img.shields.io/badge/Modules-15-blue)
+![Contracts](https://img.shields.io/badge/Contracts-25-orange)
+![Network](https://img.shields.io/badge/Network-Ethereum%20Sepolia-purple)
+
 # FHEVM Bootcamp Curriculum
 
 **A comprehensive, hands-on training program for building confidential smart contracts with Fully Homomorphic Encryption on the EVM.**
@@ -157,7 +164,7 @@ fhevm-bootcamp/
 │   ├── ConfidentialERC20.sol          # Module 11
 │   ├── ConfidentialDAO.sol            # Module 14 (capstone)
 │   └── ...
-├── test/                              # 25 test files (210 tests)
+├── test/                              # 25 test files (216 tests)
 ├── modules/                           # 15 learning modules
 │   ├── 00-prerequisites/
 │   │   ├── README.md                  # Module overview
@@ -179,8 +186,9 @@ fhevm-bootcamp/
 │   ├── GAS_GUIDE.md                   # Gas cost reference
 │   ├── SECURITY_CHECKLIST.md          # Audit checklist
 │   └── GLOSSARY.md                    # A-Z terminology
-├── exercises/                         # 12 exercise starter templates
-├── solutions/                         # 13 complete solutions
+├── exercises/                         # 14 exercise starter templates
+├── solutions/                         # 15 complete solutions
+├── frontend/                          # Interactive React demo dApp
 ├── diagrams/                          # 6 architecture diagrams (Mermaid)
 └── scripts/
     ├── deploy-all.ts                  # Deploy all contracts
@@ -200,7 +208,7 @@ fhevm-bootcamp/
 | Configuration | `ZamaEthereumConfig` base contract |
 | Development Framework | Hardhat + fhEVM plugin |
 | Testing | Hardhat test / Foundry (mock mode) |
-| Frontend Encryption | `fhevmjs` client library |
+| Frontend Encryption | `@zama-fhe/relayer-sdk` (Relayer SDK) |
 | Network | Ethereum Sepolia / local fhEVM node |
 
 ---
@@ -243,7 +251,7 @@ euint32 rand = FHE.randEuint32();
 |---|---|
 | Zama Documentation | [docs.zama.ai/fhevm](https://docs.zama.ai/fhevm) |
 | fhEVM Solidity Library | [github.com/zama-ai/fhevm](https://github.com/zama-ai/fhevm) |
-| fhevmjs (Client Library) | [github.com/zama-ai/fhevmjs](https://github.com/zama-ai/fhevmjs) |
+| Relayer SDK (Client Library) | [github.com/zama-ai/relayer-sdk](https://github.com/zama-ai/relayer-sdk) |
 | TFHE-rs (Underlying Engine) | [github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) |
 | Zama Community | [community.zama.ai](https://community.zama.ai) |
 | Zama Blog | [zama.ai/blog](https://www.zama.ai/blog) |
@@ -284,6 +292,36 @@ All contracts have been deployed and verified on Ethereum Sepolia testnet.
 | ConfidentialVoting | `0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3` | [View](https://sepolia.etherscan.io/address/0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3) |
 | SealedBidAuction | `0x1AB15668906f288dE4dF3064B8B50e91eFBD771D` | [View](https://sepolia.etherscan.io/address/0x1AB15668906f288dE4dF3064B8B50e91eFBD771D) |
 | ConfidentialDAO | `0x2eDadE60f5Db5da59c73ADd9159ec7519E127770` | [View](https://sepolia.etherscan.io/address/0x2eDadE60f5Db5da59c73ADd9159ec7519E127770) |
+
+---
+
+## Built With
+
+| Technology | Purpose |
+|------------|---------|
+| [Zama fhEVM](https://docs.zama.ai/fhevm) | Fully Homomorphic Encryption on EVM |
+| [Solidity 0.8.27](https://soliditylang.org/) | Smart contract language |
+| [Hardhat](https://hardhat.org/) | Development & testing framework |
+| [@zama-fhe/relayer-sdk](https://www.npmjs.com/package/@zama-fhe/relayer-sdk) | Client-side FHE encryption |
+| [React + Vite](https://vitejs.dev/) | Frontend demo application |
+| [Marp](https://marp.app/) | Presentation slides |
+| [GitHub Actions](https://github.com/features/actions) | CI/CD pipeline |
+
+---
+
+## Frontend Demo
+
+An interactive React dApp is included in the `frontend/` directory. It connects to the deployed contracts on Sepolia and demonstrates:
+
+- Client-side encryption with the Relayer SDK (`@zama-fhe/relayer-sdk`)
+- Encrypted counter operations (SimpleCounter)
+- Confidential token transfers (ConfidentialERC20)
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+See [frontend/README.md](frontend/README.md) for details.
 
 ---
 

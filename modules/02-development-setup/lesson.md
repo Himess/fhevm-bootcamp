@@ -107,7 +107,7 @@ contract MyContract is ZamaEthereumConfig {
 - Configures the FHE co-processor address
 - Sets up the ACL (Access Control List) contract address
 - Initializes the KMS (Key Management Service) verifier
-- Provides the gateway address for decryption requests
+- Provides the decryption oracle address for public decryption operations
 
 > **Important:** You do NOT need to manually configure these addresses. `ZamaEthereumConfig` handles everything.
 

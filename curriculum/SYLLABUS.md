@@ -135,7 +135,7 @@ By the end of this module, students will be able to:
 - Key management: global FHE public key, network key, user keys
 - The Gateway: decryption oracle and callback mechanism
 - `ZamaEthereumConfig` base contract and configuration
-- Development environment setup: Hardhat, fhEVM plugin, fhevmjs
+- Development environment setup: Hardhat, fhEVM plugin, Relayer SDK (`@zama-fhe/relayer-sdk`)
 - Local devnet vs Ethereum Sepolia vs mainnet considerations
 - First contract: compile, deploy, interact
 
@@ -278,13 +278,13 @@ By the end of this module, students will be able to:
 
 ### Description
 
-Encrypted inputs arrive at smart contracts as `externalEuintXX` types from the client side. This module covers the full input pipeline: client-side encryption with `fhevmjs`, the `externalEuintXX` type system, conversion with `FHE.fromExternal(value, proof)`, and input validation strategies for encrypted data.
+Encrypted inputs arrive at smart contracts as `externalEuintXX` types from the client side. This module covers the full input pipeline: client-side encryption with the Relayer SDK (`@zama-fhe/relayer-sdk`), the `externalEuintXX` type system, conversion with `FHE.fromExternal(value, proof)`, and input validation strategies for encrypted data.
 
 ### Learning Objectives
 
 By the end of this module, students will be able to:
 
-1. Encrypt values on the client side using `fhevmjs` and submit them as contract inputs.
+1. Encrypt values on the client side using the Relayer SDK (`@zama-fhe/relayer-sdk`) and submit them as contract inputs.
 2. Receive and convert encrypted inputs using `externalEuintXX` types and `FHE.fromExternal(value, proof)`.
 3. Implement input validation patterns for encrypted values (range checks, non-zero checks).
 4. Handle multiple encrypted inputs in a single transaction.
@@ -292,7 +292,7 @@ By the end of this module, students will be able to:
 
 ### Topics Covered
 
-- Client-side encryption with `fhevmjs`: `createInstance()`, `encrypt()`, contract integration
+- Client-side encryption with the Relayer SDK (`@zama-fhe/relayer-sdk`): `createInstance()`, `encrypt()`, contract integration
 - The `externalEuintXX` type family: `externalEbool`, `externalEuint8` through `externalEuint256`, `externalEaddress`
 - Converting inputs: `FHE.fromExternal(externalEuint32, proof)` returns `euint32`
 - ZKP proofs: ensuring input validity without revealing values
@@ -303,10 +303,10 @@ By the end of this module, students will be able to:
 
 ### Hands-on Activities
 
-- **Exercise 1:** Write a client script that encrypts a value with `fhevmjs` and sends it to a contract.
+- **Exercise 1:** Write a client script that encrypts a value with the Relayer SDK and sends it to a contract.
 - **Exercise 2:** Build a contract function that accepts three encrypted inputs using `externalEuintXX` and converts them with `FHE.fromExternal(value, proof)`.
 - **Exercise 3:** Implement a "Sealed Envelope" contract where users submit encrypted messages via `externalEbytes256`.
-- **Quiz:** 8 questions on the input pipeline, `externalEuintXX` types, and client-side encryption.
+- **Quiz:** 8 questions on the input pipeline, `externalEuintXX` types, and client-side encryption with the Relayer SDK.
 
 ---
 
@@ -318,7 +318,7 @@ By the end of this module, students will be able to:
 
 ### Description
 
-Eventually, encrypted results must be revealed. This module covers the asynchronous decryption mechanism via the Gateway, the callback pattern, re-encryption for user-specific decryption via `FHE.sealoutput()`, and the security implications of when and what to decrypt. Students learn that decryption is a design decision with privacy trade-offs.
+Eventually, encrypted results must be revealed. This module covers the asynchronous decryption mechanism via the Gateway, the callback pattern, re-encryption for user-specific decryption via ACL + client-side `instance.userDecrypt()`, and the security implications of when and what to decrypt. Students learn that decryption is a design decision with privacy trade-offs.
 
 ### Learning Objectives
 
@@ -326,7 +326,7 @@ By the end of this module, students will be able to:
 
 1. Request asynchronous decryption through the Gateway and handle the callback.
 2. Implement the callback pattern with proper validation and state management.
-3. Use re-encryption (`FHE.sealoutput()`) to allow specific users to decrypt values client-side.
+3. Use ACL (`FHE.allow()`) to grant user access, enabling client-side decryption via `instance.userDecrypt()`.
 4. Evaluate the privacy implications of different decryption strategies.
 5. Design contracts that minimize unnecessary decryption.
 
@@ -337,16 +337,16 @@ By the end of this module, students will be able to:
   - *Note: `Gateway.requestDecryption()` was the pre-v0.9 method and is now deprecated.*
 - Callback functions: receiving decrypted values asynchronously
 - Callback validation: ensuring only the Gateway can call back
-- Re-encryption: `FHE.sealoutput()` for user-specific encrypted returns
-- Client-side re-encryption with `fhevmjs`
+- Re-encryption: ACL grants + client-side `instance.userDecrypt()` for user-specific decryption
+- Client-side re-encryption with the Relayer SDK (`@zama-fhe/relayer-sdk`)
 - Privacy analysis: what information leaks when you decrypt?
 - Design patterns: lazy decryption, batched decryption, event-driven reveals
 - Common mistakes: decrypting too early, decrypting to storage, race conditions
 
 ### Hands-on Activities
 
-- **Exercise 1:** Implement a contract that stores an encrypted counter and reveals it on-demand via Gateway callback.
-- **Exercise 2:** Build a "Private Balance Viewer" using `FHE.sealoutput()` so only the balance owner can see their value.
+- **Exercise 1:** Implement a contract that stores an encrypted counter and reveals it on-demand via `FHE.makePubliclyDecryptable()`.
+- **Exercise 2:** Build a "Private Balance Viewer" using ACL + `instance.userDecrypt()` so only the balance owner can see their value.
 - **Exercise 3:** Design and implement a "Timed Reveal" mechanism that decrypts a sealed value after a block deadline.
 - **Quiz:** 10 questions on decryption mechanisms, callbacks, and privacy implications.
 
@@ -442,13 +442,13 @@ By the end of this module, students will be able to:
 
 ### Description
 
-This module bridges the gap between smart contracts and user-facing applications. Students learn to build frontends that interact with fhEVM contracts using `fhevmjs`, ethers.js/viem, and React. Topics include client-side encryption of inputs, re-decryption of sealed outputs, and building a complete dApp workflow.
+This module bridges the gap between smart contracts and user-facing applications. Students learn to build frontends that interact with fhEVM contracts using the Relayer SDK (`@zama-fhe/relayer-sdk`), ethers.js/viem, and React. Topics include client-side encryption of inputs, re-decryption of sealed outputs, and building a complete dApp workflow.
 
 ### Learning Objectives
 
 By the end of this module, students will be able to:
 
-1. Initialize the `fhevmjs` client library and connect it to an fhEVM network.
+1. Initialize the Relayer SDK (`@zama-fhe/relayer-sdk`) client library and connect it to an fhEVM network.
 2. Encrypt user inputs on the frontend and submit them as `externalEuintXX` parameters.
 3. Request and process re-encrypted (sealed) outputs for display to the user.
 4. Build a complete React frontend for an fhEVM contract.
@@ -456,12 +456,12 @@ By the end of this module, students will be able to:
 
 ### Topics Covered
 
-- `fhevmjs` SDK: installation, initialization, `createInstance()`
+- Relayer SDK (`@zama-fhe/relayer-sdk`): installation, initialization, `createInstance()`
 - Client-side encryption: `instance.encrypt()` for different types
 - Submitting encrypted inputs: encoding for contract calls
 - Re-decryption on the frontend: requesting sealed output, decrypting with user key
 - React integration patterns: hooks, state management for encrypted data
-- ethers.js and viem integration with fhEVM
+- ethers.js and viem integration with the Relayer SDK and fhEVM
 - Wallet connection: MetaMask, WalletConnect with fhEVM
 - UX patterns: loading states for async decryption, encrypted value display
 - Error handling: network errors, encryption failures, decryption timeouts
@@ -471,7 +471,7 @@ By the end of this module, students will be able to:
 - **Exercise 1:** Build a React frontend that connects to a deployed encrypted counter contract, encrypts increments, and displays the decrypted count.
 - **Exercise 2:** Implement a "Private Note" dApp where users write encrypted notes and only they can read them back.
 - **Exercise 3:** Create a full dApp interface for the Secret Vault contract from Module 05 with deposit, view balance, and withdraw.
-- **Quiz:** 8 questions on frontend integration, `fhevmjs` API, and client-side encryption.
+- **Quiz:** 8 questions on frontend integration, Relayer SDK API, and client-side encryption.
 
 ---
 
@@ -493,7 +493,7 @@ By the end of this module, students will be able to:
 2. Handle the "sufficient balance" check using `FHE.ge()` and `FHE.select`.
 3. Manage ACL permissions correctly across transfers, approvals, and allowances.
 4. Implement encrypted `approve` and `transferFrom` with proper allowance management.
-5. Add selective balance viewing via `FHE.sealoutput()` for the token holder.
+5. Add selective balance viewing via ACL + client-side `instance.userDecrypt()` for the token holder.
 
 ### Topics Covered
 
@@ -505,13 +505,13 @@ By the end of this module, students will be able to:
 - The "silent fail" pattern: transfers that do nothing when balance is insufficient (no revert, no leak)
 - Encrypted approvals and allowances: `approve`, `transferFrom`
 - ACL management: `FHE.allow()` and `FHE.allowThis()` for every balance update
-- Balance viewing: `FHE.sealoutput()` for the token holder
+- Balance viewing: ACL grants + `instance.userDecrypt()` for the token holder
 - Total supply considerations: public vs encrypted
 - Events: what can and cannot be emitted without leaking information
 
 ### Hands-on Activities
 
-- **Exercise 1:** Implement the core `ConfidentialERC20`: constructor inheriting `ZamaEthereumConfig`, `mint`, `transfer` (using `externalEuint64`, `FHE.fromExternal(value, proof)`, `FHE.ge()`, `FHE.select`), and `balanceOf` (re-encrypted via `FHE.sealoutput()`).
+- **Exercise 1:** Implement the core `ConfidentialERC20`: constructor inheriting `ZamaEthereumConfig`, `mint`, `transfer` (using `externalEuint64`, `FHE.fromExternal(value, proof)`, `FHE.ge()`, `FHE.select`), and `balanceOf` (ACL-gated, client-side decryption via `instance.userDecrypt()`).
 - **Exercise 2:** Add `approve`, `allowance`, and `transferFrom` with encrypted allowances.
 - **Exercise 3:** Write a comprehensive test suite covering transfers, insufficient balances, approvals, and edge cases.
 - **Quiz:** 12 questions on encrypted token design, ACL management, and implementation patterns.
@@ -555,7 +555,7 @@ By the end of this module, students will be able to:
 
 - **Exercise 1:** Implement the core `ConfidentialVoting` contract: create proposal, submit encrypted vote via `externalEuint32`, tally via `FHE.add`.
 - **Exercise 2:** Add voter eligibility (whitelist) and double-vote prevention.
-- **Exercise 3:** Implement tally reveal via Gateway callback and write end-to-end tests.
+- **Exercise 3:** Implement tally reveal via `FHE.makePubliclyDecryptable()` and write end-to-end tests.
 - **Quiz:** 10 questions on confidential voting design and security.
 
 ---
@@ -618,7 +618,7 @@ By the end of this module, students will be able to:
 
 1. Independently design an FHE application architecture from requirements to implementation.
 2. Implement a complete Confidential DAO with encrypted governance, private treasury, and confidential proposals.
-3. Integrate multiple FHE patterns: encrypted inputs (`externalEuintXX` + `FHE.fromExternal(value, proof)`), ACL management, `FHE.select`, Gateway decryption, `FHE.sealoutput()`, and `FHE.randEuintXX()`.
+3. Integrate multiple FHE patterns: encrypted inputs (`externalEuintXX` + `FHE.fromExternal(value, proof)`), ACL management, `FHE.select`, Gateway decryption, `instance.userDecrypt()`, and `FHE.randEuintXX()`.
 4. Write comprehensive tests that validate all encrypted logic paths.
 5. Document the security model, trust assumptions, and known limitations.
 
@@ -720,7 +720,7 @@ Module 14 (Capstone: Confidential DAO)
 | 07 | Decryption Patterns | Intermediate | 3 | Gateway decryption and re-encryption |
 | 08 | Conditional Logic / FHE.select | Intermediate | 3 | Branchless conditional logic with FHE.select |
 | 09 | On-Chain Randomness | Intermediate | 2 | Encrypted random number generation |
-| 10 | Frontend Integration | Intermediate | 3 | Complete dApp with fhevmjs frontend |
+| 10 | Frontend Integration | Intermediate | 3 | Complete dApp with Relayer SDK frontend |
 | 11 | Confidential ERC-20 | Advanced | 4 | Complete encrypted ERC-20 implementation |
 | 12 | Confidential Voting | Advanced | 4 | Working confidential voting system |
 | 13 | Sealed-Bid Auction | Advanced | 4 | Working sealed-bid auction |

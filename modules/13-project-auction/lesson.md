@@ -361,10 +361,10 @@ function endAuction(uint256 auctionId) external onlyOwner {
 }
 ```
 
-Key difference from Gateway-based decryption:
-- **Gateway pattern:** Owner gets ACL access, decrypts via re-encryption, then submits plaintext back on-chain
-- **`makePubliclyDecryptable` pattern:** The encrypted value is marked for public decryption -- anyone can read the result once the FHE network processes it
-- This is simpler and removes the need for the owner to act as a trusted intermediary for decryption
+Key points about public decryption:
+- **`makePubliclyDecryptable` pattern:** The encrypted value is marked for public decryption — anyone can read the result once the decryption oracle processes it
+- **Alternative (re-encryption):** Owner gets ACL access, then decrypts client-side via `instance.userDecrypt()` (Relayer SDK), then submits plaintext back on-chain
+- `makePubliclyDecryptable` is simpler and removes the need for the owner to act as a trusted intermediary
 
 ---
 

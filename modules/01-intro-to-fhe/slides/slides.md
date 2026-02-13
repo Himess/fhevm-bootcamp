@@ -32,6 +32,10 @@ Different keys for encryption/decryption. Example: RSA, ECC
 To compute on encrypted data, you must **decrypt first**.
 Whoever computes, **sees the data**.
 
+<!--
+Speaker notes: Start by grounding students in what they already know about encryption. The key insight to land here is: traditional encryption forces you to choose between security and usability. Pause on "whoever computes, sees the data" -- this is the exact problem FHE solves.
+-->
+
 ---
 
 # What is Homomorphic Encryption?
@@ -58,6 +62,10 @@ Encryption that allows **computation directly on ciphertext**.
 
 Nobody sees individual votes. The tally is mathematically correct.
 
+<!--
+Speaker notes: The ballot box analogy is the most intuitive way to explain FHE. Linger on this -- ask students to think about what other real-world processes work this way. This analogy maps directly to the voting contract in Module 12.
+-->
+
 ---
 
 # Types of Homomorphic Encryption
@@ -75,6 +83,10 @@ Nobody sees individual votes. The tally is mathematically correct.
 **PHE** (1977 - RSA, 1999 - Paillier): Only one operation type
 **SHE**: Both operations but noise accumulates, eventually corrupts data
 **FHE** (2009 - Gentry): **Bootstrapping** refreshes ciphertexts, enabling unlimited operations
+
+<!--
+Speaker notes: Emphasize the historical progression -- FHE was considered a "holy grail" of cryptography for decades. The breakthrough was Gentry's bootstrapping technique in 2009. Students do not need to understand the math, just the capability hierarchy.
+-->
 
 ---
 
@@ -101,6 +113,10 @@ Nobody sees individual votes. The tally is mathematically correct.
                                     Private key --> Decrypt --> Result
 ```
 
+<!--
+Speaker notes: Walk through the diagram step by step. The key differentiator of TFHE is fast bootstrapping -- this is what makes it practical for smart contracts. Mention that Zama's TFHE-rs library handles all of this under the hood.
+-->
+
 ---
 
 # The Blockchain Privacy Problem
@@ -124,6 +140,10 @@ uint256 private secretNumber = 42;
 ```
 
 `private` only restricts **other contracts**, not external observers.
+
+<!--
+Speaker notes: This is often a shock to new blockchain developers. Demo eth_getStorageAt if possible to show how trivial it is to read "private" variables. This drives home why FHE is needed -- Solidity's privacy model is fundamentally broken.
+-->
 
 ---
 
@@ -151,6 +171,10 @@ uint256 private secretNumber = 42;
 **FHE provides the strongest privacy guarantee:**
 Data is **never** decrypted during computation.
 
+<!--
+Speaker notes: Spend time on this comparison table -- students often confuse ZK proofs with FHE. ZK proves facts about hidden data but cannot compute on it. FHE computes on hidden data. TEEs require hardware trust. Ask: "Which solution would you want for a private voting system?"
+-->
+
 ---
 
 # About Zama
@@ -172,6 +196,10 @@ Data is **never** decrypted during computation.
 - **fhEVM Coprocessor** -- Off-chain FHE computation for blockchain
 
 **Deployment:** Ethereum Sepolia (testnet) + Ethereum Mainnet
+
+<!--
+Speaker notes: Give a brief overview of Zama as a company to build credibility. Mention that TFHE-rs is the engine underneath everything we will use in this bootcamp. Pascal Paillier (CTO) is the creator of the Paillier cryptosystem from the previous slide.
+-->
 
 ---
 
@@ -195,6 +223,10 @@ Zama's framework that brings FHE to the Ethereum Virtual Machine.
 - Still EVM-compatible
 - Still Hardhat / Foundry
 - Still ethers.js / wagmi
+
+<!--
+Speaker notes: This is the "aha" moment for Solidity developers. Show the side-by-side comparison and emphasize that fhEVM is not a new language -- it is a library on top of Solidity. The learning curve is about new patterns, not new syntax.
+-->
 
 ---
 
@@ -226,6 +258,10 @@ Zama's framework that brings FHE to the Ethereum Virtual Machine.
 | **Gateway**        | Enforces ACL for decryption requests               |
 | **KMS**            | Distributed key management, threshold decryption   |
 
+<!--
+Speaker notes: Walk through the architecture diagram top to bottom. Emphasize that FHE operations do NOT run inside the EVM itself -- they are offloaded to the coprocessor. The Gateway and KMS handle the sensitive task of decryption with threshold security.
+-->
+
 ---
 
 # Encrypted Data Types
@@ -242,6 +278,10 @@ fhEVM provides encrypted equivalents for common Solidity types:
 | `uint128`   | `euint128`  | Large balances                |
 | `uint256`   | `euint256`  | Hashes, very large values     |
 | `address`   | `eaddress`  | Hidden recipients             |
+
+<!--
+Speaker notes: Point out the naming convention: just add "e" prefix to the type. This table is a reference students will come back to repeatedly. Mention that euint64 is the most commonly used type for token balances.
+-->
 
 ---
 
@@ -269,6 +309,10 @@ fhEVM provides encrypted equivalents for common Solidity types:
 - Hidden hands in card games
 - Fog-of-war in strategy games
 
+<!--
+Speaker notes: Go through use cases briefly and ask students which ones excite them most. Mention that we will actually build three of these (token, voting, auction) in the project modules. These are not theoretical -- they are buildable today.
+-->
+
 ---
 
 # Data Flow: Encrypted Transfer
@@ -292,6 +336,10 @@ fhEVM provides encrypted equivalents for common Solidity types:
      Gateway checks ACL --> KMS threshold-decrypts --> User sees balance
 ```
 
+<!--
+Speaker notes: Walk through each numbered step slowly. This end-to-end flow is the mental model students need for every FHEVM application. Emphasize step 3 -- the FHE operations happen on ciphertext, and even validators cannot see the amounts.
+-->
+
 ---
 
 # FHE: The Missing Piece
@@ -312,6 +360,10 @@ fhEVM provides encrypted equivalents for common Solidity types:
 Build applications that were **previously impossible** on public blockchains:
 private DeFi, secret voting, sealed auctions, confidential identity, and more.
 
+<!--
+Speaker notes: This is the motivational slide. Make the connection between blockchain's trustlessness and FHE's confidentiality -- together, they unlock applications that were impossible with either alone. Transition to the takeaways.
+-->
+
 ---
 
 # Key Takeaways
@@ -324,5 +376,9 @@ private DeFi, secret voting, sealed auctions, confidential identity, and more.
 6. **Architecture:** Smart Contract + Coprocessor + Gateway + KMS
 7. **Encrypted types:** `euint64`, `ebool`, `eaddress` replace standard types
 8. **Use cases:** DeFi privacy, voting, auctions, gaming, identity, healthcare
+
+<!--
+Speaker notes: Quickly review the 8 takeaways and ask if students have any questions about the concepts before we move to hands-on setup. This is the last theory-heavy module -- from Module 02 onward, we write code.
+-->
 
 **Next: Module 02 -- fhEVM Development Setup**

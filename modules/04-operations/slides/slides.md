@@ -22,6 +22,10 @@ Arithmetic, bitwise, and comparison operations on encrypted values.
 
 Plus: `min`, `max`, `neg`
 
+<!--
+Speaker notes: Give students a high-level map before diving in. The three categories cover different needs: arithmetic for math, bitwise for flags and masks, comparison for branching logic. Comparisons return ebool, which is the bridge to conditional logic in Module 08.
+-->
+
 ---
 
 # Arithmetic Operations
@@ -37,6 +41,10 @@ FHE.div(a, 3);   // 3  (plaintext divisor only!)
 FHE.rem(a, 3);   // 1  (plaintext divisor only!)
 FHE.neg(a);      // 2^32 - 10
 ```
+
+<!--
+Speaker notes: Walk through each operation with the concrete values. Highlight that div and rem require a plaintext second operand -- this is a fundamental limitation we will explain on the next slide. neg computes the two's complement, not negative in the traditional sense.
+-->
 
 ---
 
@@ -54,6 +62,10 @@ FHE.div(encryptedA, encryptedB);
 
 Dividing two encrypted values is not supported in the current FHE scheme.
 
+<!--
+Speaker notes: This is a common question: "Why can't I divide two encrypted numbers?" The answer is that encrypted division requires knowing the divisor to set up the computation. This is a TFHE limitation. If students need encrypted division, guide them toward alternative approaches like multiplication by inverse.
+-->
+
 ---
 
 # Bitwise Operations
@@ -67,6 +79,10 @@ FHE.or(a, b);   // 0b11101110
 FHE.xor(a, b);  // 0b01100110
 FHE.not(a);     // 0b00110011
 ```
+
+<!--
+Speaker notes: Bitwise operations are useful for flag manipulation and efficient storage patterns. They are also the cheapest FHE operations after NOT. Ask students when they might use XOR in a smart contract context -- hint: toggling flags.
+-->
 
 ---
 
@@ -86,6 +102,10 @@ euint32 x = FHE.asEuint32(1);
 euint32 result = FHE.shl(x, 3);  // 1 << 3 = 8
 ```
 
+<!--
+Speaker notes: Note the important constraint that shift amount is always euint8 or uint8, regardless of the operand type. Shift left is equivalent to multiplication by powers of 2 and can be more gas-efficient than FHE.mul() for those cases.
+-->
+
 ---
 
 # Comparison Operations
@@ -103,6 +123,10 @@ ebool r4 = FHE.ge(a, b);   // encrypted false
 ebool r5 = FHE.lt(a, b);   // encrypted true
 ebool r6 = FHE.le(a, b);   // encrypted true
 ```
+
+<!--
+Speaker notes: Comparisons are the gateway to conditional logic. Every comparison returns an ebool, which you cannot use in an if statement. Instead, you pass ebool to FHE.select() -- we will cover this in depth in Module 08. Memorize these six operators.
+-->
 
 ---
 
@@ -122,6 +146,10 @@ euint32 larger  = FHE.max(a, b); // 20
 value = FHE.max(value, FHE.asEuint32(10));
 value = FHE.min(value, FHE.asEuint32(100));
 ```
+
+<!--
+Speaker notes: min and max are extremely useful for clamping values to a range. They use FHE.select() internally, so they are slightly more expensive than a simple comparison. The clamping pattern shown here is common in token contracts and game logic.
+-->
 
 ---
 
@@ -145,6 +173,10 @@ FHE.add(encryptedVal, 5);  // OK
 FHE.eq(encryptedVal, 42);  // OK
 ```
 
+<!--
+Speaker notes: Cross-type operations are a convenience feature -- the smaller type is automatically upcast. The plaintext operand support means you do not need to wrap every constant in FHE.asEuintXX(). This saves gas and makes code cleaner.
+-->
+
 ---
 
 # Overflow Behavior
@@ -163,6 +195,10 @@ euint8 diff = FHE.sub(b, FHE.asEuint8(10));
 
 **You must check bounds manually!**
 
+<!--
+Speaker notes: This is a critical safety concern. Unlike standard Solidity (which reverts on overflow since 0.8), FHEVM wraps silently. Since the values are encrypted, you cannot even see the overflow happen. Always use comparisons before arithmetic to prevent unexpected wrapping.
+-->
+
 ---
 
 # Safe Subtraction Pattern
@@ -180,6 +216,10 @@ function safeSub(
 
 Uses `FHE.select()` (covered in detail in Module 08).
 
+<!--
+Speaker notes: This safe subtraction pattern is one of the most important reusable building blocks. Walk through it step by step: check if a >= b, compute the difference, then select either the difference or zero. This exact pattern appears in the ERC-20 transfer function.
+-->
+
 ---
 
 # Gas Cost Ranking
@@ -195,6 +235,10 @@ MIN/MAX     ████████░░
 MUL         █████████░
 DIV/REM     ██████████  Most Expensive
 ```
+
+<!--
+Speaker notes: Use this chart when students ask "why not just use mul for everything?" The gas cost difference between NOT and MUL is enormous. When optimizing FHEVM contracts, replace multiplication with shifts where possible, and minimize comparisons and divisions.
+-->
 
 ---
 
@@ -212,6 +256,10 @@ function increment(uint32 amount) public {
 }
 ```
 
+<!--
+Speaker notes: This practical example combines add, min, and allowThis in a real pattern. The clamp to MAX prevents overflow. Ask students: "What would happen without the FHE.min() call if someone incremented past MAX?" Answer: wrapping behavior.
+-->
+
 ---
 
 # Summary
@@ -228,6 +276,10 @@ function increment(uint32 amount) public {
 - Wrapping arithmetic (no reverts)
 - Handle bounds with comparisons + `FHE.select()`
 
+<!--
+Speaker notes: This summary table is a reference card for students. Encourage them to bookmark or print this slide. The key takeaway is that FHEVM gives you a complete arithmetic and logic toolkit, but overflow handling is your responsibility.
+-->
+
 ---
 
 # Next Up
@@ -235,3 +287,7 @@ function increment(uint32 amount) public {
 **Module 05: Access Control (ACL)**
 
 Learn `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, `FHE.isSenderAllowed()`, and `FHE.makePubliclyDecryptable()`.
+
+<!--
+Speaker notes: Transition to the next module by saying: "We now know the types and operations, but who gets to USE the results?" ACL is the permission layer that controls access to encrypted data.
+-->

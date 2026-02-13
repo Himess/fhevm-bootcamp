@@ -25,6 +25,10 @@ Alice bids 100 ETH  (visible in mempool)
 - Bid sniping: last-second bids based on current highest
 - Collusion: bidders coordinate based on visible bids
 
+<!--
+Speaker notes: Start with the MEV problem to motivate the auction design. Front-running is a real issue that costs DeFi users millions. Bid sniping and collusion are additional problems in standard on-chain auctions. Ask students if they have experienced any of these.
+-->
+
 ---
 
 # FHE Solution: Encrypted Bids
@@ -38,6 +42,10 @@ Contract compares encrypted bids
 Nobody knows who is winning
 Auction ends -> winner revealed
 ```
+
+<!--
+Speaker notes: The FHE solution is elegant: all bids are encrypted, the contract compares them while they remain encrypted, and nobody knows who is winning until the auction ends. This eliminates all three problems from the previous slide in one design.
+-->
 
 ---
 
@@ -53,6 +61,10 @@ Auction ends -> winner revealed
    - FHE.makePubliclyDecryptable() reveals results
 5. Losers call withdrawDeposit(auctionId)
 ```
+
+<!--
+Speaker notes: Walk through the full auction lifecycle. Note the ETH deposit requirement -- this ensures bidders have skin in the game. The endAuction function uses makePubliclyDecryptable instead of the Gateway, which simplifies the reveal process. Losers can withdraw their deposits after the auction ends.
+-->
 
 ---
 
@@ -75,6 +87,10 @@ _highestBidder[auctionId] = FHE.select(
     _highestBidder[auctionId]);
 ```
 
+<!--
+Speaker notes: This is the core comparison logic. FHE.gt compares the new bid against the current highest. FHE.select updates both the highest bid and the highest bidder if the new bid is higher. Both use the same ebool condition, ensuring consistency. Nobody can see which bid is winning.
+-->
+
 ---
 
 # The eaddress Pattern
@@ -92,6 +108,10 @@ FHE.select(isHigher,
 ```
 
 The winner's identity is encrypted until `endAuction()` is called.
+
+<!--
+Speaker notes: eaddress is used here to hide the winner's identity during the auction. FHE.asEaddress converts a plaintext address to an encrypted one, and FHE.select picks between encrypted addresses. This is the first practical use of eaddress in the bootcamp -- it was introduced in Module 03.
+-->
 
 ---
 
@@ -117,6 +137,10 @@ contract SealedBidAuction is ZamaEthereumConfig {
 }
 ```
 
+<!--
+Speaker notes: Review the contract structure. Note the separation between the plaintext Auction struct and the encrypted mappings. Encrypted data (bids, highest bid, highest bidder) uses separate mappings because Solidity structs cannot contain encrypted types directly. Deposits are plaintext ETH amounts.
+-->
+
 ---
 
 # Creating an Auction
@@ -138,6 +162,10 @@ function createAuction(
     FHE.allowThis(_highestBidder[id]);
 }
 ```
+
+<!--
+Speaker notes: The auction creation initializes both the highest bid (encrypted zero) and the highest bidder (encrypted zero address). Both require allowThis. The reserve price is plaintext -- it is a public minimum that all bidders should know. The deadline uses block.timestamp for simplicity.
+-->
 
 ---
 
@@ -165,6 +193,10 @@ function bid(
 }
 ```
 
+<!--
+Speaker notes: Walk through the bid function. It requires ETH deposit and enforces one-bid-per-user. The encrypted bid is converted with FHE.fromExternal, then compared against the current highest. Both the highest bid and bidder are updated atomically using the same isHigher condition. Note the ACL grants for the new highest values.
+-->
+
 ---
 
 # Ending the Auction: makePubliclyDecryptable
@@ -182,6 +214,10 @@ function endAuction(uint256 auctionId) external onlyOwner {
 ```
 
 Anyone can read the result once the FHE network processes it.
+
+<!--
+Speaker notes: The endAuction function is simple: check deadline, check not already ended, then make both the highest bid and bidder publicly decryptable. No Gateway callback needed. After the FHE network processes it, anyone can read the winner and winning bid.
+-->
 
 ---
 
@@ -204,6 +240,10 @@ function withdrawDeposit(uint256 auctionId) external {
 }
 ```
 
+<!--
+Speaker notes: Deposit handling uses the checks-effects-interactions pattern: check ended, check not winner, zero the deposit before transferring ETH. The winner's deposit stays in the contract as payment. Losers get their full deposit back. Discuss potential improvements like partial deposit locking.
+-->
+
 ---
 
 # FHE vs. Commit-Reveal
@@ -215,6 +255,10 @@ function withdrawDeposit(uint256 auctionId) external {
 | Bidder can grief (not reveal) | **Yes** | **No** |
 | On-chain comparison | After reveal | **While encrypted** |
 | Front-running protection | Partial | **Full** |
+
+<!--
+Speaker notes: This comparison highlights FHE's advantages over commit-reveal. The biggest win: no reveal phase means no griefing. In commit-reveal, a bidder can refuse to reveal and block the auction. With FHE, the contract can determine the winner without any bidder action.
+-->
 
 ---
 
@@ -228,6 +272,10 @@ ebool isHigher = FHE.gt(newBid, _highestBid[auctionId]);
 // To prefer later bidder on ties:
 ebool isHigherOrEqual = FHE.ge(newBid, _highestBid[auctionId]);
 ```
+
+<!--
+Speaker notes: Tie handling is a design decision. FHE.gt means the first bidder wins ties (first-come advantage). FHE.ge means the last bidder wins ties (recency advantage). Neither approach reveals tie information. Discuss which is fairer with students.
+-->
 
 ---
 
@@ -243,6 +291,10 @@ ebool isHigherOrEqual = FHE.ge(newBid, _highestBid[auctionId]);
 | Final price | Public after makePubliclyDecryptable |
 
 **For max privacy:** Use fixed deposit amounts for all bidders.
+
+<!--
+Speaker notes: Walk through the privacy table. The main leak is deposit amounts, which are visible ETH transfers. If Alice deposits 10 ETH and Bob deposits 1 ETH, observers can infer Alice's bid is higher. Fixed deposits solve this: everyone deposits the same amount, eliminating this side channel.
+-->
 
 ---
 
@@ -265,6 +317,10 @@ const tx = await contract.bid(
 await tx.wait();
 ```
 
+<!--
+Speaker notes: The frontend bid code shows the complete flow: encrypt the bid amount with add64, then call bid with the encrypted handle, proof, and ETH value. The ETH deposit is sent as msg.value using the standard ethers.js value option.
+-->
+
 ---
 
 # Summary
@@ -278,6 +334,10 @@ await tx.wait();
 - `withdrawDeposit()` lets losers reclaim ETH
 - Fixed deposits improve privacy
 
+<!--
+Speaker notes: Recap the auction module. This is the most complex project so far, combining encrypted inputs, FHE comparisons, eaddress, FHE.select, makePubliclyDecryptable, and ETH handling. Students now have three complete project examples to reference for their capstone.
+-->
+
 ---
 
 # Next Up
@@ -285,3 +345,7 @@ await tx.wait();
 **Module 14: Capstone -- Confidential DAO**
 
 Combine tokens, voting, and treasury into a full DAO!
+
+<!--
+Speaker notes: Transition to the capstone by saying: "You have built tokens, voting, and auctions. Now we combine them all into a complete DAO -- the ultimate FHEVM application."
+-->

@@ -25,6 +25,10 @@ Master every encrypted data type in FHEVM.
 | `euint256` | 256 | Hashes, full range |
 | `eaddress` | 160 | Hidden recipients |
 
+<!--
+Speaker notes: Have students refer back to this table throughout the bootcamp. The most commonly used types are euint32 (general purpose), euint64 (balances), and ebool (conditions). Mention that euint256 has limited operations -- no arithmetic comparisons beyond eq/ne.
+-->
+
 ---
 
 # What is a Handle?
@@ -43,6 +47,10 @@ EVM Storage              FHE Co-processor
 - One storage slot per encrypted variable
 - Handle `0` = uninitialized / invalid
 
+<!--
+Speaker notes: This is a critical concept -- encrypted values are not stored in the EVM directly. The EVM holds a uint256 handle that points to the actual ciphertext in the coprocessor. Think of handles like file descriptors or pointers. A handle of 0 means "no value" and will cause operations to revert.
+-->
+
 ---
 
 # Creating Encrypted Values
@@ -56,6 +64,10 @@ euint64 big     = FHE.asEuint64(999999999);
 ```
 
 All use the pattern: `FHE.asXXX(plaintext)`
+
+<!--
+Speaker notes: The FHE.asXXX() pattern is how you convert plaintext to ciphertext on-chain. Stress that the plaintext value IS visible in the transaction calldata -- this is fine for constants and initialization, but not for user secrets. Module 06 covers truly private inputs.
+-->
 
 ---
 
@@ -74,6 +86,10 @@ Use cases:
 - Anonymous voting
 - Hidden transfer recipients
 - Sealed-bid auctions
+
+<!--
+Speaker notes: eaddress is unique to FHEVM -- no other FHE framework has this. It enables hiding who the recipient of a transaction or winner of an auction is. Ask students to think about what other use cases benefit from hiding addresses.
+-->
 
 ---
 
@@ -95,6 +111,10 @@ contract Vault is ZamaEthereumConfig {
 }
 ```
 
+<!--
+Speaker notes: This is the most important pattern in all of FHEVM. Every time you write to an encrypted state variable, you MUST call FHE.allowThis(). Point out the three places: constructor, deposit, and any other function that modifies _balance. This pattern will repeat in every contract.
+-->
+
 ---
 
 # Storage Pattern: Mappings
@@ -110,6 +130,10 @@ function _setBalance(address user, uint32 amount) internal {
 ```
 
 Mappings work exactly like regular Solidity — each value is a handle.
+
+<!--
+Speaker notes: Show that the mapping pattern is identical to standard Solidity -- the only difference is the ACL calls. Point out the dual grant: allowThis for the contract and allow for the user. This dual-grant pattern is what enables users to decrypt their own balances.
+-->
 
 ---
 
@@ -133,6 +157,10 @@ FHE.allow(_secretValue, msg.sender);   // Caller can decrypt/view it
 
 > **Deep dive:** Module 05 covers `allowTransient` and multi-party access patterns.
 
+<!--
+Speaker notes: Explain the "why" behind the two permissions: allowThis is needed because even the contract that created the value loses access in the next transaction. allow is for users who need to see their own data. This is the most common source of bugs -- forgetting either one.
+-->
+
 ---
 
 # The Golden Rules
@@ -148,6 +176,10 @@ constructor() {
     FHE.allowThis(_value);
 }
 ```
+
+<!--
+Speaker notes: The "always initialize" rule catches many beginners. An uninitialized euint32 has handle 0, and any FHE operation on handle 0 will fail. Make this a class mantra: "Initialize, then allowThis."
+-->
 
 ---
 
@@ -168,6 +200,10 @@ euint8 age;    // GOOD: 8 bits is enough
 euint256 age;  // BAD: wastes gas
 ```
 
+<!--
+Speaker notes: Rule 2 (allowThis after updates) is worth repeating: every FHE operation creates a NEW handle, so the old ACL does not apply. Rule 3 (smallest type) directly impacts gas costs, which we will quantify on the next slide.
+-->
+
 ---
 
 # Plaintext Warning
@@ -182,6 +218,10 @@ function setSecret(uint32 val) public {
 `FHE.asEuintXX()` encrypts on-chain, but the **input is plaintext**.
 
 For truly private inputs: use `externalEuintXX` + `FHE.fromExternal()` (Module 06).
+
+<!--
+Speaker notes: This is a crucial warning that students often miss. FHE.asEuint32(42) encrypts the value on-chain, but the number 42 is plaintext in the transaction calldata. Anyone reading the blockchain can see it. For user-provided secrets, always use externalEuintXX.
+-->
 
 ---
 
@@ -198,6 +238,10 @@ euint256 ████████████████████  Highest
 ```
 
 **Rule:** Smallest type that fits = cheapest operations.
+
+<!--
+Speaker notes: Use this gas bar chart to justify the "smallest type" rule. The difference between ebool and euint256 can be 10x or more in gas. For a contract doing many operations, this adds up significantly.
+-->
 
 ---
 
@@ -216,6 +260,10 @@ Need arithmetic operations?
 
 > Rule of thumb: Use the smallest type that fits your data.
 > Smaller types = lower gas costs.
+
+<!--
+Speaker notes: Walk through the decision tree with students. Ask: "What type would you use for a token balance? For an age check? For a flag?" Have students practice choosing types before showing the answer. Highlight the euint256 warning -- no arithmetic operations supported.
+-->
 
 ---
 
@@ -236,6 +284,10 @@ euint8 truncated = FHE.asEuint8(big); // 300 mod 256 = 44!
 ## Casting chain:
 `ebool <-> euint8 <-> euint16 <-> euint32 <-> euint64 <-> euint128 <-> euint256`
 
+<!--
+Speaker notes: Upcasting is always safe because the value fits in the larger type. Downcasting is dangerous because it truncates silently -- there is no revert. This is similar to how Solidity handles uint casting, but with encrypted values you cannot even check the result. Warn students to be very careful with downcasting.
+-->
+
 ---
 
 # Summary
@@ -247,6 +299,10 @@ euint8 truncated = FHE.asEuint8(big); // 300 mod 256 = 44!
 5. Use **`FHE.allowThis()`** for contract access and **`FHE.allow()`** for user access
 6. Use the **smallest suitable type** to save gas
 
+<!--
+Speaker notes: Review these six summary points as a checklist. Ask students to close their laptops and name the three golden rules from memory. Reinforce: initialize, allowThis after every update, smallest type.
+-->
+
 ---
 
 # Next Up
@@ -254,3 +310,7 @@ euint8 truncated = FHE.asEuint8(big); // 300 mod 256 = 44!
 **Module 04: Operations on Encrypted Data**
 
 Learn arithmetic, bitwise, and comparison operations on encrypted values.
+
+<!--
+Speaker notes: Transition by saying we now know how to declare encrypted types, and next we need to learn what operations we can perform on them. Module 04 is the "operator reference" module.
+-->

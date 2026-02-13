@@ -432,7 +432,7 @@ The fhEVM ecosystem consists of four main components that work together to enabl
 
 ```mermaid
 flowchart TD
-    User["User / dApp<br/>(fhevmjs SDK)"]
+    User["User / dApp<br/>(Relayer SDK)"]
     SC["Smart Contract<br/>(Solidity + FHE.sol)"]
     CP["Coprocessor<br/>(FHE Operations)"]
     GW["Gateway<br/>(Access Control)"]
@@ -495,7 +495,7 @@ The KMS is a distributed threshold decryption service that holds the global FHE 
 ```mermaid
 sequenceDiagram
     participant User as User (Frontend)
-    participant SDK as fhevmjs SDK
+    participant SDK as Relayer SDK
     participant Contract as Smart Contract
     participant Coprocessor as FHE Coprocessor
     participant Gateway as Gateway

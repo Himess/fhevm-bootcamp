@@ -106,6 +106,12 @@ describe("ConfidentialVoting", function () {
     const noHandle = await voting.getNoVotes(0);
     expect(yesHandle).to.not.equal(ethers.ZeroHash);
     expect(noHandle).to.not.equal(ethers.ZeroHash);
+
+    // Store results via setResults
+    await (await voting.setResults(0, 2, 1)).wait();
+    const proposal = await voting.proposals(0);
+    expect(proposal.yesResult).to.equal(2n);
+    expect(proposal.noResult).to.equal(1n);
   });
 
   it("should reject vote on invalid proposal", async function () {
@@ -124,6 +130,84 @@ describe("ConfidentialVoting", function () {
   it("should only allow owner to create proposals", async function () {
     try {
       await voting.connect(alice).createProposal("Unauthorized", 3600);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Not the owner");
+    }
+  });
+
+  it("should store results via setResults", async function () {
+    await (await voting.createProposal("Results Test", 100)).wait();
+
+    // Alice votes yes
+    const encYes = await fhevm
+      .createEncryptedInput(votingAddress, alice.address)
+      .add8(1)
+      .encrypt();
+    await (await voting.connect(alice).vote(0, encYes.handles[0], encYes.inputProof)).wait();
+
+    // Bob votes no
+    const encNo = await fhevm
+      .createEncryptedInput(votingAddress, bob.address)
+      .add8(0)
+      .encrypt();
+    await (await voting.connect(bob).vote(0, encNo.handles[0], encNo.inputProof)).wait();
+
+    // Advance time past deadline
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+
+    // Reveal (make publicly decryptable)
+    await (await voting.revealResult(0)).wait();
+
+    // Set results (admin stores plaintext values)
+    await (await voting.setResults(0, 1, 1)).wait();
+
+    // Check results are stored
+    const proposal = await voting.proposals(0);
+    expect(proposal.revealed).to.equal(true);
+    expect(proposal.yesResult).to.equal(1n);
+    expect(proposal.noResult).to.equal(1n);
+  });
+
+  it("should prevent double setResults", async function () {
+    await (await voting.createProposal("Double Set Test", 100)).wait();
+
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+
+    await (await voting.revealResult(0)).wait();
+    await (await voting.setResults(0, 0, 0)).wait();
+
+    try {
+      await voting.setResults(0, 0, 0);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Already revealed");
+    }
+  });
+
+  it("should reject revealResult before deadline", async function () {
+    await (await voting.createProposal("Early Reveal Test", 3600)).wait();
+
+    try {
+      await voting.revealResult(0);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Voting not ended");
+    }
+  });
+
+  it("should reject setResults from non-owner", async function () {
+    await (await voting.createProposal("Auth Test", 100)).wait();
+
+    await ethers.provider.send("evm_increaseTime", [101]);
+    await ethers.provider.send("evm_mine", []);
+
+    await (await voting.revealResult(0)).wait();
+
+    try {
+      await voting.connect(alice).setResults(0, 0, 0);
       expect.fail("Should have reverted");
     } catch (error: any) {
       expect(error.message).to.include("Not the owner");

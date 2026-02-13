@@ -1,6 +1,6 @@
 # Module 10: Frontend Integration
 
-> Connect your dApp frontend to FHEVM contracts using fhevmjs, encrypted inputs, and user decryption.
+> Connect your dApp frontend to FHEVM contracts using the Relayer SDK (`@zama-fhe/relayer-sdk`), encrypted inputs, and user decryption.
 
 | | |
 |---|---|
@@ -12,7 +12,7 @@
 
 By the end of this module, you will be able to:
 
-1. Set up fhevmjs in a React + ethers.js frontend
+1. Set up the Relayer SDK (`@zama-fhe/relayer-sdk`) in a React + ethers.js frontend
 2. Create encrypted inputs from the browser and send them to FHEVM contracts
 3. Request decryption of encrypted values for the connected user
 4. Build a complete dApp with a per-user encrypted counter contract
@@ -30,10 +30,10 @@ By the end of this module, you will be able to:
 
 ## Key Concepts
 
-- **fhevmjs** -- JavaScript/TypeScript library for interacting with FHEVM from the browser
+- **Relayer SDK (`@zama-fhe/relayer-sdk`)** -- JavaScript/TypeScript library for interacting with FHEVM from the browser
 - **Encrypted Inputs** -- Client-side encryption of plaintext values before sending to contracts
 - **User Decryption** -- Requesting the gateway to re-encrypt a ciphertext for the user's key
-- **FHE Instance** -- The fhevmjs object that holds the public key and provides encrypt/decrypt methods
+- **FHE Instance** -- The Relayer SDK object that holds the public key and provides encrypt/decrypt methods
 - **`externalEuint32` / `FHE.fromExternal()`** -- External types received from frontend, converted on-chain
 
 ## Next Module

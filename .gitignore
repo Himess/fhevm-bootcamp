@@ -15,3 +15,6 @@ slides-output/
 hardhat.config.ts.bak
 .vscode/
 .idea/
+zama_docs/
+plan*.md
+TODO_REPORT.md

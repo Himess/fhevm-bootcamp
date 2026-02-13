@@ -112,12 +112,12 @@ function myFunction(
 The client first retrieves the network's FHE public key:
 
 ```javascript
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 
 const provider = new BrowserProvider(window.ethereum);
 const instance = await createInstance({
-  networkUrl: await provider.send("eth_chainId", []),
-  gatewayUrl: "https://gateway.zama.ai",
+  network: await provider.send("eth_chainId", []),
+  relayerUrl: "https://gateway.zama.ai",
 });
 ```
 
@@ -219,7 +219,7 @@ contract SealedBidAuction is ZamaEthereumConfig {
 ### Client Code
 
 ```javascript
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 import { ethers } from "ethers";
 
 async function submitBid(contractAddress, bidAmount) {
@@ -229,7 +229,7 @@ async function submitBid(contractAddress, bidAmount) {
 
     // Create FHEVM instance
     const instance = await createInstance({
-        networkUrl: provider,
+        network: provider,
     });
 
     // Encrypt the bid
@@ -386,7 +386,7 @@ The API is functionally identical but differs slightly between environments:
 
 | Environment | API |
 |-------------|-----|
-| Browser (fhevmjs) | `instance.input.createEncryptedInput(contractAddr, userAddr)` |
+| Browser (Relayer SDK) | `instance.input.createEncryptedInput(contractAddr, userAddr)` |
 | Hardhat Tests | `fhevm.createEncryptedInput(contractAddr, signerAddr)` |
 
 The `fhevm` object in Hardhat is provided by `@fhevm/hardhat-plugin`. Both produce the same `{ handles, inputProof }` output.
@@ -399,7 +399,7 @@ const encrypted = await fhevm
   .encrypt();
 await contract.myFunction(encrypted.handles[0], encrypted.inputProof);
 
-// Browser (fhevmjs)
+// Browser (Relayer SDK)
 const input = await instance.input.createEncryptedInput(contractAddress, userAddress);
 input.add32(42);
 const encrypted = await input.encrypt();
@@ -419,6 +419,6 @@ await contract.myFunction(encrypted.handles[0], encrypted.inputProof);
 | **Conversion** | `FHE.fromExternal(input, inputProof)` validates ZK proof and returns `euintXX` |
 | **Parameters** | Function must accept both `externalEuintXX` and `bytes calldata inputProof` |
 | **ZK proof** | Automatically verified — ensures well-formedness and range validity |
-| **Client library** | `fhevmjs` handles encryption and proof generation |
+| **Client library** | Relayer SDK (`@zama-fhe/relayer-sdk`) handles encryption and proof generation |
 
 **Rule of thumb:** If the plaintext value should be private, always use `externalEuintXX` + `bytes calldata inputProof` + `FHE.fromExternal(input, inputProof)`. Reserve `FHE.asEuintXX()` for non-sensitive constants and contract-internal values.

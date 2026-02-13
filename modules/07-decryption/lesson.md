@@ -103,7 +103,7 @@ const boolValue = await fhevm.userDecryptEbool(
 expect(boolValue).to.equal(true);
 ```
 
-**In Browser (fhevmjs):**
+**In Browser (Relayer SDK):**
 ```javascript
 const { publicKey, privateKey } = instance.generateKeypair();
 const eip712 = instance.createEIP712(publicKey, contractAddress);

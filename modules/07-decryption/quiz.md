@@ -121,7 +121,7 @@ Keeping the comparison encrypted reveals only a boolean result (is it greater?),
 
 ### Question 11
 
-In a browser application using fhevmjs, how does a user decrypt their own encrypted data?
+In a browser application using the Relayer SDK (`@zama-fhe/relayer-sdk`), how does a user decrypt their own encrypted data?
 
 - A) They call a contract function that returns the plaintext
 - B) They use `instance.reencrypt()` with their keypair and EIP-712 signature ✅

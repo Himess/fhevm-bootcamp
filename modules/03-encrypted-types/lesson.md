@@ -12,7 +12,7 @@ FHEVM offers the following encrypted types:
 
 | Encrypted Type | Plaintext Equivalent | Bit Width | Typical Use Case |
 |---------------|---------------------|-----------|-----------------|
-| `ebool` | `bool` | 1 bit | Flags, conditions |
+| `ebool` | `bool` | 2 bits | Flags, conditions |
 | `euint8` | `uint8` | 8 bits | Small counters, scores |
 | `euint16` | `uint16` | 16 bits | Moderate ranges |
 | `euint32` | `uint32` | 32 bits | General purpose integers |
@@ -141,9 +141,11 @@ euint128 private _largeValue;
 euint256 private _hash;
 ```
 
-> **Important Limitation:** `euint256` does NOT support arithmetic operations (add, sub, mul, min, max) or ordering comparisons (le, lt, ge, gt, select). It only supports:
+> **Important Limitation:** `euint256` does NOT support arithmetic operations (add, sub, mul, min, max) or ordering comparisons (le, lt, ge, gt). It supports:
 > - Bitwise: `FHE.and()`, `FHE.or()`, `FHE.xor()`
 > - Equality: `FHE.eq()`, `FHE.ne()`
+> - Shift/Rotate: `FHE.shl()`, `FHE.shr()`, `FHE.rotl()`, `FHE.rotr()`
+> - Conditional: `FHE.select()`
 >
 > Use `euint128` or smaller for arithmetic operations.
 

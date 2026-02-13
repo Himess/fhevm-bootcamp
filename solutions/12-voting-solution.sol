@@ -98,8 +98,6 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         require(block.timestamp > proposals[proposalId].deadline, "Voting not ended");
         require(!proposals[proposalId].revealed, "Already revealed");
 
-        proposals[proposalId].revealed = true;
-
         FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
         FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
 
@@ -108,6 +106,20 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         // and handle the result in a callback function.
         // Here we use makePubliclyDecryptable which marks the values for
         // off-chain decryption by anyone via the KMS.
+    }
+
+    /// @notice Store decrypted vote results after off-chain decryption
+    /// @dev In production, this would be the Gateway callback receiving decrypted values.
+    ///      For the bootcamp, owner submits the values after reading publicly decryptable data.
+    function setResults(uint256 proposalId, uint32 yesResult, uint32 noResult) external onlyOwner {
+        require(proposalId < proposalCount, "Invalid proposal");
+        require(!proposals[proposalId].revealed, "Already revealed");
+
+        proposals[proposalId].revealed = true;
+        proposals[proposalId].yesResult = yesResult;
+        proposals[proposalId].noResult = noResult;
+
+        emit ResultRevealed(proposalId, yesResult, noResult);
     }
 
     /// @notice Check if voting deadline has passed

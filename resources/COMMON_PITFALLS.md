@@ -174,7 +174,7 @@ function setSecret(euint32 encryptedValue) external {
 
 ### Why It Is Wrong
 
-External functions that accept encrypted data from users must use the `externalEuintXX` type. The `euint32` type is an internal ciphertext handle and cannot be directly passed by external callers. The client-side `fhevmjs` library produces encrypted data in the `external` format.
+External functions that accept encrypted data from users must use the `externalEuintXX` type. The `euint32` type is an internal ciphertext handle and cannot be directly passed by external callers. The client-side Relayer SDK (`@zama-fhe/relayer-sdk`) produces encrypted data in the `external` format.
 
 ### Correct
 
@@ -255,8 +255,8 @@ FHE.allowThis(result);
 uint256 public revealedBalance;  // PUBLIC storage!
 
 function revealBalance(euint64 encBalance) external {
-    FHE.makePubliclyDecryptable(encBalance);
-    revealedBalance = FHE.decrypt(encBalance);  // Now anyone can read it forever
+    FHE.makePubliclyDecryptable(encBalance);  // Now anyone can decrypt it forever
+    // Plaintext result must be read off-chain after decryption completes
 }
 ```
 
@@ -267,10 +267,10 @@ Storing a decrypted value in public storage permanently exposes it. Anyone can r
 ### Correct
 
 ```solidity
-// Option A: Use re-encryption so the value never appears in plaintext on-chain
-function getBalance(address user) external view returns (bytes memory) {
+// Option A: Return the encrypted handle -- client decrypts off-chain via instance.userDecrypt()
+function getBalance(address user) external view returns (euint64) {
     require(FHE.isSenderAllowed(balances[user]), "Not authorized");
-    return FHE.sealoutput(balances[user], msg.sender);
+    return balances[user]; // client decrypts off-chain via instance.userDecrypt()
 }
 
 // Option B: If on-chain decryption is truly needed, restrict access and use private storage
@@ -283,7 +283,7 @@ function revealMyBalance() external {
 }
 ```
 
-**Best practice:** Use re-encryption (`FHE.sealoutput`) so the value never appears in plaintext on-chain. Only use `FHE.makePubliclyDecryptable()` for values that genuinely need to be public (e.g., final auction results, game outcomes).
+**Best practice:** Use ACL grants + client-side re-encryption (`instance.userDecrypt`) so the value never appears in plaintext on-chain. Only use `FHE.makePubliclyDecryptable()` for values that genuinely need to be public (e.g., final auction results, game outcomes).
 
 ---
 
@@ -555,13 +555,57 @@ function revealResult(euint64 encResult) external {
     // It can be read by anyone once decrypted
 }
 
-// Option B: Use sealoutput for user-specific private reads (preferred)
-function getMyBalance() external view returns (bytes memory) {
+// Option B: Return encrypted handle for user-specific private reads (preferred)
+function getMyBalance() external view returns (euint64) {
     require(FHE.isSenderAllowed(balances[msg.sender]), "Not authorized");
-    return FHE.sealoutput(balances[msg.sender], msg.sender);
-    // Only the caller can decrypt this sealed output client-side
+    return balances[msg.sender];
+    // Client calls instance.userDecrypt() to re-encrypt and decrypt off-chain
 }
 ```
+
+---
+
+## Pitfall 15: No Error Feedback from Silent Fails
+
+### Wrong
+
+```solidity
+function transfer(address to, euint64 amount) external {
+    ebool hasEnough = FHE.ge(balances[msg.sender], amount);
+    balances[msg.sender] = FHE.select(hasEnough, FHE.sub(balances[msg.sender], amount), balances[msg.sender]);
+    balances[to] = FHE.select(hasEnough, FHE.add(balances[to], amount), balances[to]);
+    // User has no way to know if the transfer succeeded or failed
+}
+```
+
+### Why It Is Wrong
+
+The silent fail pattern is correct for preventing information leakage, but provides zero feedback to the caller. The user cannot distinguish between a successful and failed transfer.
+
+### Correct — LastError Pattern
+
+```solidity
+// Encrypted error code: 0 = no error, non-zero = error occurred
+mapping(address => euint8) private _lastError;
+
+function transfer(address to, euint64 amount) external {
+    ebool hasEnough = FHE.ge(balances[msg.sender], amount);
+
+    balances[msg.sender] = FHE.select(hasEnough, FHE.sub(balances[msg.sender], amount), balances[msg.sender]);
+    balances[to] = FHE.select(hasEnough, FHE.add(balances[to], amount), balances[to]);
+
+    // Store encrypted error code: 0 if success, 1 if insufficient balance
+    _lastError[msg.sender] = FHE.select(hasEnough, FHE.asEuint8(0), FHE.asEuint8(1));
+    FHE.allowThis(_lastError[msg.sender]);
+    FHE.allow(_lastError[msg.sender], msg.sender);
+}
+
+function getLastError() external view returns (euint8) {
+    return _lastError[msg.sender];
+}
+```
+
+**Key insight:** The `LastError` pattern stores an **encrypted** error code, preserving privacy while giving the user feedback they can decrypt client-side via `instance.userDecrypt()`.
 
 ---
 
@@ -582,4 +626,5 @@ function getMyBalance() external view returns (bytes memory) {
 | 11 | Oversized types | Wasted gas | Use smallest sufficient type |
 | 12 | Gas leakage | Side-channel attack | Uniform execution paths |
 | 13 | Missing cross-contract ACL | Unauthorized access | `FHE.allowTransient()` before return |
-| 14 | Incorrect decryption pattern | Wrong data / no decryption | Use `FHE.makePubliclyDecryptable()` or `FHE.sealoutput()` |
+| 14 | Incorrect decryption pattern | Wrong data / no decryption | Use `FHE.makePubliclyDecryptable()` or return handle + `instance.userDecrypt()` |
+| 15 | No error feedback | User confusion | Use `LastError` encrypted error pattern |

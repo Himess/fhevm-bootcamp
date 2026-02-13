@@ -104,7 +104,7 @@ How does the frontend send an encrypted transfer amount?
 - C) `contract.transfer(to, FHE.encrypt(amount))`
 - D) The contract encrypts it automatically
 
-> The frontend uses fhevmjs to encrypt the amount client-side, then passes the encrypted bytes as the `externalEuint64` parameter.
+> The frontend uses the Relayer SDK (`@zama-fhe/relayer-sdk`) to encrypt the amount client-side, then passes the encrypted bytes as the `externalEuint64` parameter.
 
 ---
 

@@ -28,6 +28,10 @@ Transaction calldata:
 
 Encrypting on-chain does NOT hide the input value.
 
+<!--
+Speaker notes: Show the hex calldata and point to where the plaintext 1000 (0x3e8) appears. This is the fundamental motivation for encrypted inputs. Even though the value gets encrypted after it reaches the contract, the original plaintext is permanently recorded in the transaction.
+-->
+
 ---
 
 # The Solution: Client-Side Encryption
@@ -44,6 +48,10 @@ Encrypting on-chain does NOT hide the input value.
 
 The plaintext **never** appears on-chain.
 
+<!--
+Speaker notes: Walk through this diagram left to right. The browser encrypts the value locally, generates a ZK proof, and sends both to the contract. The contract calls FHE.fromExternal() which validates the proof and registers the ciphertext. At no point does the plaintext appear in transaction data.
+-->
+
 ---
 
 # External Encrypted Types
@@ -58,6 +66,10 @@ The plaintext **never** appears on-chain.
 | `externalEuint128` | `euint128` |
 | `externalEuint256` | `euint256` |
 | `externalEaddress` | `eaddress` |
+
+<!--
+Speaker notes: Each encrypted type has a corresponding external type. The external type is what appears in the function signature -- it represents the encrypted blob sent by the client. You always pair it with FHE.fromExternal() inside the function body to convert it.
+-->
 
 ---
 
@@ -80,15 +92,19 @@ function setSecret(
 
 Takes the encrypted input and its ZK proof. Internally: validates ZK proof, registers ciphertext, returns handle.
 
+<!--
+Speaker notes: Point out the three-step pattern inside the function: (1) FHE.fromExternal to convert, (2) use the value in FHE operations, (3) set up ACL with allowThis and allow. This is the production pattern for every function that accepts user input.
+-->
+
 ---
 
 # Client-Side: Encryption Flow
 
 ```javascript
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 
 // 1. Create FHEVM instance
-const instance = await createInstance({ networkUrl });
+const instance = await createInstance({ network });
 
 // 2. Create encrypted input
 const input = await instance.input.createEncryptedInput(
@@ -106,6 +122,10 @@ await contract.setSecret(
 );
 ```
 
+<!--
+Speaker notes: Walk through the JavaScript code step by step. The createEncryptedInput binds the encryption to a specific contract and user, preventing replay attacks. The add32() method specifies the type, and encrypt() produces the handles array and proof. This is the client-side counterpart to the Solidity code.
+-->
+
 ---
 
 # What the ZK Proof Guarantees
@@ -115,6 +135,10 @@ await contract.setSecret(
 3. **Knowledge proof** — Submitter knows the plaintext
 
 All verified automatically inside `FHE.fromExternal(input, proof)`.
+
+<!--
+Speaker notes: The ZK proof guarantees three things that prevent attacks. Without well-formedness, someone could submit garbage. Without range proofs, someone could claim a euint8 value of 1000. Without knowledge proofs, someone could replay another user's ciphertext. All checks happen automatically.
+-->
 
 ---
 
@@ -143,6 +167,10 @@ contract SealedBidAuction is ZamaEthereumConfig {
 
 No bidder can see anyone else's bid amount!
 
+<!--
+Speaker notes: This auction example ties encrypted inputs to a real use case. Point out that FHE.max keeps track of the highest bid without revealing any individual bid. This is a preview of Module 13 where students will build the full auction contract.
+-->
+
 ---
 
 # Multiple Encrypted Inputs
@@ -168,6 +196,10 @@ const enc = await input.encrypt();
 await contract.createOrder(enc.handles[0], enc.handles[1], enc.inputProof);
 ```
 
+<!--
+Speaker notes: Multiple encrypted inputs share a single inputProof. On the client side, you call add64 and add32 on the same input object, then encrypt once. The handles array contains one handle per input in order. The proof covers all inputs together.
+-->
+
 ---
 
 # Key Rule: `bytes calldata inputProof` Required
@@ -182,6 +214,10 @@ function good(externalEuint32 encValue, bytes calldata inputProof) external { }
 
 Functions accepting encrypted inputs must always include the `bytes calldata inputProof` parameter.
 
+<!--
+Speaker notes: This is a compilation error students will hit frequently. If you see externalEuintXX in a function signature, you MUST have bytes calldata inputProof as well. It is always calldata, never memory, for gas efficiency.
+-->
+
 ---
 
 # When to Use What
@@ -192,6 +228,10 @@ Functions accepting encrypted inputs must always include the `bytes calldata inp
 | Contract-internal constants | `FHE.asEuintXX(plaintext)` |
 | Initializing state to zero | `FHE.asEuintXX(0)` |
 | Non-sensitive public params | `FHE.asEuintXX(value)` |
+
+<!--
+Speaker notes: Use this decision table when designing function signatures. The rule of thumb: if the value comes from a user and should be private, use externalEuintXX. If it is a constant known to everyone (like zero for initialization), use FHE.asEuintXX.
+-->
 
 ---
 
@@ -204,16 +244,24 @@ Functions accepting encrypted inputs must always include the `bytes calldata inp
 | Using `FHE.asEuintXX()` for secrets | Use `externalEuintXX` + `inputProof` |
 | Forgetting ACL after `fromExternal` | Call `allowThis` + `allow` |
 
+<!--
+Speaker notes: Review the common mistakes table. The most frequent error is using FHE.asEuintXX() when the value should be private -- this is a security bug, not a compilation error, so it is easy to miss during development.
+-->
+
 ---
 
 # Summary
 
 1. `FHE.asEuintXX(plaintext)` exposes the value in calldata
 2. `externalEuintXX` + `bytes calldata inputProof` + `FHE.fromExternal(input, inputProof)` = truly private inputs
-3. Client encrypts with `fhevmjs`, sends ciphertext + ZK proof
+3. Client encrypts with the Relayer SDK (`@zama-fhe/relayer-sdk`), sends ciphertext + ZK proof
 4. ZK proof is auto-verified inside `FHE.fromExternal(input, proof)`
 5. Always include `bytes calldata inputProof` parameter alongside encrypted inputs
 6. Always manage ACL after conversion
+
+<!--
+Speaker notes: Recap the module by emphasizing the full pipeline: client encrypts, sends ciphertext + ZK proof, contract validates with fromExternal, then manages ACL. This is the complete input path for every production FHEVM application.
+-->
 
 ---
 
@@ -222,3 +270,7 @@ Functions accepting encrypted inputs must always include the `bytes calldata inp
 **Module 07: Decryption Patterns**
 
 Learn how to get plaintext values back — public decryption, user-specific reencryption, and the Gateway.
+
+<!--
+Speaker notes: Transition by saying: "We now know how to get data IN encrypted. But eventually, someone needs to see results. Module 07 covers how to get data OUT."
+-->

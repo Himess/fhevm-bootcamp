@@ -9,11 +9,11 @@ Test your knowledge of connecting a frontend to FHEVM contracts.
 What library is used to encrypt inputs on the frontend for FHEVM?
 
 - A) `@fhevm/solidity`
-- B) `fhevmjs` ✅
+- B) Relayer SDK (`@zama-fhe/relayer-sdk`) ✅
 - C) `ethers.js`
 - D) `web3-fhe`
 
-> fhevmjs is the official JavaScript/TypeScript library for interacting with FHEVM from the browser.
+> The Relayer SDK (`@zama-fhe/relayer-sdk`) is the official JavaScript/TypeScript library for interacting with FHEVM from the browser.
 
 ---
 
@@ -104,7 +104,7 @@ Which method encrypts a 32-bit unsigned integer on the frontend?
 - C) `input.add32(value)` ✅
 - D) `FHE.encrypt(value, 32)`
 
-> The fhevmjs input object provides `add8()`, `add16()`, `add32()`, `add64()`, etc.
+> The Relayer SDK input object provides `add8()`, `add16()`, `add32()`, `add64()`, etc.
 
 ---
 

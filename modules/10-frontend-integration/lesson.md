@@ -2,7 +2,7 @@
 
 ## Introduction
 
-So far we have written and tested FHEVM contracts using Hardhat. In a real application, users interact through a web frontend. This module covers everything needed to connect a React + ethers.js dApp to FHEVM contracts using the **fhevmjs** library.
+So far we have written and tested FHEVM contracts using Hardhat. In a real application, users interact through a web frontend. This module covers everything needed to connect a React + ethers.js dApp to FHEVM contracts using the **Relayer SDK (`@zama-fhe/relayer-sdk`)**.
 
 The key challenges are:
 1. The frontend must **encrypt** values before sending them as transaction parameters
@@ -14,7 +14,7 @@ The key challenges are:
 ## 1. Architecture Overview
 
 ```
-Browser (React + fhevmjs)
+Browser (React + Relayer SDK)
     |
     |-- 1. Initialize FHE instance (fetches public key from chain)
     |-- 2. Encrypt plaintext inputs client-side
@@ -30,17 +30,17 @@ FHEVM Contract
     v
 Gateway (for decryption)
     |
-    |-- 7. User requests decryption via fhevmjs
+    |-- 7. User requests decryption via Relayer SDK
     |-- 8. Gateway re-encrypts for user's keypair
     |-- 9. Frontend decrypts and displays
 ```
 
 ---
 
-## 2. Installing fhevmjs
+## 2. Installing the Relayer SDK
 
 ```bash
-npm install fhevmjs ethers
+npm install @zama-fhe/relayer-sdk ethers
 ```
 
 For a React project (Vite):
@@ -48,7 +48,7 @@ For a React project (Vite):
 ```bash
 npm create vite@latest my-fhevm-app -- --template react-ts
 cd my-fhevm-app
-npm install fhevmjs ethers
+npm install @zama-fhe/relayer-sdk ethers
 ```
 
 ---
@@ -58,7 +58,7 @@ npm install fhevmjs ethers
 The FHE instance must be created once and reused. It fetches the network's FHE public key.
 
 ```typescript
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 import { BrowserProvider } from "ethers";
 
 let fheInstance: Awaited<ReturnType<typeof createInstance>> | null = null;
@@ -69,8 +69,8 @@ async function initFhevm(): Promise<typeof fheInstance> {
   const provider = new BrowserProvider(window.ethereum);
 
   fheInstance = await createInstance({
-    networkUrl: await provider.send("eth_chainId", []),
-    gatewayUrl: "https://gateway.zama.ai",
+    network: await provider.send("eth_chainId", []),
+    relayerUrl: "https://gateway.zama.ai",
   });
 
   return fheInstance;
@@ -122,7 +122,7 @@ Key points:
 
 ## 5. Creating Encrypted Inputs
 
-On the frontend, use fhevmjs to encrypt a plaintext value before sending it in a transaction:
+On the frontend, use the Relayer SDK to encrypt a plaintext value before sending it in a transaction:
 
 ```typescript
 async function encryptAmount(
@@ -191,7 +191,7 @@ async function incrementCounter(amount: number) {
 
 ## 7. Requesting Decryption
 
-To read an encrypted value, the user must request decryption through the gateway:
+To read an encrypted value, the user must request decryption through the relayer:
 
 ```typescript
 async function readCounter(): Promise<number> {
@@ -347,7 +347,7 @@ async function connectWallet(): Promise<string> {
 
 ### Cache Decrypted Values
 
-Decryption requests go through the gateway and require a signature. Cache results when appropriate:
+Decryption requests go through the relayer and require a signature. Cache results when appropriate:
 
 ```typescript
 const decryptionCache = new Map<string, number>();
@@ -383,7 +383,7 @@ The encryption flow is the same in both environments, but **decryption differs**
 
 | Environment | SDK | Decrypt Method |
 |-------------|-----|----------------|
-| **Browser (Frontend)** | `fhevmjs` | `instance.reencrypt()` with keypair + EIP-712 signature |
+| **Browser (Frontend)** | Relayer SDK (`@zama-fhe/relayer-sdk`) | `instance.reencrypt()` with keypair + EIP-712 signature |
 | **Hardhat Tests** | `@fhevm/hardhat-plugin` | `fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddr, signer)` |
 
 In Hardhat tests, the `fhevm` object is available via `import { ethers, fhevm } from "hardhat"` and provides a simpler API for testing purposes:
@@ -420,10 +420,10 @@ After calling `makePubliclyDecryptable()`, any user can decrypt the value withou
 
 ## Summary
 
-- **fhevmjs** provides the client-side tools for encrypting inputs and decrypting outputs
+- The **Relayer SDK (`@zama-fhe/relayer-sdk`)** provides the client-side tools for encrypting inputs and decrypting outputs
 - Use `createEncryptedInput()` to encrypt values bound to a specific contract and user
 - Contract parameters use `externalEuintXX` and `bytes calldata inputProof` types; convert with `FHE.fromExternal(val, inputProof)`
 - Decryption requires EIP-712 signatures to prove ACL access
-- The gateway re-encrypts ciphertexts for the user's temporary keypair
+- The relayer re-encrypts ciphertexts for the user's temporary keypair
 - Always initialize the FHE instance before performing any operations
 - Cache decryption results and invalidate on state changes

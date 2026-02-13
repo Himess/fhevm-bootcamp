@@ -26,6 +26,10 @@ if (hasEnough) {
 The EVM needs a **plaintext** `bool` for `if`.
 An `ebool` is **encrypted** -- the EVM cannot read it.
 
+<!--
+Speaker notes: Start with this broken code example to establish the problem. The EVM's if statement requires a plaintext true/false, but ebool is a ciphertext. Ask students: "How would you solve this?" Then reveal FHE.select() on the next slide.
+-->
+
 ---
 
 # Comparison Operators
@@ -43,6 +47,10 @@ All return `ebool` (encrypted boolean):
 
 `euint256` and `eaddress`: only `eq` / `ne`
 
+<!--
+Speaker notes: Quick review of comparison operators from Module 04. The key limitation to highlight: euint256 and eaddress only support equality checks, not ordering. This means you cannot do greater-than or less-than on encrypted addresses or 256-bit values.
+-->
+
 ---
 
 # The Solution: `FHE.select()`
@@ -58,6 +66,10 @@ condition ? valueIfTrue : valueIfFalse
 
 Both branches are **always computed**.
 The correct result is selected without revealing the condition.
+
+<!--
+Speaker notes: FHE.select() is the single most important function in FHEVM after the arithmetic operations. It is the encrypted ternary operator. Both branches are always computed, and the correct one is selected based on the encrypted condition. Nobody learns which branch was taken.
+-->
 
 ---
 
@@ -77,6 +89,10 @@ balance = FHE.select(
 
 Nobody (not even the EVM) knows which branch was taken.
 
+<!--
+Speaker notes: Walk through this example step by step. First, FHE.ge compares balance and amount. Then FHE.sub computes the new balance. Finally, FHE.select picks the correct result. The subtraction always runs even if balance is less than amount -- the wrapping result is just discarded by select.
+-->
+
 ---
 
 # Pattern: Safe Subtraction
@@ -95,6 +111,10 @@ function safeSub(euint32 a, euint32 b)
 If `a >= b`: return `a - b`
 If `a < b`: return `0` (no underflow)
 
+<!--
+Speaker notes: This safe subtraction pattern is a reusable building block. Have students write this function from memory. It appears in every token transfer, every withdrawal, and every function that subtracts encrypted values. Consider making it a library function.
+-->
+
 ---
 
 # Pattern: Clamp
@@ -111,6 +131,10 @@ function clamp(euint32 value, uint32 lo, uint32 hi)
 
 `FHE.min()` and `FHE.max()` use `FHE.select()` internally.
 
+<!--
+Speaker notes: The clamp pattern is useful for bounding values to a valid range. Note that FHE.min and FHE.max are built-in and more gas-efficient than writing your own select-based version. Use them whenever possible.
+-->
+
 ---
 
 # Pattern: Conditional Transfer
@@ -126,6 +150,10 @@ _balances[to]   = FHE.select(ok, newTo, _balances[to]);
 ```
 
 If insufficient funds: both balances remain unchanged.
+
+<!--
+Speaker notes: This is the exact pattern used in confidential ERC-20 transfers. Both the sender and receiver balances are updated using select with the same condition. If the transfer fails, BOTH balances stay the same -- no information leaks about whether it succeeded or failed.
+-->
 
 ---
 
@@ -148,6 +176,10 @@ price = FHE.select(
     FHE.asEuint32(5), price);
 ```
 
+<!--
+Speaker notes: Nested selects simulate if/else-if/else chains. The order matters -- evaluate from least specific to most specific (or vice versa) to get correct logic. Each select overrides the previous result if the condition is true. This is the FHEVM equivalent of a switch statement.
+-->
+
 ---
 
 # Combining Conditions
@@ -169,6 +201,10 @@ ebool canTransfer = FHE.and(
 );
 ```
 
+<!--
+Speaker notes: Boolean logic on ebool values uses FHE.and, FHE.or, and FHE.not -- the same operations from Module 04. These let you build complex conditions before passing them to FHE.select. The canTransfer example combines a balance check with a status check in one condition.
+-->
+
 ---
 
 # Key Rule: Both Branches Always Execute
@@ -182,6 +218,10 @@ result = FHE.select(cond, expensive, cheap);
 
 Gas cost = **sum of both branches**, not just the taken one.
 
+<!--
+Speaker notes: This is the most important gas implication of FHE conditional logic. Unlike regular if/else where only one branch executes, BOTH branches always run in FHE. This means if one branch has an expensive multiplication, you pay for it even if the condition is false. Design accordingly.
+-->
+
 ---
 
 # Gas Optimization Tips
@@ -190,6 +230,10 @@ Gas cost = **sum of both branches**, not just the taken one.
 2. **Use built-in min/max** -- More efficient than manual select
 3. **Minimize select chains** -- Restructure logic to reduce selects
 4. **Smaller types** -- `euint8` selects cost less than `euint256`
+
+<!--
+Speaker notes: Practical optimization tips: create zero constants once and reuse them, use built-in min/max instead of manual select, and keep select chains as short as possible. Every select is a full FHE operation with significant gas cost.
+-->
 
 ---
 
@@ -202,6 +246,10 @@ Gas cost = **sum of both branches**, not just the taken one.
 | Assuming one branch runs | Both always execute |
 | Forgetting `FHE.allowThis()` | Call after select stored |
 
+<!--
+Speaker notes: The if(ebool) mistake is the most common one -- students instinctively write if statements. Remind them: if you see ebool, use FHE.select. Also note the type mismatch issue: both values in a select must be the same encrypted type.
+-->
+
 ---
 
 # Summary
@@ -213,6 +261,10 @@ Gas cost = **sum of both branches**, not just the taken one.
 - Combine conditions: `FHE.and()`, `FHE.or()`, `FHE.not()`
 - Built-in `FHE.min()` / `FHE.max()` for clamping
 
+<!--
+Speaker notes: FHE.select is the backbone of all FHEVM control flow. With types (Module 03), operations (Module 04), ACL (Module 05), inputs (Module 06), decryption (Module 07), and now conditional logic (Module 08), students have the complete toolkit for any FHEVM application.
+-->
+
 ---
 
 # Next Up
@@ -220,3 +272,7 @@ Gas cost = **sum of both branches**, not just the taken one.
 **Module 09: On-Chain Randomness**
 
 Generate encrypted random numbers with `FHE.randEuintXX()`.
+
+<!--
+Speaker notes: Transition to Module 09 by asking: "What if you need a value that nobody knows -- not even the person creating it?" Randomness is the last core concept before we move to project modules.
+-->

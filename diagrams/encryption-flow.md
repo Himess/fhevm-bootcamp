@@ -7,7 +7,7 @@ This diagram details the full lifecycle of encrypted data in fhEVM: from plainte
 ```mermaid
 sequenceDiagram
     participant User as User / dApp
-    participant SDK as fhevmjs SDK
+    participant SDK as Relayer SDK
     participant Chain as Blockchain
     participant Contract as Smart Contract
     participant Copro as FHE Coprocessor
@@ -88,7 +88,7 @@ graph LR
 ```mermaid
 sequenceDiagram
     participant User as User / dApp
-    participant SDK as fhevmjs SDK
+    participant SDK as Relayer SDK
     participant Contract as Smart Contract
     participant KMS as Key Management Service
 

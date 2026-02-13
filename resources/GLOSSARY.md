@@ -86,7 +86,10 @@ See "FHE.select."
 Encrypted unsigned integer types in fhEVM, representing 8-bit through 256-bit encrypted values. Larger types support larger value ranges but incur higher gas costs for operations.
 
 **externalEuintXX**
-The type used for encrypted inputs in external function parameters (e.g., `externalEuint32`, `externalEuint64`). These represent raw encrypted data submitted by users via `fhevmjs`. Must be converted to the corresponding `euintXX` type using `FHE.fromExternal()` before use in FHE operations.
+The type used for encrypted inputs in external function parameters (e.g., `externalEuint32`, `externalEuint64`). These represent raw encrypted data submitted by users via the Relayer SDK (`@zama-fhe/relayer-sdk`). Must be converted to the corresponding `euintXX` type using `FHE.fromExternal()` before use in FHE operations.
+
+**ERC-7984**
+A proposed standard for confidential tokens on fhEVM. Defines a standard interface for encrypted ERC-20 tokens with confidential balances and transfer amounts, including functions for encrypted transfers, ACL-gated balance queries, and integration with the fhEVM decryption infrastructure.
 
 ---
 
@@ -137,8 +140,8 @@ Generates an encrypted random value of the specified type (e.g., `FHE.randEuint8
 **FHE.rotl / FHE.rotr**
 Bitwise rotate left and rotate right on encrypted integers.
 
-**FHE.sealoutput**
-Produces a re-encrypted ciphertext that only a specific user can decrypt client-side. Used for private data viewing without on-chain decryption.
+**FHE.sealoutput** *(Does not exist in v0.10.0)*
+`FHE.sealoutput()` is **not** a function in `@fhevm/solidity` v0.10.0. Re-encryption for user-specific reads is handled entirely client-side: the contract returns the encrypted handle (after ACL check), and the client-side Relayer SDK (`@zama-fhe/relayer-sdk`) calls `instance.userDecrypt()` to re-encrypt the ciphertext via the KMS for the user to decrypt locally.
 
 **FHE.select**
 The encrypted ternary operator: `FHE.select(ebool condition, euintXX valueIfTrue, euintXX valueIfFalse)`. The fundamental branching primitive in FHE programming, replacing `if/else` for encrypted conditions.
@@ -149,8 +152,8 @@ Bitwise shift left and shift right on encrypted integers.
 **fhEVM**
 Zama's implementation of Fully Homomorphic Encryption on the Ethereum Virtual Machine. Combines the standard EVM with a TFHE coprocessor to enable confidential smart contracts.
 
-**fhevmjs**
-The JavaScript/TypeScript client library for interacting with fhEVM. Handles client-side encryption of inputs, re-encryption for viewing, and key management.
+**fhevmjs** *(Superseded)*
+The original JavaScript/TypeScript client library for interacting with fhEVM. Has been replaced by the Relayer SDK (`@zama-fhe/relayer-sdk`), which is the current official JS/TS SDK for client-side encryption of inputs, re-encryption for viewing, and key management.
 
 ---
 
@@ -159,7 +162,7 @@ The JavaScript/TypeScript client library for interacting with fhEVM. Handles cli
 **Gas (FHE context)**
 The unit of computational cost on the EVM. FHE operations are significantly more expensive in gas than plaintext operations because they involve complex mathematical computations on ciphertexts. Gas costs scale with bit width and operation complexity.
 
-**Gateway** — In earlier fhEVM versions (pre-v0.9), an oracle service for asynchronous decryption via `Gateway.requestDecryption()`. In the current version, decryption uses `FHE.makePubliclyDecryptable()` instead. The Gateway remains relevant for advanced production use cases.
+**Gateway** — *(Deprecated)* In earlier fhEVM versions (pre-v0.9), an oracle service for asynchronous decryption via `Gateway.requestDecryption()`. In the current version (v0.9+), decryption uses `FHE.makePubliclyDecryptable()` instead. Do not use the Gateway pattern in new contracts.
 
 **Gentry, Craig**
 The computer scientist who constructed the first Fully Homomorphic Encryption scheme in 2009, based on ideal lattices. His PhD thesis ("A Fully Homomorphic Encryption Scheme") is one of the most significant breakthroughs in modern cryptography.
@@ -185,7 +188,7 @@ A smart contract that uses both encrypted and plaintext values, encrypting only 
 The unintended disclosure of information about encrypted values through observable side channels. In fhEVM, potential leakage vectors include: transaction reverts, gas consumption differences, event emissions, storage access patterns, and timing.
 
 **Input Encryption**
-The process of encrypting plaintext data on the client side before submitting it to an fhEVM contract. Performed using the `fhevmjs` library and the network's FHE public key.
+The process of encrypting plaintext data on the client side before submitting it to an fhEVM contract. Performed using the Relayer SDK (`@zama-fhe/relayer-sdk`) and the network's FHE public key.
 
 ---
 
@@ -235,7 +238,7 @@ The amount of noise a ciphertext can tolerate before decryption becomes impossib
 ## O
 
 **On-Chain Decryption**
-Decryption that produces a plaintext value stored on the blockchain (via the Gateway callback). The decrypted value is visible to all chain observers. Contrast with re-encryption, where the value remains encrypted on-chain.
+Decryption that produces a plaintext value readable on the blockchain. Triggered by calling `FHE.makePubliclyDecryptable()`, after which the decryption oracle processes the ciphertext. The decrypted value is visible to all chain observers. Contrast with re-encryption, where the value remains encrypted on-chain.
 
 **Overflow (Silent)**
 In fhEVM, arithmetic overflow does not cause a revert. Instead, values silently wrap around. For example, `FHE.add` on `euint8` with values 200 and 100 produces 44 (300 mod 256) without any error signal.
@@ -258,7 +261,7 @@ A technique specific to TFHE where bootstrapping simultaneously resets noise and
 ## R
 
 **Re-encryption**
-The process of transforming a ciphertext encrypted under the network key into a ciphertext encrypted under a specific user's key. This allows the user to decrypt the value client-side without revealing it on-chain. In fhEVM, performed via `FHE.sealoutput()`.
+The process of transforming a ciphertext encrypted under the network key into a ciphertext encrypted under a specific user's key. This allows the user to decrypt the value client-side without revealing it on-chain. In fhEVM v0.10.0, re-encryption is performed client-side via the Relayer SDK's (`@zama-fhe/relayer-sdk`) `instance.userDecrypt()`, which communicates with the KMS. The contract simply returns the encrypted handle after verifying ACL permissions.
 
 **Ring-LWE (Ring Learning With Errors)**
 A variant of the LWE problem defined over polynomial rings. Ring-LWE provides better efficiency than standard LWE while maintaining equivalent security, and is the basis for most practical FHE schemes.
@@ -268,7 +271,7 @@ A variant of the LWE problem defined over polynomial rings. Ring-LWE provides be
 ## S
 
 **Sealed Output**
-See "Re-encryption" and `FHE.sealoutput()`.
+See "Re-encryption." In fhEVM v0.10.0, there is no on-chain `sealoutput` function. The contract returns the encrypted handle, and the client-side Relayer SDK (`instance.userDecrypt()`) handles re-encryption for the user.
 
 **Select**
 See "FHE.select."

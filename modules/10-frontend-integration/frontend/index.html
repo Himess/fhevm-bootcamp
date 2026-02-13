@@ -174,10 +174,10 @@
           document.getElementById("counterValue").textContent = "0";
           addLog("Counter is at initial state (0)", "info");
         } else {
-          // In a real dApp, you would use fhevmjs to reencrypt and decrypt
+          // In a real dApp, you would use the Relayer SDK to reencrypt and decrypt
           document.getElementById("counterValue").textContent = "(encrypted)";
           addLog(`Counter handle: ${handle.slice(0, 10)}...`, "info");
-          addLog("Use fhevmjs reencryption to see cleartext value", "info");
+          addLog("Use Relayer SDK reencryption to see cleartext value", "info");
         }
       } catch (error) {
         addLog(`Read failed: ${error.message}`, "error");
@@ -196,9 +196,9 @@
         document.getElementById("incrementBtn").textContent = "Encrypting...";
         addLog(`Encrypting value ${value} client-side...`);
 
-        // -- fhevmjs encryption + transaction (requires deployed contract + fhevmjs loaded) --
+        // -- Relayer SDK encryption + transaction (requires deployed contract + SDK loaded) --
         // To enable: deploy SimpleCounter on a fhEVM-enabled chain, update CONTRACT_ADDRESS,
-        // and uncomment the ethers + fhevmjs script tags at the bottom of this file.
+        // and uncomment the ethers + Relayer SDK script tags at the bottom of this file.
         //
         // const userAddress = await signer.getAddress();
         // const input = fhevmInstance.createEncryptedInput(CONTRACT_ADDRESS, userAddress);
@@ -209,7 +209,7 @@
         // await tx.wait();
         // addLog("TX confirmed!", "success");
 
-        addLog("NOTE: This is a UI mockup. Deploy a contract and load fhevmjs for real transactions.", "info");
+        addLog("NOTE: This is a UI mockup. Deploy a contract and load the Relayer SDK for real transactions.", "info");
         addLog("Demo increment complete (connect to Ethereum Sepolia for real transactions)", "success");
 
         await readCounter();
@@ -222,8 +222,8 @@
     }
   </script>
 
-  <!-- In production, include ethers and fhevmjs -->
+  <!-- In production, include ethers and the Relayer SDK -->
   <!-- <script src="https://cdn.ethers.org/lib/ethers-6.min.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/fhevmjs@latest/dist/fhevm.umd.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@zama-fhe/relayer-sdk@latest/dist/relayer-sdk.umd.min.js"></script> -->
 </body>
 </html>

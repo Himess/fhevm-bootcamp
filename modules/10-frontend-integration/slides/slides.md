@@ -8,17 +8,17 @@ footer: "Zama Developer Program"
 
 # Module 10: Frontend Integration
 
-Connecting your dApp to FHEVM with fhevmjs.
+Connecting your dApp to FHEVM with the Relayer SDK.
 
 ---
 
 # Architecture Overview
 
 ```
-Browser (React + fhevmjs)
+Browser (React + Relayer SDK)
   --> Encrypt inputs client-side
   --> Send encrypted bytes in transactions
-  --> Request decryption via gateway
+  --> Request decryption via relayer
 
 FHEVM Contract
   --> FHE.fromExternal(val, inputProof) to convert inputs
@@ -30,37 +30,49 @@ Gateway
   --> User decrypts locally
 ```
 
+<!--
+Speaker notes: Walk through the three layers of the architecture. The browser handles encryption and decryption. The contract handles FHE operations. The relayer bridges the two for decryption. Emphasize that the user's plaintext never leaves the browser.
+-->
+
 ---
 
-# Key Library: fhevmjs
+# Key Library: Relayer SDK (`@zama-fhe/relayer-sdk`)
 
 ```bash
-npm install fhevmjs ethers
+npm install @zama-fhe/relayer-sdk ethers
 ```
 
 Provides:
 - `createInstance()` -- Initialize FHE with network's public key
 - `createEncryptedInput()` -- Encrypt values for a contract
 - `generateKeypair()` -- Create temporary keys for decryption
-- `reencrypt()` -- Request decryption from gateway
+- `reencrypt()` -- Request decryption from relayer
+
+<!--
+Speaker notes: The Relayer SDK is the client-side counterpart to @fhevm/solidity. These four functions cover the complete frontend workflow: initialize, encrypt inputs, generate keys, and decrypt results. Install alongside ethers.js for a complete dApp setup.
+-->
 
 ---
 
 # Initializing the FHE Instance
 
 ```typescript
-import { createInstance } from "fhevmjs";
+import { createInstance } from "@zama-fhe/relayer-sdk/web";
 import { BrowserProvider } from "ethers";
 
 const provider = new BrowserProvider(window.ethereum);
 
 const instance = await createInstance({
-  networkUrl: await provider.send("eth_chainId", []),
-  gatewayUrl: "https://gateway.zama.ai",
+  network: await provider.send("eth_chainId", []),
+  relayerUrl: "https://gateway.zama.ai",
 });
 ```
 
 Initialize **once** per page load, then reuse.
+
+<!--
+Speaker notes: The instance creation fetches the FHE public key from the network. This is a one-time operation per page load -- store the instance in a React context or module-level variable. Creating multiple instances wastes resources and can cause bugs. Note: `network` replaces the old `networkUrl` parameter, and `relayerUrl` replaces `gatewayUrl`.
+-->
 
 ---
 
@@ -75,6 +87,10 @@ Frontend sends encrypted bytes. Contract receives external types.
 | `input.addBool(true)` | `externalEbool` | `ebool` |
 
 **Conversion:** `FHE.fromExternal(externalValue, inputProof)`
+
+<!--
+Speaker notes: This table maps the client-side add methods to the contract-side external types. The naming is consistent: add32 produces externalEuint32, add64 produces externalEuint64. Always make sure the add method matches the contract's expected type.
+-->
 
 ---
 
@@ -103,6 +119,10 @@ contract SimpleCounter is ZamaEthereumConfig {
 - Per-user mapping: each address has its own encrypted counter
 - No `decrement()` -- only `increment()` and `getMyCount()`
 
+<!--
+Speaker notes: This is the reference contract for the frontend integration. Point out the per-user mapping, the event emission, and the ACL grants. The getMyCount getter returns an encrypted handle -- the frontend must decrypt it using the reencryption flow.
+-->
+
 ---
 
 # Encrypting Inputs (Frontend)
@@ -123,6 +143,10 @@ const encrypted = await input.encrypt();
 
 Pass `encrypted` as the transaction parameter.
 
+<!--
+Speaker notes: Walk through the encryption flow step by step. createEncryptedInput binds to contract + user to prevent replay attacks. add32(42) specifies the value and type. encrypt() returns the handles array and proof. This is the same pattern from Module 06, now in the frontend context.
+-->
+
 ---
 
 # Sending the Transaction
@@ -142,6 +166,10 @@ await tx.wait();
 
 The encrypted handle and input proof are sent as separate parameters on the ABI level.
 
+<!--
+Speaker notes: Show how the encrypted object maps to the contract parameters: handles[0] maps to the externalEuint32 parameter, and inputProof maps to bytes calldata inputProof. The ABI encoding handles the rest. This is standard ethers.js contract interaction.
+-->
+
 ---
 
 # Decryption Flow
@@ -151,6 +179,10 @@ The encrypted handle and input proof are sent as separate parameters on the ABI 
 3. Sign EIP-712 message (proves ACL access)
 4. Gateway re-encrypts for user's public key
 5. Frontend decrypts with private key
+
+<!--
+Speaker notes: The decryption flow has five steps. The EIP-712 signature proves to the gateway that the user has ACL access. The gateway re-encrypts the value for the user's temporary public key. The user decrypts locally with their temporary private key. This ensures the plaintext only exists in the user's browser.
+-->
 
 ---
 
@@ -173,6 +205,10 @@ const value = await instance.reencrypt(
   signature, COUNTER_ADDRESS, userAddress
 );
 ```
+
+<!--
+Speaker notes: This code block is the full decryption implementation. Point out the temporary keypair generation, the EIP-712 typed data signing (which the user sees in MetaMask), and the final reencrypt call. The handle comes from the contract, and the value comes back as a plaintext BigInt.
+-->
 
 ---
 
@@ -203,6 +239,10 @@ function CounterApp() {
 }
 ```
 
+<!--
+Speaker notes: This React component shows the typical UX pattern: loading state during the FHE operation, then display the decrypted result. FHE transactions are slower than regular transactions, so loading indicators are essential. The pattern is: encrypt, transact, wait, decrypt, display.
+-->
+
 ---
 
 # Best Practices
@@ -213,6 +253,10 @@ function CounterApp() {
 4. **Invalidate on writes** -- Clear cache after transactions
 5. **Handle errors** -- Wallet connection, network, gateway failures
 6. **Loading states** -- FHE operations are slower than plain txs
+
+<!--
+Speaker notes: These best practices come from real production experience. The most impactful ones are caching the FHE instance (avoids repeated public key fetches) and invalidating cache on writes (prevents stale data display). Loading states are critical because users are not used to the FHE latency.
+-->
 
 ---
 
@@ -227,15 +271,23 @@ function CounterApp() {
 
 The user's plaintext never leaves their browser unencrypted.
 
+<!--
+Speaker notes: The trust model is the security argument for FHEVM dApps. Walk through each row: the user trusts their browser, the contract trusts the coprocessor, the gateway trusts ACL signatures, and nobody sees plaintext unless authorized. This is a powerful privacy guarantee.
+-->
+
 ---
 
 # Summary
 
-- **fhevmjs** bridges frontend and FHEVM contracts
+- The **Relayer SDK (`@zama-fhe/relayer-sdk`)** bridges frontend and FHEVM contracts
 - Encrypt with `createEncryptedInput()` + `input.add32()`
 - Contract receives `externalEuint32` + `bytes calldata inputProof`, converts with `FHE.fromExternal(val, inputProof)`
-- Decrypt via EIP-712 signature + gateway re-encryption
+- Decrypt via EIP-712 signature + relayer re-encryption
 - Cache FHE instance and decrypted values for performance
+
+<!--
+Speaker notes: Recap the full frontend flow: initialize the Relayer SDK, encrypt inputs with createEncryptedInput, send transactions with handles and proof, decrypt results via EIP-712 + relayer reencryption. Students now have everything they need to build full-stack FHEVM dApps.
+-->
 
 ---
 
@@ -244,3 +296,7 @@ The user's plaintext never leaves their browser unencrypted.
 **Module 11: Confidential ERC-20**
 
 Build a full ERC-20 token with encrypted balances!
+
+<!--
+Speaker notes: Transition to the first project module. Module 11 applies everything learned so far to build a real confidential ERC-20 token. This is where theory meets practice.
+-->

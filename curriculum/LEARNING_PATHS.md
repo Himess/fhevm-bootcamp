@@ -142,7 +142,7 @@ This path is designed for working professionals who can dedicate evenings and we
 |---|---|---|---|
 | Monday | Evening | 2h | **Module 08:** Conditional Logic (complete) |
 | Tuesday | Evening | 2h | **Module 09:** On-Chain Randomness |
-| Wednesday | Evening | 2h | **Module 10:** Frontend Integration (Part 1: fhevmjs setup, wallet connection) |
+| Wednesday | Evening | 2h | **Module 10:** Frontend Integration (Part 1: Relayer SDK setup, wallet connection) |
 | Thursday | Evening | 1h | **Module 10:** Frontend Integration (complete exercises) |
 | Saturday | Morning | 2h | **Module 11:** Confidential ERC-20 (Part 1: Design, transfer, balances) |
 | Sunday | Morning | 2h | **Module 11:** Confidential ERC-20 (Part 2: Approvals, test suite) |

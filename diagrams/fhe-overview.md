@@ -6,7 +6,7 @@ This diagram shows how Fully Homomorphic Encryption (FHE) enables confidential c
 graph TD
     subgraph User Side
         U1[User / dApp Frontend]
-        U2[fhevmjs Client Library]
+        U2[Relayer SDK]
     end
 
     subgraph On-Chain

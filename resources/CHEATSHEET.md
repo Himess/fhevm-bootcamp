@@ -241,9 +241,24 @@ Generate encrypted random values on-chain:
 | `FHE.randEuint128()` | `euint128` |
 | `FHE.randEuint256()` | `euint256` |
 
+**Bounded random (upper bound, exclusive):**
+
+| Function | Output Type |
+|---|---|
+| `FHE.randEuint8(uint8 upperBound)` | `euint8` in range [0, upperBound) |
+| `FHE.randEuint16(uint16 upperBound)` | `euint16` in range [0, upperBound) |
+| `FHE.randEuint32(uint32 upperBound)` | `euint32` in range [0, upperBound) |
+| `FHE.randEuint64(uint64 upperBound)` | `euint64` in range [0, upperBound) |
+| `FHE.randEuint128(uint128 upperBound)` | `euint128` in range [0, upperBound) |
+| `FHE.randEuint256(uint256 upperBound)` | `euint256` in range [0, upperBound) |
+
 ```solidity
 euint32 randomNumber = FHE.randEuint32();
 FHE.allowThis(randomNumber);
+
+// Bounded: random number from 0 to 99
+euint32 dice = FHE.randEuint32(100);
+FHE.allowThis(dice);
 ```
 
 ---
@@ -270,6 +285,18 @@ Every encrypted value has an access control list. You MUST grant permissions for
 | Function | Description |
 |---|---|
 | `FHE.isSenderAllowed(ciphertext)` | Returns `bool` --- is `msg.sender` allowed to use this ciphertext? |
+| `FHE.isAllowed(ciphertext, address)` | Returns `bool` --- is `address` allowed to use this ciphertext? |
+
+### Initialization Checks
+
+| Function | Description |
+|---|---|
+| `FHE.isInitialized(ciphertext)` | Returns `bool` --- is the encrypted value non-zero (has been assigned)? |
+
+```solidity
+// Guard against uninitialized encrypted values
+require(FHE.isInitialized(balances[user]), "No balance set");
+```
 
 ### Common ACL Pattern
 
@@ -286,22 +313,32 @@ FHE.allow(newBalance, owner);        // Owner can view/decrypt it
 
 ### Re-encryption (User-Specific, Off-Chain)
 
+Re-encryption is handled **client-side** using the Relayer SDK (`@zama-fhe/relayer-sdk`), not on-chain. The contract simply returns the encrypted handle after verifying ACL permissions. The client then calls `instance.userDecrypt()` to re-encrypt the ciphertext under the user's key via the KMS.
+
 ```solidity
-// Seal output for a specific user to decrypt client-side
-function viewMyBalance() external view returns (bytes memory) {
-    return FHE.sealoutput(balances[msg.sender], msg.sender);
+// Return the encrypted handle -- client decrypts via instance.userDecrypt()
+function viewMyBalance() external view returns (euint64) {
+    return balances[msg.sender]; // ACL must have been set via FHE.allow(balance, msg.sender)
 }
 ```
+
+> **Note:** `FHE.sealoutput()` does **not** exist in fhEVM v0.10.0. The correct pattern is to return the ciphertext handle and let the client-side Relayer SDK (`instance.userDecrypt()`) handle re-encryption through the KMS.
 
 ### Public Decryption (On-Chain Reveal)
 
 ```solidity
-// Make a value publicly decryptable (current API)
+// Step 1: Make a value publicly decryptable
 FHE.makePubliclyDecryptable(encryptedValue);
 
-// Check ACL access
-require(FHE.isSenderAllowed(encryptedValue), "No access");
+// Step 2: Check if a value has been marked for public decryption
+bool canDecrypt = FHE.isPubliclyDecryptable(encryptedValue);
 ```
+
+| Function | Description |
+|---|---|
+| `FHE.makePubliclyDecryptable(ciphertext)` | Mark an encrypted value for public decryption |
+| `FHE.isPubliclyDecryptable(ciphertext)` | Check if a value has been marked publicly decryptable |
+| `FHE.checkSignatures(bytes)` | Verify KMS decryption signatures on-chain |
 
 > **Note:** In earlier fhEVM versions (pre-v0.9), `Gateway.requestDecryption()` was used for asynchronous decryption. In the current version, use `FHE.makePubliclyDecryptable()` instead.
 
@@ -360,5 +397,5 @@ contract ConfidentialToken is ZamaEthereumConfig {
 4. **Both operands must match types** (or second operand is plaintext).
 5. **Overflow wraps silently.** There is no revert on overflow.
 6. **Use the smallest type that fits your data.** Gas cost scales with bit width.
-7. **Decryption is asynchronous.** Use the Gateway callback pattern.
+7. **Use `FHE.makePubliclyDecryptable()` for on-chain reveal** or client-side re-encryption via `instance.userDecrypt()` for user-specific off-chain decryption.
 8. **Inherit `ZamaEthereumConfig`** in your contract for proper fhEVM configuration.

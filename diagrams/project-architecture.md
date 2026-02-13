@@ -8,7 +8,7 @@ This diagram shows the overall structure of the 15-module bootcamp curriculum, o
 graph TD
     subgraph "Foundation (Modules 1-3)"
         M1[Module 1<br/>Introduction to FHE<br/>Theory & Concepts]
-        M2[Module 2<br/>fhEVM Setup<br/>Hardhat + fhevmjs]
+        M2[Module 2<br/>fhEVM Setup<br/>Hardhat + Relayer SDK]
         M3[Module 3<br/>Encrypted Types<br/>euint8/16/32/64, ebool, eaddress]
     end
 
@@ -112,7 +112,7 @@ graph TD
 graph LR
     subgraph "Frontend Layer"
         FE1[React / Next.js]
-        FE2[fhevmjs SDK]
+        FE2[Relayer SDK]
         FE3[ethers.js / viem]
     end
 

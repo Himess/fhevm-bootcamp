@@ -23,6 +23,10 @@ A Confidential DAO with:
 
 All votes are private. All balances are encrypted.
 
+<!--
+Speaker notes: Set expectations for the capstone. This is the most complex project in the bootcamp -- it combines the confidential ERC-20 from Module 11 with weighted voting from Module 12, plus treasury management. Students should have their previous module code open for reference.
+-->
+
 ---
 
 # System Architecture
@@ -38,9 +42,13 @@ ConfidentialDAO
   - Treasury management
   - Finalize and execute
 
-Frontend (React + fhevmjs)
+Frontend (React + Relayer SDK)
   - Full dApp interface
 ```
+
+<!--
+Speaker notes: Show how the three components interact: the GovernanceToken is a standalone confidential ERC-20, the ConfidentialDAO reads token balances for vote weighting and manages proposals and treasury, and the frontend ties them together. Cross-contract ACL is the new concept here.
+-->
 
 ---
 
@@ -57,6 +65,10 @@ The DAO needs to read token balances for vote weighting.
    token.balanceOf(user) --> euint64
 4. DAO uses balance as vote weight
 ```
+
+<!--
+Speaker notes: Cross-contract ACL is the key new concept. The user must explicitly grant the DAO contract access to their token balance using FHE.allow. Without this step, the DAO cannot read the user's balance for vote weighting. This is a one-time operation per user.
+-->
 
 ---
 
@@ -83,6 +95,10 @@ function vote(
 }
 ```
 
+<!--
+Speaker notes: Compare this with Module 12's voting: instead of adding 1 or 0, we add the user's entire token balance or 0. FHE.select routes the weight to the correct tally. The token balance is read directly from the governance token contract via cross-contract ACL. This is weighted voting with complete privacy.
+-->
+
 ---
 
 # Module 12 vs. Module 14 Voting
@@ -93,6 +109,10 @@ function vote(
 | Token integration | None | Cross-contract ACL |
 | Treasury | None | ETH management |
 | Execution | View results | Transfer funds |
+
+<!--
+Speaker notes: This comparison table shows how the capstone builds on Module 12. The three key upgrades are: token-weighted votes, cross-contract ACL for balance reading, and treasury execution that actually transfers ETH. This progression from simple to complex mirrors real DAO development.
+-->
 
 ---
 
@@ -117,6 +137,10 @@ Phase 4: Execute
   - If no >= yes: rejected
 ```
 
+<!--
+Speaker notes: Walk through all four phases. The key design decision is the finalization step: the admin makes tallies publicly decryptable, then anyone can read the results. Execution is a separate step that checks the decrypted results and transfers ETH. This separation prevents atomic manipulation.
+-->
+
 ---
 
 # Proposal Data Structure
@@ -135,6 +159,10 @@ struct Proposal {
     bool executed;
 }
 ```
+
+<!--
+Speaker notes: The Proposal struct combines plaintext fields (description, recipient, amount, timestamps, flags) with encrypted fields (yesVotes, noVotes). The exists/finalized/executed flags control the lifecycle state machine. Note that the ETH amount is plaintext because it becomes public when the proposal is created.
+-->
 
 ---
 
@@ -160,6 +188,10 @@ function executeProposal(
 }
 ```
 
+<!--
+Speaker notes: The treasury has two parts: a receive() function that accepts ETH, and executeProposal that sends ETH to the approved recipient. The execute function takes decrypted vote counts as parameters and checks that yes > no. Discuss the trust assumption: the admin provides the decrypted values.
+-->
+
 ---
 
 # Concepts Used from Each Module
@@ -172,9 +204,13 @@ function executeProposal(
 | 06 | `externalEbool`, `FHE.fromExternal()` |
 | 07 | Public decryption (makePubliclyDecryptable) |
 | 08 | `FHE.select()` weighted voting |
-| 10 | fhevmjs frontend |
+| 10 | Relayer SDK frontend |
 | 11 | Governance token |
 | 12 | Private voting |
+
+<!--
+Speaker notes: Use this table to help students see how the capstone ties everything together. Each row represents a module concept that appears in the DAO. This is a great review moment -- ask students to identify where each concept appears in the code they have seen.
+-->
 
 ---
 
@@ -186,6 +222,10 @@ function executeProposal(
 | Admin manipulation | On-chain decrypt callback (advanced) |
 | Treasury drain | Quorum, caps, cooldowns |
 | Vote weight = 0 | Check weight > 0 before accepting |
+
+<!--
+Speaker notes: Discuss each security risk honestly. The snapshot problem (double-voting with transferred tokens) is the most serious and requires an advanced solution. Admin manipulation can be mitigated with on-chain decrypt callbacks. Quorum and caps prevent treasury drain. These are real DAO security considerations.
+-->
 
 ---
 
@@ -208,6 +248,10 @@ function executeProposal(
    - Transfer tokens
 ```
 
+<!--
+Speaker notes: The frontend has four pages, each demonstrating different FHEVM interaction patterns. The dashboard reads and decrypts balances. Create Proposal is a standard transaction. Proposal Detail uses encrypted inputs for voting. Token Management handles cross-contract ACL grants.
+-->
+
 ---
 
 # Frontend: Key Interactions
@@ -228,6 +272,10 @@ const enc = await input.encrypt();
 await dao.vote(proposalId, enc.handles[0], enc.inputProof);
 ```
 
+<!--
+Speaker notes: Show the three key frontend interactions. The grantDAOAccess is a one-time setup. createProposal is a standard plaintext transaction. The vote interaction uses addBool(true) because the capstone uses externalEbool for the vote parameter, unlike Module 12 which used externalEuint8.
+-->
+
 ---
 
 # Testing Strategy
@@ -244,6 +292,10 @@ await dao.vote(proposalId, enc.handles[0], enc.inputProof);
 9. Verify ETH transferred
 ```
 
+<!--
+Speaker notes: The testing strategy follows the full lifecycle. Have students implement these tests step by step. Each step depends on the previous one, so they must be run in order. The final verification -- checking ETH was actually transferred to the recipient -- confirms the entire pipeline works end to end.
+-->
+
 ---
 
 # What You Have Accomplished
@@ -258,6 +310,10 @@ After completing this bootcamp, you can:
 - Use conditional logic with `FHE.select()`
 - Build real applications: tokens, voting, auctions, DAOs
 
+<!--
+Speaker notes: This is the achievement slide. Read through each bullet point and let it sink in. Students started with Solidity basics and now can build complete confidential applications. These are real, deployable applications -- not toy examples. Acknowledge the effort it took to get here.
+-->
+
 ---
 
 # What is Next?
@@ -269,3 +325,7 @@ After completing this bootcamp, you can:
 - Push the boundaries of on-chain privacy!
 
 **Congratulations on completing the FHEVM Bootcamp!**
+
+<!--
+Speaker notes: End on an inspiring note. Encourage students to start building their own projects immediately while the knowledge is fresh. Share links to Zama's Discord, GitHub, and documentation. Thank everyone for their time and participation.
+-->

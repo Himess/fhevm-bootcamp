@@ -101,7 +101,7 @@ A structured security review checklist for FHE smart contracts. Use this during 
 - [ ] **Functions do not return different plaintext values based on encrypted conditions.**
   Example: returning `true` for success and `false` for failure on an encrypted transfer leaks whether the sender had sufficient balance.
 
-- [ ] **View functions that return encrypted values use `FHE.sealoutput()` for user-specific re-encryption.**
+- [ ] **View functions that return encrypted values return the handle after ACL check; the client uses `instance.userDecrypt()` for user-specific re-encryption.**
 
 ---
 
@@ -136,7 +136,7 @@ A structured security review checklist for FHE smart contracts. Use this during 
 ### 4.1 Decryption Pattern
 
 - [ ] **Decryption uses `FHE.makePubliclyDecryptable()` only for values that should be public.**
-  Only call `makePubliclyDecryptable` when the value genuinely needs to be revealed on-chain. For user-specific reads, prefer `FHE.sealoutput()` instead.
+  Only call `makePubliclyDecryptable` when the value genuinely needs to be revealed on-chain. For user-specific reads, return the encrypted handle after ACL check and let the client use `instance.userDecrypt()` instead.
 
 - [ ] **Decrypted values are not stored in public storage variables.**
   Storing `uint256 public revealedValue` permanently exposes the decrypted data.
@@ -160,10 +160,10 @@ A structured security review checklist for FHE smart contracts. Use this during 
 
 ### 4.4 Re-encryption
 
-- [ ] **`FHE.sealoutput()` is used for user-facing reads instead of on-chain decryption when possible.**
-  Re-encryption keeps the value encrypted on-chain and only reveals it to the specific user.
+- [ ] **User-facing reads return the encrypted handle after ACL check; the client uses `instance.userDecrypt()` for re-encryption instead of on-chain decryption.**
+  Re-encryption keeps the value encrypted on-chain and only reveals it to the specific user via the client-side SDK.
 
-- [ ] **Permission checks are performed before `FHE.sealoutput()` to ensure the caller is authorized.**
+- [ ] **Permission checks (ACL) are performed before returning encrypted handles to ensure the caller is authorized.**
 
 ---
 

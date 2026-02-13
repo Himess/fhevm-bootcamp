@@ -34,7 +34,7 @@ ConfidentialDAO (main contract)
     |       - Released via approved proposals
     |
     v
-Frontend (React + fhevmjs)
+Frontend (React + Relayer SDK)
     - Create proposals
     - Cast weighted votes
     - View results after finalization
@@ -451,7 +451,7 @@ The Confidential DAO combines all FHEVM concepts:
 | 06: Inputs | `externalEbool`, `FHE.fromExternal()` |
 | 07: Decryption | `makePubliclyDecryptable()` for tallies |
 | 08: Conditional Logic | `FHE.select()` for weighted voting |
-| 10: Frontend | fhevmjs integration |
+| 10: Frontend | Relayer SDK integration |
 | 11: ERC-20 | Governance token with encrypted balances |
 | 12: Voting | Private voting with encrypted tallies |
 

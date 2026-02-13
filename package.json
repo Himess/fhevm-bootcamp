@@ -12,9 +12,20 @@
     "deploy:local": "hardhat run scripts/deploy-all.ts --network hardhat",
     "deploy:sepolia": "hardhat run scripts/deploy-sepolia.ts --network sepolia",
     "slides:build": "node scripts/build-slides.js",
-    "lint:sol": "echo 'Use npx hardhat compile to check Solidity syntax'"
+    "lint": "solhint \"contracts/**/*.sol\"",
+    "lint:fix": "solhint \"contracts/**/*.sol\" --fix",
+    "format": "prettier --check \"contracts/**/*.sol\" \"test/**/*.ts\"",
+    "format:fix": "prettier --write \"contracts/**/*.sol\" \"test/**/*.ts\""
   },
-  "keywords": ["fhe", "fhevm", "zama", "bootcamp", "solidity", "encryption", "privacy"],
+  "keywords": [
+    "fhe",
+    "fhevm",
+    "zama",
+    "bootcamp",
+    "solidity",
+    "encryption",
+    "privacy"
+  ],
   "author": "FHEVM Bootcamp Contributors",
   "license": "MIT",
   "description": "Comprehensive bootcamp curriculum for building confidential smart contracts with Zama fhEVM",
@@ -39,7 +50,10 @@
     "hardhat": "^2.28.5",
     "hardhat-gas-reporter": "^2.3.0",
     "mocha": "^11.7.5",
+    "prettier": "^3.8.1",
+    "prettier-plugin-solidity": "^1.4.3",
     "rimraf": "^6.1.2",
+    "solhint": "^5.2.0",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
     "typescript": "^5.9.3"
