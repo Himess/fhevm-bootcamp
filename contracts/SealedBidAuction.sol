@@ -56,9 +56,6 @@ contract SealedBidAuction is ZamaEthereumConfig {
         auctions[id].item = item;
         auctions[id].deadline = block.timestamp + duration;
         auctions[id].reservePrice = reservePrice;
-        auctions[id].ended = false;
-        auctions[id].finalized = false;
-
         _highestBid[id] = FHE.asEuint64(0);
         FHE.allowThis(_highestBid[id]);
 

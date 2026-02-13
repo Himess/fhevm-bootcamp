@@ -42,7 +42,6 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         proposals[id].yesVotes = FHE.asEuint32(0);
         proposals[id].noVotes = FHE.asEuint32(0);
         proposals[id].deadline = block.timestamp + duration;
-        proposals[id].revealed = false;
 
         FHE.allowThis(proposals[id].yesVotes);
         FHE.allowThis(proposals[id].noVotes);

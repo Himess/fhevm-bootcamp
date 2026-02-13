@@ -25,7 +25,6 @@ contract RevealableAuction is ZamaEthereumConfig {
     constructor() {
         owner = msg.sender;
         auctionOpen = true;
-        revealed = false;
 
         _highestBid = FHE.asEuint64(0);
         _highestBidder = FHE.asEaddress(address(0));
@@ -64,6 +63,7 @@ contract RevealableAuction is ZamaEthereumConfig {
         require(!revealed, "Already revealed");
 
         FHE.makePubliclyDecryptable(_highestBid);
+        FHE.makePubliclyDecryptable(_highestBidder);
         FHE.allow(_highestBid, msg.sender);
         revealed = true;
     }
