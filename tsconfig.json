@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["./test", "./scripts", "./tasks"],
+  "include": ["./test", "./scripts"],
   "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"],
   "ts-node": {

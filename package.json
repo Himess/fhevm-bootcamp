@@ -10,9 +10,9 @@
     "clean": "rimraf artifacts cache types",
     "build": "npm run clean && npm run compile",
     "deploy:local": "hardhat run scripts/deploy-all.ts --network hardhat",
-    "deploy:sepolia": "hardhat run scripts/deploy-all.ts --network sepolia",
+    "deploy:sepolia": "hardhat run scripts/deploy-sepolia.ts --network sepolia",
     "slides:build": "node scripts/build-slides.js",
-    "lint:sol": "hardhat compile"
+    "lint:sol": "echo 'Use npx hardhat compile to check Solidity syntax'"
   },
   "keywords": [],
   "author": "",

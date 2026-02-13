@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Level** | Intermediate |
-| **Duration** | 1.5h |
+| **Duration** | 3h |
 | **Prerequisites** | Module 07 |
 
 ## Learning Objectives

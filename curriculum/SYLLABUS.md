@@ -2,7 +2,7 @@
 
 **Version:** 2.0
 **Total Modules:** 15 (Modules 00 through 14)
-**Total Duration:** ~63 hours
+**Total Duration:** ~46 hours
 **API Version:** New FHEVM API (`FHE` library, `externalEuintXX` inputs, `FHE.fromExternal(value, proof)`)
 
 ---

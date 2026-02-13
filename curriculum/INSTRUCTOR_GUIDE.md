@@ -18,6 +18,28 @@ This guide provides teaching notes, discussion prompts, time management tips, co
 
 ## Bootcamp Organization
 
+### Curriculum Summary
+
+The bootcamp consists of 15 modules (Modules 00-14) totaling approximately 46 hours of instruction. The curriculum includes 25 smart contracts and 210 tests across all exercises and projects.
+
+| Module | Title | Duration |
+|---|---|---|
+| 00 | Prerequisites & Solidity Review | 2 hrs |
+| 01 | Introduction to FHE | 2 hrs |
+| 02 | Development Setup | 2 hrs |
+| 03 | Encrypted Types | 3 hrs |
+| 04 | Operations - Arithmetic, Bitwise, Comparison | 3 hrs |
+| 05 | Access Control (ACL) | 3 hrs |
+| 06 | Encrypted Inputs & ZK Proofs | 3 hrs |
+| 07 | Decryption Patterns | 3 hrs |
+| 08 | Conditional Logic | 3 hrs |
+| 09 | On-Chain Randomness | 2 hrs |
+| 10 | Frontend Integration | 3 hrs |
+| 11 | Confidential ERC-20 | 4 hrs |
+| 12 | Confidential Voting | 4 hrs |
+| 13 | Sealed-Bid Auction | 4 hrs |
+| 14 | Capstone - Confidential DAO | 5 hrs |
+
 ### Before the Bootcamp
 
 **2 Weeks Before:**
@@ -69,16 +91,16 @@ After the theory-heavy Module 00, every subsequent module should start with a wo
 
 ### 2. The "Encrypted Mindset" Transition
 
-The single biggest conceptual hurdle is the shift from imperative programming (if/else branching on values) to the encrypted paradigm (compute all paths, select the result). Emphasize this transition repeatedly in Modules 04-07.
+The single biggest conceptual hurdle is the shift from imperative programming (if/else branching on values) to the encrypted paradigm (compute all paths, select the result). Emphasize this transition repeatedly in Modules 04-08.
 
 **Key phrase to repeat:** "You cannot look at encrypted data. You cannot branch on encrypted data. You compute all possibilities and select the right one."
 
 ### 3. Build on the ERC-20
 
-The Encrypted ERC-20 (Module 07) is the central artifact of the bootcamp. Reference it constantly in later modules:
-- Module 08: "Let's write tests for our ERC-20."
-- Module 09: "Let's optimize our ERC-20."
-- Module 10: "Let's audit our ERC-20."
+The Confidential ERC-20 (Module 11) is the central artifact of the bootcamp. Reference it constantly in later modules:
+- Module 12: "Let's apply voting patterns we learned to our ERC-20 governance."
+- Module 13: "Let's use our ERC-20 as the payment token in the auction."
+- Module 14: "Let's integrate our ERC-20 into the DAO capstone."
 
 ### 4. Encourage Mistakes
 
@@ -92,9 +114,39 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 
 ## Module-by-Module Teaching Notes
 
-### Module 00: Cryptography & FHE Foundations
+### Module 00: Prerequisites & Solidity Review
 
-**Duration:** 3 hours
+**Duration:** 2 hours
+**Teaching Style:** Lecture + hands-on review (minimal new coding)
+
+**Key Teaching Points:**
+- Assess student backgrounds quickly: Solidity experience, crypto knowledge, math comfort.
+- Review Solidity fundamentals that are critical for fhEVM: types, storage, visibility, modifiers, events.
+- Ensure everyone has a working development environment before leaving this module.
+- Set expectations for the bootcamp pace and the "encrypted mindset" shift coming in later modules.
+
+**Discussion Questions:**
+1. "What Solidity patterns do you use most frequently? Which do you think will change with FHE?"
+2. "Why does Solidity have so many integer types (uint8 through uint256)? How might this matter for encrypted computation?"
+
+**Common Pitfalls:**
+- Students with varying Solidity experience levels. Pair stronger students with beginners during the review exercises.
+- Environment setup issues. Have TAs ready to troubleshoot Node.js, npm, and Hardhat problems.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| Welcome and background assessment | 15 min |
+| Solidity fundamentals review | 40 min |
+| Development environment setup | 30 min |
+| Hands-on: compile and deploy a basic contract | 25 min |
+| Quiz | 10 min |
+
+---
+
+### Module 01: Introduction to FHE
+
+**Duration:** 2 hours
 **Teaching Style:** Lecture + group discussion (minimal coding)
 
 **Key Teaching Points:**
@@ -116,19 +168,19 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Encryption history and motivation | 45 min |
-| PHE/SHE/FHE progression | 30 min |
-| TFHE scheme overview | 30 min |
-| Noise budget and bootstrapping | 20 min |
-| FHE vs ZK vs TEE vs MPC comparison | 25 min |
-| Group discussion + paper exercise | 20 min |
-| Quiz | 10 min |
+| Encryption history and motivation | 30 min |
+| PHE/SHE/FHE progression | 20 min |
+| TFHE scheme overview | 20 min |
+| Noise budget and bootstrapping | 15 min |
+| FHE vs ZK vs TEE vs MPC comparison | 20 min |
+| Group discussion | 10 min |
+| Quiz | 5 min |
 
 ---
 
-### Module 01: FHEVM Architecture & Setup
+### Module 02: Development Setup
 
-**Duration:** 3 hours
+**Duration:** 2 hours
 **Teaching Style:** Lecture (architecture) + live coding (setup)
 
 **Key Teaching Points:**
@@ -136,6 +188,7 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 - Explain the coprocessor as "a specialized computer that does the FHE math while the EVM handles the logic."
 - The `ZamaEthereumConfig` base contract is where all the FHE configuration lives --- show its source code briefly.
 - Do the environment setup as a live walkthrough. Have TAs circulate to help students with issues.
+- **Note:** In the local dev environment, the bootcamp uses the `FHE.makePubliclyDecryptable()` pattern rather than Gateway/GatewayConfig for decryption. The Gateway is relevant for production but not needed in the local Hardhat mock setup.
 
 **Discussion Questions:**
 1. "Why can't we just run FHE operations directly in the EVM? What would happen to gas costs?"
@@ -150,24 +203,23 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Architecture overview (lecture + whiteboard) | 45 min |
-| Key management deep dive | 20 min |
-| Gateway and decryption lifecycle | 20 min |
-| Environment setup (live) | 45 min |
-| First contract deployment | 30 min |
-| Transaction tracing exercise | 20 min |
-| Quiz | 10 min |
+| Architecture overview (lecture + whiteboard) | 30 min |
+| Key management overview | 15 min |
+| Environment setup (live) | 35 min |
+| First contract deployment | 25 min |
+| Transaction tracing exercise | 10 min |
+| Quiz | 5 min |
 
 ---
 
-### Module 02: Encrypted Types & Basic Operations
+### Module 03: Encrypted Types
 
-**Duration:** 4 hours
+**Duration:** 3 hours
 **Teaching Style:** Live coding + exercises
 
 **Key Teaching Points:**
 - Create a "type reference wall" (physical or digital) that stays visible throughout the bootcamp.
-- Demonstrate each operation category with live code: arithmetic, bitwise, shift.
+- Introduce the encrypted types: `ebool`, `euint4`, `euint8`, `euint16`, `euint32`, `euint64`, `euint128`, `euint256`, `eaddress`, `ebytes64`, `ebytes128`, `ebytes256`.
 - Emphasize that operations with plaintext second operands (e.g., `FHE.add(encryptedVal, 5)`) are cheaper than fully encrypted operations.
 - Show overflow behavior: `FHE.add` on `euint8` wraps at 256 silently (no revert).
 
@@ -184,53 +236,86 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Type overview and reference card | 30 min |
-| Arithmetic operations (live coding) | 40 min |
-| Bitwise and shift operations | 30 min |
+| Type overview and reference card | 25 min |
+| Encrypted type demos (live coding) | 30 min |
 | Type casting | 20 min |
-| Exercise 1: Encrypted Calculator | 45 min |
-| Exercise 2: Bitwise Flag Register | 35 min |
-| Exercise 3: Type Conversion | 20 min |
-| Quiz | 20 min |
+| Exercise 1: Encrypted Type Explorer | 40 min |
+| Exercise 2: Type Conversion | 30 min |
+| Exercise 3: Gas Cost Comparison | 25 min |
+| Quiz | 10 min |
 
 ---
 
-### Module 03: Access Control & Permissions (ACL)
+### Module 04: Operations - Arithmetic, Bitwise, Comparison
 
 **Duration:** 3 hours
-**Teaching Style:** Lecture + debugging exercise
+**Teaching Style:** Live coding + exercises
 
 **Key Teaching Points:**
-- ACL is the #1 source of bugs in fhEVM contracts. Emphasize this throughout.
-- Use a visual diagram: draw a table of (ciphertext, allowed_address) pairs.
-- The "allow dance" pattern: after every operation that produces a new ciphertext, you must re-establish permissions.
-- Demonstrate what happens when you forget `FHE.allowThis()`: the contract itself cannot use the value in the next transaction.
+- Demonstrate each operation category with live code: arithmetic (`FHE.add`, `FHE.sub`, `FHE.mul`), bitwise (`FHE.and`, `FHE.or`, `FHE.xor`, `FHE.shl`, `FHE.shr`), and comparison (`FHE.eq`, `FHE.ne`, `FHE.gt`, `FHE.ge`, `FHE.lt`, `FHE.le`).
+- Comparisons return `ebool`, not `bool`. You cannot use them in `if` statements or `require`.
+- Emphasize that `FHE.min` and `FHE.max` are useful shorthands.
 
 **Discussion Questions:**
-1. "Why does every new ciphertext need fresh ACL permissions, even if it was derived from an already-permitted ciphertext?"
-2. "What is the difference between `FHE.allow` and `FHE.allowTransient`? When would you use each?"
-3. "If a contract stores an encrypted value but forgets to call `FHE.allowThis`, what happens in the next transaction that reads it?"
+1. "Why do comparison operations return `ebool` instead of `bool`? What does this mean for control flow?"
+2. "When would you use bitwise operations on encrypted values in a real application?"
+3. "How does `FHE.select` relate to comparison operations?"
 
 **Common Pitfalls:**
-- Forgetting `FHE.allowThis()` --- the contract cannot use its own stored encrypted values.
-- Forgetting to allow the user --- the user cannot decrypt/view their own data.
-- Students assume permissions are inherited when ciphertexts are combined (they are not).
+- Students try to use `ebool` in `if` statements or `require()`. This will not compile.
+- Students forget that `FHE.sub` wraps on underflow (no revert).
+- Confusing `FHE.rem` behavior with plaintext modulo.
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Why ACLs exist (lecture + diagram) | 25 min |
-| Persistent vs transient permissions | 25 min |
-| The "allow dance" pattern | 20 min |
-| Live coding: multi-party ACL | 20 min |
-| Exercise 1: Secret Vault | 30 min |
-| Exercise 2: Two-Party Escrow | 25 min |
-| Exercise 3: Debug ACL Bugs | 20 min |
-| Quiz | 15 min |
+| Arithmetic operations (live coding) | 30 min |
+| Bitwise and shift operations | 25 min |
+| Comparison operations and ebool | 25 min |
+| Exercise 1: Encrypted Calculator | 40 min |
+| Exercise 2: Bitwise Flag Register | 30 min |
+| Exercise 3: Comparison Patterns | 20 min |
+| Quiz | 10 min |
 
 ---
 
-### Module 04: Input Handling & Validation
+### Module 05: Access Control (ACL)
+
+**Duration:** 3 hours
+**Teaching Style:** Lecture + live coding + debugging exercise
+
+**Key Teaching Points:**
+- ACL (Access Control List) is how you manage WHO can see encrypted data. Every encrypted value has an access list.
+- The core ACL functions: `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, `FHE.makePubliclyDecryptable()`, `FHE.isSenderAllowed()`.
+- After every state update (e.g., `_balance = FHE.add(_balance, value)`), you MUST re-set ACL because the handle changes.
+- `FHE.allowThis()` grants the contract itself access. `FHE.allow(handle, address)` grants a specific user access.
+- Show the "ACL reset after update" pattern --- this is the #1 source of bugs for beginners.
+- **Note:** The bootcamp uses the `FHE.makePubliclyDecryptable()` pattern for decryption in the local dev environment rather than Gateway-based decryption.
+
+**Discussion Questions:**
+1. "Why do you need to call `FHE.allowThis()` after every operation that updates an encrypted state variable?"
+2. "What is the difference between `FHE.allow()` and `FHE.allowTransient()`? When would you use each?"
+3. "How does `FHE.makePubliclyDecryptable()` differ from `FHE.allow()`? What are the security implications?"
+
+**Common Pitfalls:**
+- Students forget to re-set ACL after updating an encrypted variable. The new ciphertext handle has NO permissions by default.
+- Students use `FHE.allow()` when `FHE.allowTransient()` would be more appropriate for intermediate values.
+- Students forget `FHE.allowThis()` on contract-owned state, causing subsequent operations on that variable to fail.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| What is ACL and why it matters | 20 min |
+| The ACL functions deep dive | 25 min |
+| ACL reset after update pattern | 20 min |
+| Live coding: ACLDemo contract | 25 min |
+| Exercise 1: Multi-User Vault | 25 min |
+| Exercise 2: Debug ACL Bugs | 20 min |
+| Quiz | 10 min |
+
+---
+
+### Module 06: Encrypted Inputs & ZK Proofs
 
 **Duration:** 3 hours
 **Teaching Style:** Full-stack live coding (client + contract)
@@ -240,6 +325,7 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 - Show the full flow: `fhevmjs.encrypt()` on client -> `externalEuint32` parameter -> `FHE.fromExternal()` in contract.
 - Emphasize: `externalEuint32` is NOT the same as `euint32`. It is a raw encrypted input that must be converted.
 - Input validation on encrypted data is tricky --- you cannot check a range with `require()` because the value is encrypted.
+- Explain the role of ZK proofs in input verification: they ensure the encrypted input is well-formed without revealing the plaintext.
 
 **Discussion Questions:**
 1. "Can a malicious user submit an encrypted value that is out of the expected range? How do you prevent this?"
@@ -256,8 +342,8 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 |---|---|
 | Client-side encryption overview | 20 min |
 | fhevmjs setup and API | 20 min |
-| externalEuintXX types and FHE.fromExternal() | 25 min |
-| Input validation patterns | 20 min |
+| externalEuintXX types and FHE.fromExternal() | 20 min |
+| ZK proof role in input validation | 15 min |
 | Exercise 1: Client Script | 30 min |
 | Exercise 2: Multi-Input Contract | 25 min |
 | Exercise 3: Sealed Envelope | 15 min |
@@ -265,89 +351,152 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 
 ---
 
-### Module 05: Access Control (ACL)
+### Module 07: Decryption Patterns
 
-**Duration:** 4 hours
-**Teaching Style:** Live coding + refactoring exercise
-
-**Key Teaching Points:**
-- ACL (Access Control List) is how you manage WHO can see encrypted data. Every encrypted value has an access list.
-- The 5 core ACL functions: `FHE.allow()`, `FHE.allowThis()`, `FHE.allowTransient()`, `FHE.makePubliclyDecryptable()`, `FHE.isSenderAllowed()`.
-- After every state update (e.g., `_balance = FHE.add(_balance, value)`), you MUST re-set ACL because the handle changes.
-- `FHE.allowThis()` grants the contract itself access. `FHE.allow(handle, address)` grants a specific user access.
-- Show the "ACL reset after update" pattern — this is the #1 source of bugs for beginners.
-
-**Discussion Questions:**
-1. "Why do you need to call `FHE.allowThis()` after every operation that updates an encrypted state variable?"
-2. "What is the difference between `FHE.allow()` and `FHE.allowTransient()`? When would you use each?"
-3. "How does `FHE.makePubliclyDecryptable()` differ from `FHE.allow()`? What are the security implications?"
-
-**Common Pitfalls:**
-- Students forget to re-set ACL after updating an encrypted variable. The new ciphertext handle has NO permissions by default.
-- Students use `FHE.allow()` when `FHE.allowTransient()` would be more appropriate for intermediate values.
-- Students forget `FHE.allowThis()` on contract-owned state, causing subsequent operations on that variable to fail.
-
-**Time Allocation:**
-| Segment | Duration |
-|---|---|
-| What is ACL and why it matters | 20 min |
-| The 5 ACL functions deep dive | 30 min |
-| ACL reset after update pattern | 25 min |
-| Live coding: ACLDemo contract | 30 min |
-| Cross-contract ACL patterns | 20 min |
-| Exercise 1: Multi-User Vault | 30 min |
-| Exercise 2: Confidential Token ACL | 25 min |
-| Quiz | 15 min |
-
----
-
-### Module 06: Decryption Patterns & Callbacks
-
-**Duration:** 4 hours
+**Duration:** 3 hours
 **Teaching Style:** Lecture + live coding with devnet
 
 **Key Teaching Points:**
-- Decryption is asynchronous. This surprises students used to synchronous Solidity calls.
-- Draw the decryption timeline: request -> Gateway processes -> callback arrives (separate transaction).
-- Emphasize the security of the callback: validate that only the Gateway can call it.
-- Re-encryption (sealoutput) is different from Gateway decryption --- it produces a user-specific encrypted blob, not plaintext on-chain.
+- Decryption is asynchronous in production. This surprises students used to synchronous Solidity calls.
+- In the bootcamp dev environment, we use `FHE.makePubliclyDecryptable()` which simplifies the pattern (no Gateway callbacks needed in local mock mode).
+- Re-encryption (sealoutput) is different from on-chain decryption --- it produces a user-specific encrypted blob, not plaintext on-chain.
+- Discuss when to use each pattern: `makePubliclyDecryptable` for values that should become public, re-encryption for private viewing.
 
 **Discussion Questions:**
-1. "Why is decryption asynchronous? Why can't the contract just decrypt immediately?"
+1. "Why is decryption asynchronous on a real network? Why can't the contract just decrypt immediately?"
 2. "If the decrypted value ends up on-chain (in the callback), is it still private?"
-3. "When should you use re-encryption vs Gateway decryption? What are the trade-offs?"
-4. "What happens if the Gateway goes down? Can your contract still function?"
+3. "When should you use re-encryption vs on-chain decryption? What are the trade-offs?"
 
 **Common Pitfalls:**
 - Students expect decryption to be synchronous --- they write code that uses the decrypted result on the next line.
-- Callback functions that are not properly guarded can be called by anyone with a fake result.
 - Students store decrypted values in public storage, defeating the purpose of encryption.
+- Confusion between the `makePubliclyDecryptable` pattern used in dev and the Gateway callback pattern used in production.
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Gateway architecture and trust model | 25 min |
-| Decryption request and callback pattern | 30 min |
+| Decryption architecture overview | 20 min |
+| makePubliclyDecryptable pattern | 25 min |
+| Re-encryption (sealoutput) | 20 min |
 | Live coding: counter with reveal | 25 min |
-| Re-encryption (sealoutput) | 25 min |
-| Privacy analysis discussion | 15 min |
 | Exercise 1: Counter with Reveal | 25 min |
 | Exercise 2: Private Balance Viewer | 25 min |
-| Exercise 3: Timed Reveal | 20 min |
 | Quiz | 10 min |
 
 ---
 
-### Module 07: Encrypted ERC-20 Token
+### Module 08: Conditional Logic
 
-**Duration:** 5 hours
+**Duration:** 3 hours
+**Teaching Style:** Live coding + refactoring exercise
+
+**Key Teaching Points:**
+- The core paradigm shift: you cannot branch on encrypted data. You must compute all paths and select the result.
+- `FHE.select(condition, valueIfTrue, valueIfFalse)` is the fundamental pattern --- the encrypted `if/else`.
+- Show refactoring from plaintext branching to encrypted select patterns step by step.
+- Demonstrate chaining multiple `FHE.select` calls for multi-condition logic.
+
+**Discussion Questions:**
+1. "Why is `FHE.select` necessary? Why not just use `if (encryptedBool)` ?"
+2. "How does computing all branches affect gas costs compared to plaintext branching?"
+3. "When is it safe to use a plaintext `if` statement in an FHE contract?"
+
+**Common Pitfalls:**
+- Students instinctively write `if (encryptedCondition)` --- this will not compile because `ebool` is not `bool`.
+- Forgetting that both branches of `FHE.select` are always evaluated (gas cost for both paths).
+- Nested `FHE.select` chains become hard to read. Encourage helper functions.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| The encrypted branching problem | 20 min |
+| FHE.select deep dive | 25 min |
+| Refactoring patterns (live coding) | 25 min |
+| Exercise 1: Branchless Logic | 30 min |
+| Exercise 2: Multi-Condition Contract | 25 min |
+| Exercise 3: Refactor a Plaintext Contract | 25 min |
+| Quiz | 10 min |
+
+---
+
+### Module 09: On-Chain Randomness
+
+**Duration:** 2 hours
+**Teaching Style:** Lecture + live coding
+
+**Key Teaching Points:**
+- fhEVM provides encrypted randomness via `FHE.randomEuintXX()` functions.
+- The randomness is generated by the coprocessor and is encrypted --- no one (including the contract) can see the value.
+- Use cases: lotteries, gaming, random assignment, shuffling.
+- Emphasize: the randomness is only as trustworthy as the coprocessor generating it.
+
+**Discussion Questions:**
+1. "How does encrypted randomness differ from Chainlink VRF or block hash-based randomness?"
+2. "Can a miner/validator influence FHE random values? Why or why not?"
+3. "What applications require random values that nobody can see, even the contract?"
+
+**Common Pitfalls:**
+- Students confuse FHE randomness with public on-chain randomness (block.timestamp, etc.).
+- Forgetting ACL setup on random values --- the generated ciphertext needs `FHE.allowThis()`.
+- Using randomness in a way that leaks information when the result is eventually decrypted.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| On-chain randomness overview | 15 min |
+| FHE.randomEuintXX functions | 20 min |
+| Live coding: encrypted lottery | 25 min |
+| Exercise 1: Random Assignment | 25 min |
+| Exercise 2: Encrypted Dice Game | 25 min |
+| Quiz | 10 min |
+
+---
+
+### Module 10: Frontend Integration
+
+**Duration:** 3 hours
+**Teaching Style:** Full-stack live coding
+
+**Key Teaching Points:**
+- Connect fhevmjs to a React/frontend application.
+- Show the full user flow: connect wallet -> fetch FHE public key -> encrypt inputs -> send transaction -> view decrypted results.
+- Demonstrate re-encryption for private balance viewing in the UI.
+- Handle async patterns: waiting for transactions, polling for decryption results.
+
+**Discussion Questions:**
+1. "What is the user experience difference between an FHE dApp and a standard dApp?"
+2. "How do you handle the latency of FHE operations in the frontend?"
+3. "What should the UI show while an encrypted transaction is being processed?"
+
+**Common Pitfalls:**
+- Students forget to initialize fhevmjs before attempting encryption.
+- Handling the async nature of FHE operations in React state management.
+- CORS issues when connecting to devnet from localhost.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| fhevmjs frontend setup | 20 min |
+| Wallet connection and FHE key fetching | 15 min |
+| Input encryption in the browser | 20 min |
+| Live coding: React component for encrypted transfer | 30 min |
+| Re-encryption for private viewing | 20 min |
+| Exercise 1: Balance Viewer UI | 25 min |
+| Exercise 2: Transfer Form with Encryption | 20 min |
+| Quiz | 10 min |
+
+---
+
+### Module 11: Confidential ERC-20
+
+**Duration:** 4 hours
 **Teaching Style:** Guided project build
 
 **Key Teaching Points:**
 - Build the contract incrementally: storage -> mint -> transfer -> approve -> transferFrom -> balanceOf.
 - The "silent fail" pattern is critical: `FHE.select(hasEnough, newBalance, oldBalance)` --- if balance is insufficient, nothing changes and nothing reverts.
 - ACL management in ERC-20 is complex: after every balance update, re-allow both the contract and the token holder.
-- This is the most comprehensive module. Do not rush it.
+- This is a comprehensive module that brings together types, operations, ACL, and conditional logic. Do not rush it.
 
 **Discussion Questions:**
 1. "Why does the transfer not revert when the sender has insufficient balance? What would a revert leak?"
@@ -363,159 +512,57 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Design walkthrough | 20 min |
-| Storage and minting | 25 min |
-| Transfer implementation (live coding) | 35 min |
+| Design walkthrough | 15 min |
+| Storage and minting | 20 min |
+| Transfer implementation (live coding) | 30 min |
 | ACL management deep dive | 20 min |
-| Exercise 1: Core ERC-20 | 50 min |
-| Approve and transferFrom | 30 min |
-| Exercise 2: Approvals | 40 min |
+| Exercise 1: Core ERC-20 | 40 min |
+| Approve and transferFrom | 25 min |
+| Exercise 2: Approvals | 35 min |
 | Balance viewing via re-encryption | 15 min |
-| Exercise 3: Test Suite | 35 min |
+| Exercise 3: Test Suite | 25 min |
 | Quiz | 10 min |
 
 ---
 
-### Module 08: Testing & Debugging FHE Contracts
+### Module 12: Confidential Voting
 
 **Duration:** 4 hours
-**Teaching Style:** Test-driven live coding
-
-**Key Teaching Points:**
-- The mock environment replaces actual FHE with simulated encryption. Operations still work logically, but there is no real cryptography.
-- Test structure: setup accounts -> encrypt inputs -> call contract -> request decryption (mock) -> assert results.
-- Show how to read and interpret common error messages (ACL failures, type mismatches).
-- Encourage comprehensive test suites: happy path + edge cases + failure cases + ACL tests.
-
-**Discussion Questions:**
-1. "If the mock environment does not use real encryption, how do we know our contract will work with real FHE?"
-2. "How do you test that an encrypted transfer with insufficient balance correctly does nothing (silent fail)?"
-3. "What test cases would you write for the ACL system of an encrypted ERC-20?"
-
-**Common Pitfalls:**
-- Students write tests that only cover the happy path. Push for edge case coverage.
-- Mock decryption helpers have different APIs than production --- ensure students understand the difference.
-- Test setup is verbose (encrypt values, get instances). Encourage helper functions.
-
-**Time Allocation:**
-| Segment | Duration |
-|---|---|
-| Mock environment overview | 20 min |
-| Hardhat plugin configuration | 15 min |
-| Test structure walkthrough | 25 min |
-| Live coding: writing tests for a simple contract | 30 min |
-| Debugging techniques | 25 min |
-| Exercise 1: ERC-20 Test Suite | 50 min |
-| Exercise 2: Bug Hunting | 30 min |
-| Exercise 3: Test Helper Library | 15 min |
-| Quiz | 10 min |
-
----
-
-### Module 09: Gas Optimization & Performance
-
-**Duration:** 3 hours
-**Teaching Style:** Benchmarking workshop
-
-**Key Teaching Points:**
-- Show the gas cost table early and let it sink in. FHE operations are orders of magnitude more expensive than plaintext.
-- The biggest optimization is choosing the right type: euint8 is much cheaper than euint256.
-- The second biggest optimization is reducing the number of FHE operations per transaction.
-- Show before/after optimizations with gas profiler output.
-
-**Discussion Questions:**
-1. "Given the gas costs, what types of applications are economically viable with FHE today?"
-2. "When would you choose to store a value in plaintext vs encrypted, in a hybrid contract?"
-3. "How do you expect FHE gas costs to change over the next 2-5 years?"
-
-**Common Pitfalls:**
-- Students over-optimize readability for gas savings. Emphasize: correctness and security first, then optimize.
-- Using larger types than necessary "just in case" --- this is the most common waste.
-- Students forget that comparisons are expensive too, not just arithmetic.
-
-**Time Allocation:**
-| Segment | Duration |
-|---|---|
-| Gas cost table walkthrough | 25 min |
-| Type selection strategies | 20 min |
-| Operation minimization patterns | 20 min |
-| Gas profiling demo | 15 min |
-| Exercise 1: ERC-20 Optimization | 30 min |
-| Exercise 2: Rewrite Inefficient Contract | 25 min |
-| Exercise 3: Benchmark Matrix | 20 min |
-| Quiz | 10 min |
-
----
-
-### Module 10: Security Patterns & Auditing
-
-**Duration:** 4 hours
-**Teaching Style:** Case study + audit workshop
-
-**Key Teaching Points:**
-- The core insight: even with encrypted data, a public blockchain reveals metadata (who transacts, when, gas used, storage changes).
-- The "revert vs select" principle: encrypted contracts should never revert on business logic conditions, because reverts leak information.
-- Walk through the security checklist (`resources/SECURITY_CHECKLIST.md`) item by item.
-- The audit exercise is the most engaging part --- let students find bugs independently before revealing answers.
-
-**Discussion Questions:**
-1. "If a contract reverts when a transfer has insufficient balance, what information does the attacker learn?"
-2. "Can an attacker learn the encrypted balance of a user by observing gas usage across multiple transactions?"
-3. "What information does event emission leak in an encrypted contract?"
-4. "How does the trust model change when the Gateway is operated by a centralized party?"
-
-**Common Pitfalls:**
-- Students assume encryption = security. Emphasize the metadata leakage vectors.
-- "Security theater" --- adding encryption without analyzing what is actually protected.
-- Over-focusing on smart contract vulnerabilities (reentrancy, overflow) while ignoring FHE-specific issues (ACL, decryption leakage).
-
-**Time Allocation:**
-| Segment | Duration |
-|---|---|
-| FHE threat model | 30 min |
-| Information leakage vectors | 25 min |
-| Secure design patterns | 25 min |
-| Security checklist walkthrough | 20 min |
-| Exercise 1: Audit the Lottery | 40 min |
-| Exercise 2: Fix the Voting Contract | 30 min |
-| Exercise 3: ERC-20 Security Report | 25 min |
-| Quiz | 15 min |
-
----
-
-### Module 11: Confidential Voting System
-
-**Duration:** 5 hours
 **Teaching Style:** Guided project build
 
 **Key Teaching Points:**
 - Voting is the "killer demo" for FHE --- it is immediately intuitive why encrypted computation matters here.
 - Homomorphic tallying with `FHE.add` is elegant: each encrypted vote is added to an encrypted running total.
 - The hardest part is preventing double votes without revealing who voted for what. Discuss trade-offs.
-- The reveal mechanism (Gateway callback) should only trigger after the voting period ends.
+- The reveal mechanism should only trigger after the voting period ends. In dev, use `FHE.makePubliclyDecryptable()`.
 
 **Discussion Questions:**
 1. "How can you prevent double voting if you cannot see who has already voted?"
 2. "Should the voter be able to verify their own vote was counted? How would you implement that with FHE?"
 3. "What information leaks when the final tally is revealed? Can partial information be inferred?"
 
+**Common Pitfalls:**
+- Students forget to track voters with a plaintext mapping to prevent double voting.
+- Revealing tallies too early (before voting ends) leaks partial results.
+- ACL issues with the running tally variable.
+
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Voting system design | 30 min |
-| Encrypted ballot and tally architecture | 25 min |
-| Exercise 1: Core Voting Contract | 60 min |
-| Voter eligibility and double-vote prevention | 25 min |
-| Exercise 2: Eligibility and Anti-Double-Vote | 45 min |
-| Tally reveal via Gateway | 20 min |
-| Exercise 3: Reveal + E2E Tests | 35 min |
+| Voting system design | 25 min |
+| Encrypted ballot and tally architecture | 20 min |
+| Exercise 1: Core Voting Contract | 50 min |
+| Voter eligibility and double-vote prevention | 20 min |
+| Exercise 2: Eligibility and Anti-Double-Vote | 40 min |
+| Tally reveal mechanism | 15 min |
+| Exercise 3: Reveal + E2E Tests | 30 min |
 | Quiz | 10 min |
 
 ---
 
-### Module 12: Sealed-Bid Auction
+### Module 13: Sealed-Bid Auction
 
-**Duration:** 5 hours
+**Duration:** 4 hours
 **Teaching Style:** Guided project build
 
 **Key Teaching Points:**
@@ -529,79 +576,56 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 2. "How do deposits work when the bid amount is encrypted?"
 3. "Can the auctioneer front-run the auction if they can request decryption of all bids?"
 
+**Common Pitfalls:**
+- Students forget to handle the case where no bids are placed.
+- The two-variable tracking pattern for Vickrey auctions is error-prone --- walk through it carefully.
+- Deposit refund logic must handle the encrypted/plaintext boundary correctly.
+
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Auction type overview | 20 min |
-| Sealed-bid design with FHE | 25 min |
+| Auction type overview | 15 min |
+| Sealed-bid design with FHE | 20 min |
 | Running maximum pattern | 20 min |
-| Exercise 1: First-Price Auction | 60 min |
-| Vickrey extension (second-price) | 25 min |
-| Exercise 2: Vickrey Auction | 50 min |
-| Deposit management and refunds | 20 min |
-| Exercise 3: Full Auction with Tests | 35 min |
+| Exercise 1: First-Price Auction | 50 min |
+| Vickrey extension (second-price) | 20 min |
+| Exercise 2: Vickrey Auction | 40 min |
+| Deposit management and refunds | 15 min |
+| Exercise 3: Full Auction with Tests | 30 min |
 | Quiz | 10 min |
 
 ---
 
-### Module 13: Confidential DeFi Primitives
+### Module 14: Capstone - Confidential DAO
 
 **Duration:** 5 hours
-**Teaching Style:** Design workshop + selective implementation
-
-**Key Teaching Points:**
-- Not everything in DeFi can or should be encrypted. The design discussion is as valuable as the code.
-- Confidential order books are the most implementable primitive with current fhEVM capabilities.
-- The AMM design exercise (whitepaper-level) teaches architectural thinking without requiring full implementation.
-- Compliance is the elephant in the room --- address it directly.
-
-**Discussion Questions:**
-1. "If order book prices are encrypted, how does a user know the current market price?"
-2. "Can you build a private AMM? What fundamental challenges arise?"
-3. "How do encrypted DeFi protocols handle compliance and regulatory reporting?"
-4. "What is the MEV protection value of encrypted transactions? Is it sufficient justification for the gas overhead?"
-
-**Time Allocation:**
-| Segment | Duration |
-|---|---|
-| DeFi privacy landscape | 25 min |
-| Confidential order book design | 25 min |
-| Exercise 1: Order Book Implementation | 60 min |
-| Private lending design | 25 min |
-| Exercise 2: Lending Position Tracker | 50 min |
-| AMM analysis and design discussion | 25 min |
-| Exercise 3: AMM Whitepaper | 20 min |
-| Quiz | 10 min |
-
----
-
-### Module 14: Capstone Project
-
-**Duration:** 8 hours
+**Prerequisites:** Modules 00-13
 **Teaching Style:** Mentored independent work
 
 **Key Teaching Points:**
+- The capstone integrates concepts from all prior modules: encrypted types, ACL, conditional logic, decryption, ERC-20, and voting.
+- Students build a Confidential DAO that combines governance token (confidential ERC-20) with encrypted voting and proposal execution.
 - The instructor's role shifts from teacher to mentor. Give guidance, not answers.
 - Require a written proposal before implementation begins. This prevents scope creep.
 - Check in with each student/team at least 3 times during implementation.
 - Presentations should be 5-10 minutes: problem statement, architecture, demo, lessons learned.
 
 **Discussion Questions (for proposal review):**
-1. "What data in your application needs to be encrypted? What can remain in plaintext?"
-2. "What is the minimum viable version of your project?"
+1. "What data in your DAO needs to be encrypted? What can remain in plaintext?"
+2. "How does your DAO prevent vote buying if balances and votes are both encrypted?"
 3. "What are the security assumptions and trust boundaries?"
 
 **Time Allocation:**
 | Segment | Duration |
 |---|---|
-| Project scoping and proposal writing | 30 min |
-| Proposal review (instructor feedback) | 30 min |
-| Design and architecture | 60 min |
-| Implementation (mentored) | 180 min |
-| Testing | 60 min |
-| Documentation | 45 min |
-| Presentation prep | 15 min |
-| Presentations + Q&A | 60 min |
+| Project scoping and proposal writing | 20 min |
+| Proposal review (instructor feedback) | 20 min |
+| Design and architecture | 40 min |
+| Implementation (mentored) | 120 min |
+| Testing | 45 min |
+| Documentation | 20 min |
+| Presentation prep | 10 min |
+| Presentations + Q&A | 45 min |
 
 ---
 
@@ -683,7 +707,7 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 2. **Provide solutions:** If an exercise is taking too long, live-code the solution and let students follow along.
 3. **Batch Q&A:** Instead of answering questions during exercises, collect them and address them in a dedicated Q&A block.
 4. **Assign homework:** Move the final exercise of a module to homework (Part-Time path only).
-5. **Condense Module 13:** DeFi Primitives can be reduced to a design discussion + one exercise if time is tight.
+5. **Condense Module 13:** Sealed-Bid Auction can be reduced to a design discussion + one exercise if time is tight.
 
 ### Signals You Are Running Ahead
 
@@ -707,7 +731,7 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 | Problem | Cause | Solution |
 |---|---|---|
 | `npm install` fails with ERESOLVE | Dependency conflicts | Use `npm install --legacy-peer-deps` |
-| Hardhat compile error: "pragma" | Wrong Solidity version | Ensure `hardhat.config.ts` specifies `0.8.24` |
+| Hardhat compile error: "pragma" | Wrong Solidity version | Ensure `hardhat.config.ts` specifies `0.8.27` |
 | "Cannot find module fhevm" | Incomplete install | Delete `node_modules`, run `npm install` again |
 | Gateway timeout during decryption | Network issue / Sepolia down | Check Ethereum Sepolia status; fall back to mock mode |
 | "Out of gas" on FHE operations | Gas limit too low | Increase gas limit in hardhat config (30M+) |

@@ -30,14 +30,11 @@ This bootcamp teaches you to design, develop, audit, and deploy FHE-powered smar
 
 ```bash
 # Clone the bootcamp repository
-git clone https://github.com/your-org/fhevm-bootcamp.git
+git clone https://github.com/Himess/fhevm-bootcamp.git
 cd fhevm-bootcamp
 
 # Install dependencies
 npm install
-
-# Install the fhEVM Solidity library
-npm install fhevm
 
 # Verify installation
 npx hardhat compile
@@ -55,13 +52,13 @@ import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 contract HelloFHEVM is ZamaEthereumConfig {
     euint32 private secretNumber;
 
-    function setSecret(externalEuint32 encryptedValue, bytes calldata proof) external {
-        secretNumber = FHE.fromExternal(encryptedValue, proof);
+    function setSecret(externalEuint32 encryptedValue, bytes calldata inputProof) external {
+        secretNumber = FHE.fromExternal(encryptedValue, inputProof);
         FHE.allowThis(secretNumber);
     }
 
-    function addToSecret(externalEuint32 encryptedValue, bytes calldata proof) external {
-        euint32 input = FHE.fromExternal(encryptedValue, proof);
+    function addToSecret(externalEuint32 encryptedValue, bytes calldata inputProof) external {
+        euint32 input = FHE.fromExternal(encryptedValue, inputProof);
         secretNumber = FHE.add(secretNumber, input);
         FHE.allowThis(secretNumber);
     }
@@ -94,7 +91,7 @@ This bootcamp consists of **15 modules** organized into four progressive phases.
 | 13 | [Sealed-Bid Auction](modules/13-project-auction/) | Advanced | 4 hrs | Applications |
 | 14 | [Capstone: Confidential DAO](modules/14-capstone/) | Advanced | 5 hrs | Capstone |
 
-**Total Duration: ~63 hours**
+**Total Duration: ~46 hours**
 
 ### Phase Breakdown
 
@@ -154,13 +151,13 @@ fhevm-bootcamp/
 ├── .github/workflows/                 # CI/CD pipelines
 │   ├── test.yml                       # Run tests on PR/push
 │   └── slides.yml                     # Build Marp slides
-├── contracts/                         # 22 Solidity contracts
+├── contracts/                         # 25 Solidity contracts
 │   ├── SimpleStorage.sol              # Module 00
 │   ├── HelloFHEVM.sol                 # Module 02
 │   ├── ConfidentialERC20.sol          # Module 11
 │   ├── ConfidentialDAO.sol            # Module 14 (capstone)
 │   └── ...
-├── test/                              # 22 test files (139 tests)
+├── test/                              # 25 test files (210 tests)
 ├── modules/                           # 15 learning modules
 │   ├── 00-prerequisites/
 │   │   ├── README.md                  # Module overview
@@ -182,8 +179,8 @@ fhevm-bootcamp/
 │   ├── GAS_GUIDE.md                   # Gas cost reference
 │   ├── SECURITY_CHECKLIST.md          # Audit checklist
 │   └── GLOSSARY.md                    # A-Z terminology
-├── exercises/                         # 7 exercise starter templates
-├── solutions/                         # 7 complete solutions
+├── exercises/                         # 11 exercise starter templates
+├── solutions/                         # 11 complete solutions
 ├── diagrams/                          # 6 architecture diagrams (Mermaid)
 └── scripts/
     ├── deploy-all.ts                  # Deploy all contracts
@@ -218,7 +215,7 @@ import { FHE, euint32, ebool } from "@fhevm/solidity/lib/FHE.sol";
 import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 // Convert external encrypted input
-euint32 value = FHE.fromExternal(externalEncryptedInput, proof);
+euint32 value = FHE.fromExternal(externalEncryptedInput, inputProof);
 
 // Arithmetic
 euint32 sum = FHE.add(a, b);
@@ -260,7 +257,7 @@ euint32 rand = FHE.randEuint32();
 
 ## Deployed Contracts (Ethereum Sepolia)
 
-All 21 contracts have been deployed and verified on Ethereum Sepolia testnet.
+All contracts have been deployed and verified on Ethereum Sepolia testnet.
 
 **Deployer:** `0xF505e2E71df58D7244189072008f25f6b6aaE5ae`
 

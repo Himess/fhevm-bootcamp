@@ -1,11 +1,11 @@
 # FHEVM Bootcamp - Project Status Report
 
 ## Summary
-- **22 Solidity contracts** - All compiling successfully
-- **22 test files** - 146/146 tests passing
+- **25 Solidity contracts** - All compiling successfully
+- **25 test files** - 210/210 tests passing
 - **15 learning modules** (00-14) - Each with README, lesson, slides, exercise, quiz
 - **6 architecture diagrams** - Mermaid format
-- **7 exercise templates** + **7 solutions** - For hands-on learning
+- **11 exercise templates** + **11 solutions** - For hands-on learning
 - **CI/CD pipelines** - GitHub Actions for test + slides build
 - **Deployment scripts** - For local and Ethereum Sepolia
 - **Setup script** - Automated environment setup (scripts/setup.sh)
@@ -40,16 +40,16 @@
 
 ## Test Results
 ```
-146 passing (5s)
+210 passing (8s)
 0 failing
 ```
 
 ## Known Issues / Limitations
 1. **@fhevm/hardhat-plugin@0.4.0 patch** - The plugin has a double-registration bug. A postinstall script (`scripts/postinstall.js`) applies the fix automatically on `npm install`.
-2. **Shift operations** (shl, shr, rotl, rotr) are not available in the current FHEVM API. BitwiseOps.sol only includes: and, or, xor, not.
+2. **Shift operations** (shl, shr, rotl, rotr) ARE available in the FHEVM API for all euint types. BitwiseOps.sol includes: and, or, xor, not, shl, shr, rotl, rotr.
 3. **Frontend demo** (Module 10) is a UI mockup. Full fhevmjs integration requires connecting to Ethereum Sepolia.
 4. **Chai matchers** (emit, revertedWith) don't work with the fhevm plugin. Tests use manual event/revert checking.
-5. **On-chain deployment** - 21/21 contracts deployed to Ethereum Sepolia (see README.md for addresses).
+5. **On-chain deployment** - 21 contracts deployed to Ethereum Sepolia (see README.md for addresses).
 
 ## API Notes (Important for Instructors)
 The FHEVM API changed significantly. The bootcamp uses the **current** API:

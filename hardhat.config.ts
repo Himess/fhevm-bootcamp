@@ -12,9 +12,6 @@ const MNEMONIC: string = process.env.MNEMONIC || "test test test test test test 
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
-  namedAccounts: {
-    deployer: 0,
-  },
   gasReporter: {
     currency: "USD",
     enabled: process.env.REPORT_GAS ? true : false,

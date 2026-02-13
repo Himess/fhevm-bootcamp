@@ -11,7 +11,7 @@ This module introduces the theory of Fully Homomorphic Encryption (FHE) and expl
 | Field         | Value                     |
 |---------------|---------------------------|
 | **Level**     | Beginner                  |
-| **Duration**  | 1.5 hours                 |
+| **Duration**  | 2 hours                   |
 | **Prerequisites** | [Module 00: Prerequisites](../00-prerequisites/README.md) |
 
 ---

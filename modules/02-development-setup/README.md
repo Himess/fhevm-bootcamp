@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Level** | Beginner |
-| **Duration** | 1h |
+| **Duration** | 2h |
 | **Prerequisites** | Module 01 |
 
 ## Learning Objectives

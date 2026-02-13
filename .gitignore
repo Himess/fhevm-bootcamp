@@ -13,3 +13,5 @@ coverage.json
 deployments/
 slides-output/
 hardhat.config.ts.bak
+.vscode/
+.idea/

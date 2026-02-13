@@ -37,7 +37,7 @@ This project follows a standard code of conduct. By participating, you agree to:
 # Fork the repository on GitHub, then:
 git clone https://github.com/YOUR-USERNAME/fhevm-bootcamp.git
 cd fhevm-bootcamp
-git remote add upstream https://github.com/ORIGINAL-ORG/fhevm-bootcamp.git
+git remote add upstream https://github.com/Himess/fhevm-bootcamp.git
 ```
 
 ### 2. Create a Branch
@@ -122,20 +122,11 @@ When adding or modifying content, follow the established directory structure:
 ```
 modules/XX-module-name/
 ├── README.md              # Module overview, learning objectives, prerequisites
-├── lecture/
-│   ├── notes.md           # Detailed lecture notes
-│   └── slides/            # Presentation slides (if applicable)
-├── examples/
-│   ├── ExampleContract.sol
-│   └── ...
-├── exercises/
-│   ├── exercise-01/
-│   │   ├── README.md      # Problem statement
-│   │   ├── starter/       # Starter code for students
-│   │   └── solution/      # Reference solution
-│   └── ...
-└── quiz/
-    └── quiz.md            # Assessment questions with answer key
+├── lesson.md              # Detailed lesson content
+├── slides/
+│   └── slides.md          # Marp presentation slides
+├── exercise.md            # Hands-on exercise with starter code
+└── quiz.md                # Assessment questions with answer key
 ```
 
 ---
@@ -213,8 +204,8 @@ Prefixes:
 /// @notice Transfers encrypted tokens from sender to recipient.
 /// @param to The recipient address.
 /// @param encryptedAmount The encrypted transfer amount.
-function transfer(address to, externalEuint32 encryptedAmount, bytes calldata proof) external {
-    euint32 amount = FHE.fromExternal(encryptedAmount, proof);
+function transfer(address to, externalEuint32 encryptedAmount, bytes calldata inputProof) external {
+    euint32 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
     // Check balance >= amount (comparison on ciphertexts)
     ebool hasEnough = FHE.ge(balances[msg.sender], amount);

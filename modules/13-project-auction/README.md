@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Level** | Advanced |
-| **Duration** | 3h |
+| **Duration** | 4h |
 | **Prerequisites** | Modules 01-12 |
 
 ## Learning Objectives

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Level** | Intermediate |
-| **Duration** | 3h |
+| **Duration** | 4h |
 | **Prerequisites** | Modules 01-10 |
 
 ## Learning Objectives
