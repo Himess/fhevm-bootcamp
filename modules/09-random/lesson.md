@@ -107,7 +107,6 @@ FHEVM provides random generation functions for all major encrypted types:
 | Function | Return Type | Range | Description |
 |----------|-------------|-------|-------------|
 | `FHE.randEbool()` | `ebool` | true/false | Encrypted random boolean |
-| `FHE.randEuint4()` | `euint4` | 0 – 15 | Encrypted random 4-bit integer |
 | `FHE.randEuint8()` | `euint8` | 0 – 255 | Encrypted random 8-bit integer |
 | `FHE.randEuint16()` | `euint16` | 0 – 65,535 | Encrypted random 16-bit integer |
 | `FHE.randEuint32()` | `euint32` | 0 – 4,294,967,295 | Encrypted random 32-bit integer |
@@ -767,7 +766,6 @@ contract RevealableRandom is ZamaEthereumConfig, GatewayConfig {
 | Concept | Details |
 |---------|---------|
 | **`FHE.randEbool()`** | Encrypted random boolean (true/false) |
-| **`FHE.randEuint4()`** | Encrypted random 4-bit integer (0–15) |
 | **`FHE.randEuint8()`** | Encrypted random 8-bit integer (0–255) |
 | **`FHE.randEuint16()`** | Encrypted random 16-bit integer (0–65,535) |
 | **`FHE.randEuint32()`** | Encrypted random 32-bit integer (0–4.29B) |

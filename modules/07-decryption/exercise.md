@@ -1,8 +1,8 @@
-# Module 07: Exercise — Decryptable Auction Contract
+# Module 07: Exercise — Revealable Auction Contract
 
 ## Objective
 
-Build a sealed-bid auction contract that uses both **encrypted inputs** for private bids and **public decryption** via the Gateway to reveal the winning bid and winner.
+Build a sealed-bid auction contract that uses **encrypted inputs** for private bids and **public decryption** via `FHE.makePubliclyDecryptable()` to reveal the winning bid after the auction closes.
 
 ---
 
@@ -12,9 +12,8 @@ Create an auction contract with these features:
 
 1. Users submit sealed bids using `externalEuint64`
 2. The contract tracks the highest bid and the highest bidder (both encrypted)
-3. The owner can close the auction and request decryption of the winning bid
-4. A Gateway callback reveals the winning amount publicly
-5. Users can view their own bids via reencryption (return encrypted handle with ACL)
+3. The owner can close the auction and reveal the winning bid publicly
+4. Users can view their own bids via ACL-protected reencryption
 
 ---
 
@@ -28,9 +27,8 @@ pragma solidity ^0.8.24;
 
 import {FHE, euint64, eaddress, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
-import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
-contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
+contract RevealableAuction is ZamaEthereumConfig {
     address public owner;
     bool public auctionOpen;
     bool public revealed;
@@ -40,9 +38,6 @@ contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
 
     euint64 private _highestBid;
     eaddress private _highestBidder;
-
-    // Revealed values (plaintext, set by callback)
-    uint64 public winningBid;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -59,11 +54,11 @@ contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
         // TODO: FHE.allowThis() for both
     }
 
-    function submitBid(externalEuint64 encryptedBid, bytes calldata proof) external {
+    function submitBid(externalEuint64 encryptedBid, bytes calldata inputProof) external {
         require(auctionOpen, "Auction closed");
         require(!_hasBid[msg.sender], "Already bid");
 
-        // TODO: Convert external input with FHE.fromExternal(encryptedBid, proof)
+        // TODO: Convert external input with FHE.fromExternal(encryptedBid, inputProof)
         // TODO: Store the bid in _bids mapping
         // TODO: Mark _hasBid as true
 
@@ -80,16 +75,11 @@ contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
         auctionOpen = false;
     }
 
-    function requestReveal() public onlyOwner {
+    function revealWinner() public onlyOwner {
         require(!auctionOpen, "Close auction first");
         require(!revealed, "Already revealed");
 
-        // TODO: Create uint256[] with _highestBid handle
-        // TODO: Call Gateway.requestDecryption() with callback selector
-    }
-
-    function revealCallback(uint256 requestId, uint64 decryptedBid) public onlyGateway {
-        // TODO: Store the decrypted winning bid
+        // TODO: Call FHE.makePubliclyDecryptable() for _highestBid
         // TODO: Set revealed to true
     }
 
@@ -105,31 +95,46 @@ contract RevealableAuction is ZamaEthereumConfig, GatewayConfig {
 
 ## Step-by-Step Instructions
 
-1. **Constructor**: Initialize `_highestBid` and `_highestBidder` with encrypted zero values.
+1. **Constructor**: Initialize `_highestBid` with `FHE.asEuint64(0)` and `_highestBidder` with `FHE.asEaddress(address(0))`. Call `FHE.allowThis()` for both.
 
-2. **`submitBid`**: Convert input, store bid, compare with highest, update with `FHE.select()`.
+2. **`submitBid`**: Convert input with `FHE.fromExternal()`, store bid, compare with `FHE.gt()`, update with `FHE.select()`, set ACL permissions.
 
-3. **`closeAuction`**: Simple flag flip.
+3. **`closeAuction`**: Simple flag flip (already implemented).
 
-4. **`requestReveal`**: Build the ciphertext handle array and call `Gateway.requestDecryption()`.
+4. **`revealWinner`**: Call `FHE.makePubliclyDecryptable(_highestBid)` and set `revealed = true`.
 
-5. **`revealCallback`**: Receive the plaintext and store it.
-
-6. **`getMyBid`**: ACL check and return handle for reencryption.
+5. **`getMyBid`**: Check `FHE.isSenderAllowed()` and return the encrypted handle.
 
 ---
 
 ## Hints
 
 <details>
-<summary>Hint 1: submitBid with highest bid tracking</summary>
+<summary>Hint 1: Constructor initialization</summary>
 
 ```solidity
-function submitBid(externalEuint64 encryptedBid, bytes calldata proof) external {
+constructor() {
+    owner = msg.sender;
+    auctionOpen = true;
+    revealed = false;
+
+    _highestBid = FHE.asEuint64(0);
+    _highestBidder = FHE.asEaddress(address(0));
+    FHE.allowThis(_highestBid);
+    FHE.allowThis(_highestBidder);
+}
+```
+</details>
+
+<details>
+<summary>Hint 2: submitBid with highest bid tracking</summary>
+
+```solidity
+function submitBid(externalEuint64 encryptedBid, bytes calldata inputProof) external {
     require(auctionOpen, "Auction closed");
     require(!_hasBid[msg.sender], "Already bid");
 
-    euint64 bid = FHE.fromExternal(encryptedBid, proof);
+    euint64 bid = FHE.fromExternal(encryptedBid, inputProof);
     _bids[msg.sender] = bid;
     _hasBid[msg.sender] = true;
 
@@ -146,33 +151,14 @@ function submitBid(externalEuint64 encryptedBid, bytes calldata proof) external 
 </details>
 
 <details>
-<summary>Hint 2: requestReveal</summary>
+<summary>Hint 3: revealWinner and getMyBid</summary>
 
 ```solidity
-function requestReveal() public onlyOwner {
+function revealWinner() public onlyOwner {
     require(!auctionOpen, "Close auction first");
     require(!revealed, "Already revealed");
 
-    uint256[] memory cts = new uint256[](1);
-    cts[0] = FHE.toUint256(_highestBid);
-
-    Gateway.requestDecryption(
-        cts,
-        this.revealCallback.selector,
-        0,
-        block.timestamp + 100,
-        false
-    );
-}
-```
-</details>
-
-<details>
-<summary>Hint 3: revealCallback and getMyBid</summary>
-
-```solidity
-function revealCallback(uint256 requestId, uint64 decryptedBid) public onlyGateway {
-    winningBid = decryptedBid;
+    FHE.makePubliclyDecryptable(_highestBid);
     revealed = true;
 }
 
@@ -188,21 +174,20 @@ function getMyBid() public view returns (euint64) {
 
 ## Bonus Challenges
 
-1. **Reveal the winner's address too** — Add the `_highestBidder` eaddress to the decryption request and update the callback to receive both the bid amount and the winner's address.
+1. **Reveal the winner's address too** — Also call `FHE.makePubliclyDecryptable(_highestBidder)` in `revealWinner()`.
 
-2. **Add a `claimPrize` function** — After reveal, the winner can call this function. Compare `msg.sender` with the revealed winner address.
+2. **Add a reserve price** — In the constructor, set a minimum bid amount. In `submitBid`, use `FHE.ge()` to check the bid meets the reserve.
 
-3. **Implement bid minimum** — Require that submitted bids are at least some minimum value (checked encrypted using `FHE.ge()`).
+3. **Add bid count tracking** — Track the total number of bids and emit events.
 
 ---
 
 ## Success Criteria
 
 - [ ] Contract compiles without errors
-- [ ] Inherits both `ZamaEthereumConfig` and `GatewayConfig`
-- [ ] `submitBid` uses `externalEuint64` + `bytes calldata proof` and `FHE.fromExternal(input, proof)`
+- [ ] Inherits `ZamaEthereumConfig` (NOT `GatewayConfig`)
+- [ ] `submitBid` uses `externalEuint64` + `bytes calldata inputProof` and `FHE.fromExternal(input, inputProof)`
 - [ ] Highest bid is tracked using `FHE.gt()` + `FHE.select()`
-- [ ] `requestReveal` calls `Gateway.requestDecryption()` with correct parameters
-- [ ] `revealCallback` uses `onlyGateway` modifier
+- [ ] `revealWinner` uses `FHE.makePubliclyDecryptable()` (NOT Gateway)
 - [ ] `getMyBid` checks `FHE.isSenderAllowed()` before returning
 - [ ] All encrypted state updates have proper ACL calls

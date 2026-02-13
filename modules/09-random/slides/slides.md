@@ -48,7 +48,6 @@ FHE.allowThis(random);
 | Function | Type | Range |
 |----------|------|-------|
 | `FHE.randEbool()` | `ebool` | true / false |
-| `FHE.randEuint4()` | `euint4` | 0 - 15 |
 | `FHE.randEuint8()` | `euint8` | 0 - 255 |
 | `FHE.randEuint16()` | `euint16` | 0 - 65,535 |
 | `FHE.randEuint32()` | `euint32` | 0 - ~4.3 billion |

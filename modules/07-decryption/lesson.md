@@ -4,365 +4,374 @@
 
 Encrypted data is only useful if you can eventually act on the plaintext. FHEVM provides two primary decryption approaches:
 
-1. **Public decryption** — The plaintext is revealed on-chain (visible to everyone)
-2. **Reencryption** — The data is re-encrypted for a specific user (only they can see it)
-
-Both approaches go through the **Gateway** and **KMS** (Key Management Service), which manages the FHE secret key in a distributed manner.
+1. **Public decryption** — Make the encrypted value decryptable by everyone using `FHE.makePubliclyDecryptable()`
+2. **User-specific decryption (Reencryption)** — Grant individual users access via ACL, they decrypt client-side
 
 ---
 
-## 1. The Decryption Architecture
+## 1. Why Decrypt?
 
-```
-┌──────────────┐     decrypt request     ┌──────────────┐
-│   Contract    │ ──────────────────────► │   Gateway    │
-│   (on-chain)  │                         │  (off-chain)  │
-│               │     callback with       │               │
-│               │ ◄────plaintext───────── │               │
-└──────────────┘                         └───────┬──────┘
-                                                 │
-                                                 │ threshold
-                                                 │ decrypt
-                                                 ▼
-                                         ┌──────────────┐
-                                         │     KMS      │
-                                         │ (distributed) │
-                                         └──────────────┘
-```
+Encrypted values are useful for computation, but eventually results need to be revealed:
+- **Vote outcomes** — After tallying, the results should be public
+- **Auction winners** — The winning bid needs to be announced
+- **Private balances** — Users need to see their own balance
+- **Game results** — The outcome must eventually be known
 
-### Key Points
-
-- **Decryption is asynchronous** — You request it in one transaction, and the result comes back in a separate callback transaction.
-- **The Gateway** is an off-chain relayer that receives decryption requests and forwards them to the KMS.
-- **The KMS** holds shares of the FHE secret key and performs threshold decryption.
-- The contract must implement a **callback function** to receive the decrypted result.
+The key question is: **Who should see the decrypted value?**
 
 ---
 
-## 2. Public Decryption (Gateway Callback)
+## 2. Approach 1: Public Decryption — FHE.makePubliclyDecryptable()
 
-Public decryption reveals the plaintext to everyone on the blockchain. Use it when:
-- The result should be publicly visible (e.g., auction winner, game outcome)
-- You need to branch on a decrypted value in a subsequent transaction
-
-### Step 1: Request Decryption
+When a result should be visible to **everyone**, use `FHE.makePubliclyDecryptable()`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-
-import {FHE, euint64} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
-import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 
-contract AuctionReveal is ZamaEthereumConfig, GatewayConfig {
-    euint64 private _highestBid;
-    uint64 public revealedHighestBid;
+contract VoteRevealer is ZamaEthereumConfig {
+    euint32 private _yesVotes;
+    euint32 private _noVotes;
     bool public isRevealed;
 
-    constructor() {
-        _highestBid = FHE.asEuint64(0);
-        FHE.allowThis(_highestBid);
-    }
-
-    function requestReveal() public {
-        // Create an array of ciphertext handles to decrypt
-        uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(_highestBid);
-
-        // Request decryption from the Gateway
-        Gateway.requestDecryption(
-            cts,                           // ciphertexts to decrypt
-            this.revealCallback.selector,  // callback function
-            0,                             // msg value for callback
-            block.timestamp + 100,         // deadline
-            false                          // not expecting bytes
-        );
-    }
-
-    /// @notice Callback called by the Gateway with the decrypted value
-    function revealCallback(uint256 /*requestId*/, uint64 decryptedValue) public onlyGateway {
-        revealedHighestBid = decryptedValue;
+    function revealResults() external {
+        require(!isRevealed, "Already revealed");
+        FHE.makePubliclyDecryptable(_yesVotes);
+        FHE.makePubliclyDecryptable(_noVotes);
         isRevealed = true;
     }
 }
 ```
 
-### Key Elements
+### When to Use
+- Vote results that should become public
+- Auction outcomes (winning bid, winner)
+- Game results and scores
+- Any value that should be visible to ALL users
 
-1. **`GatewayConfig`** — Import and inherit for Gateway functionality
-2. **`Gateway.requestDecryption()`** — Initiates the decryption request
-3. **`this.revealCallback.selector`** — The function that will receive the result
-4. **`onlyGateway`** — Modifier ensuring only the Gateway can call the callback
-5. **`FHE.toUint256()`** — Converts an encrypted handle to its uint256 representation
-
----
-
-## 3. Decryption Request Parameters
-
-```solidity
-Gateway.requestDecryption(
-    cts,              // uint256[] — array of ciphertext handles
-    callbackSelector, // bytes4 — selector of the callback function
-    msgValue,         // uint256 — ETH value sent with callback tx
-    deadline,         // uint256 — timestamp deadline for the response
-    isBytes           // bool — true if decrypting ebytesXX types
-);
-```
-
-### The Callback Function Signature
-
-The callback receives:
-- A `uint256 requestId` as the first parameter
-- One parameter per decrypted value, in the type matching the encrypted type
-
-```solidity
-// For a single euint32:
-function callback(uint256 requestId, uint32 value) public onlyGateway { }
-
-// For a single euint64:
-function callback(uint256 requestId, uint64 value) public onlyGateway { }
-
-// For multiple values (euint32 + ebool):
-function callback(uint256 requestId, uint32 val, bool flag) public onlyGateway { }
-```
+### Important Notes
+- **Irreversible** — Once made publicly decryptable, anyone can see the plaintext. You cannot undo this.
+- **Works for all types** — euint8, euint32, euint64, euint128, euint256, ebool, eaddress
+- **Synchronous** — The value is immediately marked for public decryption (no callback needed)
 
 ---
 
-## 4. Decrypting Multiple Values
+## 3. Approach 2: User-Specific Decryption (Reencryption)
+
+When only a **specific user** should see their data, use the ACL + reencryption pattern:
+
+### Step 1: Grant ACL Access (Contract Side)
 
 ```solidity
-function requestMultipleDecryptions() public {
-    uint256[] memory cts = new uint256[](3);
-    cts[0] = FHE.toUint256(_value1);  // euint32
-    cts[1] = FHE.toUint256(_value2);  // euint64
-    cts[2] = FHE.toUint256(_flag);    // ebool
-
-    Gateway.requestDecryption(
-        cts,
-        this.multiCallback.selector,
-        0,
-        block.timestamp + 100,
-        false
-    );
+function storeBalance(address user, euint64 balance) internal {
+    _balances[user] = balance;
+    FHE.allowThis(_balances[user]);    // Contract can use it
+    FHE.allow(_balances[user], user);  // User can decrypt it
 }
 
-function multiCallback(
-    uint256 requestId,
-    uint32 val1,
-    uint64 val2,
-    bool flag
-) public onlyGateway {
-    _plainValue1 = val1;
-    _plainValue2 = val2;
-    _plainFlag = flag;
-}
-```
-
----
-
-## 5. Reencryption (User-Specific Decryption)
-
-Reencryption lets a specific user view their own encrypted data **without revealing it publicly**. The data is re-encrypted under the user's personal key so only they can decrypt it off-chain.
-
-### How Reencryption Works
-
-```
-┌──────────────┐                    ┌──────────────┐
-│   Contract    │   user requests    │   Gateway    │
-│               │   reencryption     │              │
-│   euint64     │ ──────────────────►│              │
-│   balance     │                    │  re-encrypt  │
-│               │                    │  under user  │
-│               │   encrypted blob   │  public key  │
-│               │ ◄──────────────────│              │
-└──────────────┘                    └──────────────┘
-        │
-        ▼
-┌──────────────┐
-│   User's     │
-│   Browser    │
-│   decrypt    │
-│   with       │
-│   private key│
-│   → plaintext│
-└──────────────┘
-```
-
-### Client-Side Reencryption Request
-
-```javascript
-import { createFhevmInstance } from "fhevmjs";
-
-async function viewMyBalance(contractAddress) {
-    const instance = await createFhevmInstance({ networkUrl });
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-
-    // Generate a keypair for reencryption
-    const { publicKey, privateKey } = instance.generateKeypair();
-
-    // Create an EIP-712 signature to prove ownership
-    const eip712 = instance.createEIP712(publicKey, contractAddress);
-    const signature = await signer.signTypedData(
-        eip712.domain,
-        { Reencrypt: eip712.types.Reencrypt },
-        eip712.message
-    );
-
-    // Get the encrypted balance handle from the contract
-    const contract = new ethers.Contract(contractAddress, ABI, signer);
-    const balanceHandle = await contract.getMyBalance();
-
-    // Request reencryption
-    const decryptedBalance = await instance.reencrypt(
-        balanceHandle,
-        privateKey,
-        publicKey,
-        signature,
-        contractAddress,
-        await signer.getAddress()
-    );
-
-    console.log("My balance:", decryptedBalance.toString());
-}
-```
-
-### Contract-Side Requirements
-
-For reencryption to work, the user must have ACL access to the ciphertext:
-
-```solidity
 function getMyBalance() public view returns (euint64) {
     require(FHE.isSenderAllowed(_balances[msg.sender]), "No access");
     return _balances[msg.sender];
 }
 ```
 
----
+### Step 2: Decrypt (Client Side)
 
-## 6. Public Decryption vs Reencryption
+**In Hardhat Tests:**
+```typescript
+import { fhevm } from "hardhat";
+import { FhevmType } from "@fhevm/hardhat-plugin";
 
-| Feature | Public Decryption | Reencryption |
-|---------|------------------|--------------|
-| **Who sees it** | Everyone | Only the requesting user |
-| **On-chain state** | Plaintext stored on-chain | No on-chain state change |
-| **Use case** | Game results, auction winners | Private balances, personal data |
-| **Mechanism** | Gateway callback to contract | Gateway returns to client |
-| **Async?** | Yes (callback pattern) | Yes (client-side await) |
-| **Gas cost** | Higher (on-chain callback) | Lower (off-chain only) |
+const handle = await contract.getMyBalance();
+const plaintext = await fhevm.userDecryptEuint(
+    FhevmType.euint64,
+    handle,
+    contractAddress,
+    signer
+);
+expect(plaintext).to.equal(1000n);
 
----
-
-## 7. The KMS (Key Management Service)
-
-### What is the KMS?
-
-The KMS is a distributed system that holds **shares** of the FHE secret key. No single entity can decrypt data alone. Decryption requires a threshold number of KMS nodes to cooperate.
-
-### Threshold Decryption
-
-```
-KMS Node 1: share_1 ──┐
-KMS Node 2: share_2 ──┼──► Combine shares → Decrypt ciphertext
-KMS Node 3: share_3 ──┘
+// For ebool:
+const boolHandle = await contract.getFlag();
+const boolValue = await fhevm.userDecryptEbool(
+    boolHandle,
+    contractAddress,
+    signer
+);
+expect(boolValue).to.equal(true);
 ```
 
-This ensures:
-- No single point of failure
-- No single party can access all encrypted data
-- Decryption only happens when properly requested through the Gateway
+**In Browser (fhevmjs):**
+```javascript
+const { publicKey, privateKey } = instance.generateKeypair();
+const eip712 = instance.createEIP712(publicKey, contractAddress);
+const signature = await signer.signTypedData(
+    eip712.domain,
+    { Reencrypt: eip712.types.Reencrypt },
+    eip712.message
+);
+
+const handle = await contract.getMyBalance();
+const plaintext = await instance.reencrypt(
+    handle, privateKey, publicKey, signature,
+    contractAddress, await signer.getAddress()
+);
+```
+
+### When to Use
+- Private balances — only the owner should see
+- Personal data — medical records, scores
+- Individual secrets — bids before reveal
+- Any value that should be visible to ONLY ONE user
 
 ---
 
-## 8. Practical Example: Game with Reveal
+## 4. Comparing the Two Approaches
+
+| Feature | makePubliclyDecryptable | User Reencryption |
+|---------|------------------------|-------------------|
+| Who sees plaintext? | Everyone | Only the authorized user |
+| On-chain call | `FHE.makePubliclyDecryptable(handle)` | `FHE.allow(handle, user)` |
+| Client-side | Anyone can read | User calls reencrypt |
+| Reversible? | No | ACL can be revoked (new handle) |
+| Use case | Vote results, auction outcomes | Private balances, secrets |
+| Async? | No (immediate) | No (immediate ACL grant) |
+| Hardhat test | `fhevm.userDecryptEuint()` | `fhevm.userDecryptEuint()` |
+
+---
+
+## 5. Practical Example: PublicDecrypt.sol Walkthrough
+
+The bootcamp includes `contracts/PublicDecrypt.sol` which demonstrates both patterns:
 
 ```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+contract PublicDecrypt is ZamaEthereumConfig {
+    euint32 private _encryptedValue;
+    bool public hasValue;
+    bool public isPubliclyDecryptable;
 
-import {FHE, ebool, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
-import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
-
-contract CoinFlip is ZamaEthereumConfig, GatewayConfig {
-    struct Game {
-        address player;
-        ebool playerChoice;
-        ebool result;
-        bool revealed;
-        bool playerWon;
+    // Store a value — grant ACL to sender (user-specific decrypt)
+    function setValue(uint32 value) external {
+        _encryptedValue = FHE.asEuint32(value);
+        FHE.allowThis(_encryptedValue);
+        FHE.allow(_encryptedValue, msg.sender);  // User can decrypt
+        hasValue = true;
     }
 
-    mapping(uint256 => Game) public games;
-    uint256 public gameCount;
-
-    function play(externalEbool encryptedChoice, bytes calldata proof) external {
-        uint256 gameId = gameCount++;
-
-        ebool choice = FHE.fromExternal(encryptedChoice, proof);
-        ebool coinResult = FHE.randEbool();
-
-        ebool won = FHE.eq(choice, coinResult);
-
-        games[gameId] = Game({
-            player: msg.sender,
-            playerChoice: choice,
-            result: coinResult,
-            revealed: false,
-            playerWon: false
-        });
-
-        FHE.allowThis(won);
-        FHE.allowThis(choice);
-        FHE.allowThis(coinResult);
-
-        uint256[] memory cts = new uint256[](1);
-        cts[0] = FHE.toUint256(won);
-
-        Gateway.requestDecryption(
-            cts,
-            this.revealResult.selector,
-            0,
-            block.timestamp + 100,
-            false
-        );
+    // Make it public — anyone can decrypt
+    function makePublic() external {
+        require(hasValue, "No value set");
+        FHE.makePubliclyDecryptable(_encryptedValue);
+        isPubliclyDecryptable = true;
     }
 
-    function revealResult(uint256 requestId, bool won) public onlyGateway {
-        uint256 gameId = gameCount - 1;
-        games[gameId].revealed = true;
-        games[gameId].playerWon = won;
+    // Return handle for off-chain decryption
+    function getEncryptedValue() external view returns (euint32) {
+        return _encryptedValue;
     }
 }
 ```
 
+### Flow:
+1. User calls `setValue(42)` → value is encrypted, only they can decrypt
+2. User calls `makePublic()` → now ANYONE can decrypt the value
+3. Any user calls `getEncryptedValue()` → gets the handle → decrypts off-chain
+
 ---
 
-## 9. Security Considerations
+## 6. Practical Example: UserDecrypt.sol Walkthrough
+
+The `contracts/UserDecrypt.sol` demonstrates per-user secrets with sharing:
+
+```solidity
+contract UserDecrypt is ZamaEthereumConfig {
+    mapping(address => euint32) private _userSecrets;
+
+    // Store own encrypted secret
+    function storeSecret(externalEuint32 encValue, bytes calldata proof) external {
+        _userSecrets[msg.sender] = FHE.fromExternal(encValue, proof);
+        FHE.allowThis(_userSecrets[msg.sender]);
+        FHE.allow(_userSecrets[msg.sender], msg.sender);
+    }
+
+    // Get own secret handle (for decryption)
+    function getMySecret() external view returns (euint32) {
+        return _userSecrets[msg.sender];
+    }
+
+    // Share secret with another address
+    function shareSecret(address to) external {
+        FHE.allow(_userSecrets[msg.sender], to);
+    }
+}
+```
+
+### Key Pattern: Secret Sharing
+- Alice stores a secret → only Alice can decrypt
+- Alice calls `shareSecret(bob)` → now Bob can also decrypt Alice's secret
+- Bob uses `fhevm.userDecryptEuint()` to see the value
+
+---
+
+## 7. Hardhat Test Patterns
+
+### Testing Public Decryption
+```typescript
+it("should make value publicly decryptable", async function () {
+    await contract.setValue(42);
+    await contract.makePublic();
+
+    // After makePubliclyDecryptable, the value can be decrypted
+    const handle = await contract.getEncryptedValue();
+    const value = await fhevm.userDecryptEuint(
+        FhevmType.euint32, handle, contractAddress, deployer
+    );
+    expect(value).to.equal(42n);
+});
+```
+
+### Testing User-Specific Decryption
+```typescript
+it("should decrypt own secret", async function () {
+    const enc = await fhevm
+        .createEncryptedInput(contractAddress, alice.address)
+        .add32(999)
+        .encrypt();
+    await contract.connect(alice).storeSecret(enc.handles[0], enc.inputProof);
+
+    const handle = await contract.connect(alice).getMySecret();
+    const value = await fhevm.userDecryptEuint(
+        FhevmType.euint32, handle, contractAddress, alice
+    );
+    expect(value).to.equal(999n);
+});
+```
+
+### Testing ACL-Protected Access
+```typescript
+it("should deny unauthorized access", async function () {
+    // Bob tries to decrypt Alice's secret without ACL
+    const handle = await contract.connect(bob).getMySecret();
+    // Bob has no secret stored, so handle is zero/empty
+});
+```
+
+---
+
+## 8. Security Considerations
 
 ### Do Not Decrypt Unnecessarily
 
 Every decryption reveals information. Minimize decryptions to preserve privacy:
 
 ```solidity
-// BAD: Decrypting just to compare — reveals the exact balance
-function isRich() public {
-    Gateway.requestDecryption(...);
+// BAD: Making value public just to compare
+function isRichBad() public {
+    FHE.makePubliclyDecryptable(_balance);  // Reveals exact balance!
 }
 
 // GOOD: Keep the comparison encrypted
 function isRich() public view returns (ebool) {
-    return FHE.gt(_balance, FHE.asEuint64(1000));
+    return FHE.gt(_balance, FHE.asEuint64(1000));  // No value revealed
 }
 ```
 
+### Information Leakage
+
+- `makePubliclyDecryptable` reveals the EXACT value — use only when necessary
+- Even partial information (e.g., "balance > 1000") reveals something
+- Consider whether you really need to decrypt, or can keep working with encrypted values
+
 ### Timing Considerations
 
-Decryption is asynchronous. Your contract logic must account for the delay:
-- Do not assume the callback will happen in the same block
-- Guard against double-requests
-- Set reasonable deadlines
+- Design your contract so all game-changing state updates happen BEFORE decryption
+- A random value should be committed (stored, used in logic) before any party can request its decryption
+
+---
+
+## 9. Advanced: Gateway Callback Pattern (Production)
+
+In production fhEVM networks, a **Gateway** service coordinates decryption between the blockchain and the KMS (Key Management Service). This uses an **asynchronous callback pattern**:
+
+```solidity
+// PRODUCTION ONLY — Gateway not available in Hardhat development environment
+import {GatewayConfig} from "@fhevm/solidity/gateway/GatewayConfig.sol";
+
+contract ProductionDecrypt is ZamaEthereumConfig, GatewayConfig {
+    uint64 public revealedValue;
+
+    function requestReveal() public {
+        uint256[] memory cts = new uint256[](1);
+        cts[0] = FHE.toUint256(_encryptedValue);
+
+        Gateway.requestDecryption(
+            cts,
+            this.revealCallback.selector,
+            0,
+            block.timestamp + 100,
+            false
+        );
+    }
+
+    function revealCallback(uint256 requestId, uint64 value) public onlyGateway {
+        revealedValue = value;
+    }
+}
+```
+
+### Key Points About the Gateway Pattern:
+- **Asynchronous** — Request in one tx, result arrives in a callback tx
+- **KMS** holds shares of the FHE secret key for threshold decryption
+- **onlyGateway** modifier ensures only the Gateway can call the callback
+- The local Hardhat environment simulates decryption synchronously via `userDecryptEuint()`, so you don't need the Gateway for development and testing
+- Use `makePubliclyDecryptable()` + `userDecryptEuint()` for development; switch to Gateway for production if needed
+
+---
+
+## 10. Common Mistakes
+
+### Mistake 1: Forgetting ACL Before Decryption
+```solidity
+// BUG: User can't decrypt — no ACL granted
+function storeValue(uint32 val) external {
+    _value = FHE.asEuint32(val);
+    FHE.allowThis(_value);
+    // MISSING: FHE.allow(_value, msg.sender);
+}
+```
+
+### Mistake 2: Making Sensitive Data Public
+```solidity
+// DANGEROUS: Reveals everyone's balance!
+function revealAllBalances() external {
+    for (...) {
+        FHE.makePubliclyDecryptable(_balances[user]); // Privacy violation!
+    }
+}
+```
+
+### Mistake 3: Not Checking isSenderAllowed in Getters
+```solidity
+// BAD: Returns handle without access check
+function getBalance() view returns (euint64) {
+    return _balances[msg.sender]; // No ACL check!
+}
+
+// GOOD: Check access first
+function getBalance() view returns (euint64) {
+    require(FHE.isSenderAllowed(_balances[msg.sender]), "No access");
+    return _balances[msg.sender];
+}
+```
+
+### Mistake 4: Forgetting ACL Reset After Operations
+```solidity
+// BUG: After FHE.add, a NEW handle is created — old ACL doesn't apply
+_balance = FHE.add(_balance, amount);
+// MISSING: FHE.allowThis(_balance); FHE.allow(_balance, user);
+```
 
 ---
 
@@ -370,13 +379,13 @@ Decryption is asynchronous. Your contract logic must account for the delay:
 
 | Pattern | When to Use | How |
 |---------|-------------|-----|
-| **Public decryption** | Result should be visible to all | `Gateway.requestDecryption()` + callback |
-| **Reencryption** | Only the user should see | Client calls `instance.reencrypt()` |
+| **Public decryption** | Result should be visible to all | `FHE.makePubliclyDecryptable(handle)` |
+| **User reencryption** | Only the user should see | `FHE.allow(handle, user)` + client-side decrypt |
 
 **Key principles:**
-1. Decryption is **asynchronous** — callback pattern required
-2. Inherit `GatewayConfig` for public decryption
-3. Use `onlyGateway` modifier on callback functions
-4. Use `FHE.toUint256()` to convert handles for decryption requests
-5. For reencryption, the user must have ACL access (`FHE.allow`)
-6. Minimize decryptions — keep data encrypted as long as possible
+1. Use `FHE.makePubliclyDecryptable()` for values everyone should see (vote results, auction winners)
+2. Use `FHE.allow()` + reencryption for private values (balances, secrets)
+3. Always check `FHE.isSenderAllowed()` in view functions that return encrypted handles
+4. Minimize decryptions — keep data encrypted as long as possible
+5. Remember: ACL must be reset after every FHE operation (new handle = empty ACL)
+6. In Hardhat tests: `fhevm.userDecryptEuint()` and `fhevm.userDecryptEbool()` for testing both patterns
