@@ -21,12 +21,21 @@ contract UserDecrypt is ZamaEthereumConfig {
 
     /// @notice Get own secret handle (only the user has ACL access)
     function getMySecret() external view returns (euint32) {
+        require(FHE.isSenderAllowed(_userSecrets[msg.sender]), "No secret stored or no access");
         return _userSecrets[msg.sender];
     }
 
     /// @notice Grant another address access to caller's secret
     function shareSecret(address to) external {
+        require(euint32.unwrap(_userSecrets[msg.sender]) != 0, "No secret stored");
         FHE.allow(_userSecrets[msg.sender], to);
+    }
+
+    /// @notice Get another user's secret (requires ACL access via shareSecret)
+    function getSharedSecret(address owner) external view returns (euint32) {
+        require(euint32.unwrap(_userSecrets[owner]) != 0, "No secret stored");
+        require(FHE.isSenderAllowed(_userSecrets[owner]), "Not authorized");
+        return _userSecrets[owner];
     }
 
     /// @notice Check if caller has access to a specific user's secret

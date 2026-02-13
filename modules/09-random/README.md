@@ -39,7 +39,8 @@ By the end of this module, you will be able to:
 
 - **`FHE.randEuintXX()`** - Generate encrypted random unsigned integers
 - **`FHE.randEbool()`** - Generate encrypted random booleans
-- **Random in range** - Using `FHE.rem()` with random values
+- **`FHE.randEuintXX(upperBound)`** — Bounded random generation (power-of-2 ranges only)
+- **Random in range** - Using `FHE.rem()` with random values for arbitrary ranges
 - **Unbiased randomness** - The random value is encrypted, so nobody can predict or front-run it
 
 ## Next Module

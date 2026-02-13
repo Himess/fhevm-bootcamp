@@ -52,4 +52,42 @@ describe("EncryptedMinMax", function () {
     const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
     expect(clear).to.equal(42n);
   });
+
+  it("findMinBuiltin: should find min of two values", async function () {
+    await (await contract.findMinBuiltin(30, 10)).wait();
+    const handle = await contract.getResultA();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(10n);
+  });
+
+  it("findMaxBuiltin: should find max of two values", async function () {
+    await (await contract.findMaxBuiltin(10, 30)).wait();
+    const handle = await contract.getResultA();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(30n);
+  });
+
+  it("findMax: equal values", async function () {
+    await (await contract.findMax(42, 42)).wait();
+    const handle = await contract.getResultA();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(42n);
+  });
+
+  it("sortTwo: equal values", async function () {
+    await (await contract.sortTwo(25, 25)).wait();
+    const handleA = await contract.getResultA();
+    const handleB = await contract.getResultB();
+    const clearA = await fhevm.userDecryptEuint(FhevmType.euint32, handleA, contractAddress, deployer);
+    const clearB = await fhevm.userDecryptEuint(FhevmType.euint32, handleB, contractAddress, deployer);
+    expect(clearA).to.equal(25n);
+    expect(clearB).to.equal(25n);
+  });
+
+  it("findMinOfThree: min is third value", async function () {
+    await (await contract.findMinOfThree(30, 50, 10)).wait();
+    const handle = await contract.getResultA();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(10n);
+  });
 });

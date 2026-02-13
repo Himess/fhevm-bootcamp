@@ -52,6 +52,34 @@ describe("UserDecrypt", function () {
     expect(hasAccess).to.equal(true);
   });
 
+  it("should allow Bob to decrypt Alice's shared secret", async function () {
+    const enc = await fhevm
+      .createEncryptedInput(contractAddress, alice.address)
+      .add32(777)
+      .encrypt();
+    await (await contract.connect(alice).storeSecret(enc.handles[0], enc.inputProof)).wait();
+    await (await contract.connect(alice).shareSecret(bob.address)).wait();
+
+    const handle = await contract.connect(bob).getSharedSecret(alice.address);
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, bob);
+    expect(clear).to.equal(777n);
+  });
+
+  it("should reject getSharedSecret without access", async function () {
+    const enc = await fhevm
+      .createEncryptedInput(contractAddress, alice.address)
+      .add32(999)
+      .encrypt();
+    await (await contract.connect(alice).storeSecret(enc.handles[0], enc.inputProof)).wait();
+
+    try {
+      await contract.connect(bob).getSharedSecret(alice.address);
+      expect.fail("Should have reverted");
+    } catch (error: any) {
+      expect(error.message).to.include("Not authorized");
+    }
+  });
+
   it("should deny access to non-shared user", async function () {
     const enc = await fhevm
       .createEncryptedInput(contractAddress, alice.address)

@@ -45,6 +45,24 @@ contract EncryptedMinMax is ZamaEthereumConfig {
         FHE.allow(_resultB, msg.sender);
     }
 
+    /// @notice Find minimum using built-in FHE.min()
+    function findMinBuiltin(uint32 a, uint32 b) external {
+        euint32 encA = FHE.asEuint32(a);
+        euint32 encB = FHE.asEuint32(b);
+        _resultA = FHE.min(encA, encB);
+        FHE.allowThis(_resultA);
+        FHE.allow(_resultA, msg.sender);
+    }
+
+    /// @notice Find maximum using built-in FHE.max()
+    function findMaxBuiltin(uint32 a, uint32 b) external {
+        euint32 encA = FHE.asEuint32(a);
+        euint32 encB = FHE.asEuint32(b);
+        _resultA = FHE.max(encA, encB);
+        FHE.allowThis(_resultA);
+        FHE.allow(_resultA, msg.sender);
+    }
+
     /// @notice Find min of three encrypted values
     function findMinOfThree(uint32 a, uint32 b, uint32 c) external {
         euint32 encA = FHE.asEuint32(a);

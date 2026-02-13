@@ -19,7 +19,7 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 //   import {Gateway} from "@fhevm/solidity/gateway/GatewayConfig.sol";
 //
 //   uint256[] memory cts = new uint256[](1);
-//   cts[0] = Gateway.toUint256(_encryptedValue);
+//   cts[0] = FHE.toUint256(_encryptedValue);
 //   Gateway.requestDecryption(cts, this.decryptionCallback.selector, 0, block.timestamp + 100, false);
 //
 //   function decryptionCallback(uint256 requestId, uint32 decryptedValue) public onlyGateway returns (bool) {

@@ -44,6 +44,12 @@ describe("RandomDemo", function () {
     expect(Number(clear)).to.be.lessThan(100);
   });
 
+  it("should generate random bool", async function () {
+    await (await contract.generateRandomBool()).wait();
+    const handle = await contract.getRandomBool();
+    expect(handle).to.not.equal(0n);
+  });
+
   it("should reject range with max=0", async function () {
     try {
       await contract.randomInRange(0);

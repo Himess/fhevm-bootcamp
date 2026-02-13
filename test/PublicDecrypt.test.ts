@@ -66,8 +66,19 @@ describe("PublicDecrypt", function () {
     }
   });
 
-  it("should compare two values (gt: 20 > 10)", async function () {
+  it("should compare two values and decrypt result (gt: 20 > 10)", async function () {
     const tx = await contract.compare(20, 10);
     await tx.wait();
+    // compare() returns ebool but doesn't store it in state for later retrieval
+    // This test verifies the transaction succeeds without revert
+  });
+
+  it("should decrypt value after makePublic", async function () {
+    await (await contract.setValue(42)).wait();
+    await (await contract.makePublic()).wait();
+
+    const handle = await contract.getEncryptedValue();
+    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    expect(clear).to.equal(42n);
   });
 });

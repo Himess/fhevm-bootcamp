@@ -236,6 +236,33 @@ function randomPercentage() public returns (euint8) {
 }
 ```
 
+### Bounded Random Generation (Power-of-2 Ranges)
+
+For ranges that are powers of 2, fhEVM provides more efficient overloaded functions:
+
+```solidity
+// Generate random uint32 in [0, 16) — upperBound must be power of 2!
+euint32 rand = FHE.randEuint32(16);
+
+// Generate random uint8 in [0, 4)
+euint8 direction = FHE.randEuint8(4);  // 0=North, 1=East, 2=South, 3=West
+```
+
+**Available overloads:**
+
+| Function | Range | Constraint |
+|----------|-------|-----------|
+| `FHE.randEuint8(uint8 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+| `FHE.randEuint16(uint16 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+| `FHE.randEuint32(uint32 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+| `FHE.randEuint64(uint64 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+| `FHE.randEuint128(uint128 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+| `FHE.randEuint256(uint256 upperBound)` | [0, upperBound) | upperBound must be power of 2 |
+
+> 💡 **When to use which?**
+> - Power-of-2 range (2, 4, 8, 16, 32...) → Use `randEuintXX(upperBound)` (more efficient)
+> - Arbitrary range (e.g., 1-6 for dice) → Use `FHE.rem(FHE.randEuintXX(), max)` then add offset
+
 ### Uniformity Considerations (Modulo Bias)
 
 When the range does not evenly divide the source range, `FHE.rem()` introduces a slight **modulo bias**. For example:

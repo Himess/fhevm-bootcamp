@@ -70,6 +70,23 @@ FHE.allowThis(inRange);
 
 ---
 
+# Bounded Random: Power-of-2 Ranges
+
+```solidity
+// Efficient: built-in bounded random (power-of-2 only)
+euint8 coinFlip = FHE.randEuint8(2);    // 0 or 1
+euint8 direction = FHE.randEuint8(4);    // 0, 1, 2, or 3
+euint32 card = FHE.randEuint32(64);      // 0 to 63
+
+// General: any range via FHE.rem()
+euint8 dice = FHE.rem(FHE.randEuint8(), 6); // 0-5
+dice = FHE.add(dice, FHE.asEuint8(1));       // 1-6
+```
+
+> upperBound **must** be a power of 2 (2, 4, 8, 16, 32, ...)
+
+---
+
 # Random in Range: Min to Max
 
 ```solidity
