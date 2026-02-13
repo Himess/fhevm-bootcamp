@@ -69,7 +69,7 @@ The vote input is `externalEuint8`, not `externalEbool`.
 
 ```solidity
 // Yes/No: 0 = no, 1 = yes
-euint8 voteValue = FHE.fromExternal(encVote, proof);
+euint8 voteValue = FHE.fromExternal(encVote, inputProof);
 ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 ```
 
@@ -102,12 +102,12 @@ function createProposal(
 ```solidity
 function vote(
     uint256 proposalId, externalEuint8 encVote,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
     require(!hasVoted[proposalId][msg.sender]);
     hasVoted[proposalId][msg.sender] = true;
 
-    euint8 voteValue = FHE.fromExternal(encVote, proof);
+    euint8 voteValue = FHE.fromExternal(encVote, inputProof);
     ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
 
     euint32 oneVote = FHE.asEuint32(1);
@@ -243,9 +243,9 @@ const noVotes = await instance.reencrypt(
 ```solidity
 function voteMulti(
     uint256 proposalId, externalEuint8 encChoice,
-    bytes calldata proof
+    bytes calldata inputProof
 ) external {
-    euint8 choice = FHE.fromExternal(encChoice, proof);
+    euint8 choice = FHE.fromExternal(encChoice, inputProof);
     for (uint8 i = 0; i < optionCount; i++) {
         ebool isThis = FHE.eq(
             choice, FHE.asEuint8(i));
