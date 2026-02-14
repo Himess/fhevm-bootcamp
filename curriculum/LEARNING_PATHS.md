@@ -8,19 +8,19 @@ This document provides three structured learning paths for completing the FHEVM 
 
 | Path | Duration | Weekly Commitment | Best For |
 |---|---|---|---|
-| **Intensive** | 5 days (1 week) | ~9 hours/day | Full-time bootcamp cohorts, dedicated learners with time off |
-| **Part-Time** | 4 weeks | ~12 hours/week | Working professionals studying evenings and weekends |
-| **Self-Paced** | Flexible (6-10 weeks) | Your schedule | Independent learners, reference material users |
+| **Intensive** | 7 days (1.5 weeks) | ~9 hours/day | Full-time bootcamp cohorts, dedicated learners with time off |
+| **Part-Time** | 6 weeks | ~11 hours/week | Working professionals studying evenings and weekends |
+| **Self-Paced** | Flexible (8-14 weeks) | Your schedule | Independent learners, reference material users |
 
 ---
 
-## Path 1: Intensive (1 Week / 5 Days)
+## Path 1: Intensive (1.5 Weeks / 7 Days)
 
-**Total Hours:** ~46 hours
+**Total Hours:** ~63 hours
 **Daily Commitment:** ~9 hours (with breaks)
 **Daily Schedule:** 9:00 AM -- 7:00 PM (with 1-hour lunch + one 30-minute break)
 
-This path is designed for instructor-led bootcamp cohorts or highly motivated individuals who can dedicate a full week. The pace is demanding but achievable with focused effort.
+This path is designed for instructor-led bootcamp cohorts or highly motivated individuals who can dedicate 7 full days. The pace is demanding but achievable with focused effort.
 
 ### Day 1: Foundation (Monday)
 
@@ -64,7 +64,7 @@ This path is designed for instructor-led bootcamp cohorts or highly motivated in
 
 **End-of-day checkpoint:** Full understanding of input/output pipeline. Conditional logic patterns mastered.
 
-### Day 4: Integration & Applications (Thursday)
+### Day 4: Integration & Token (Thursday)
 
 | Time | Duration | Module/Activity |
 |---|---|---|
@@ -76,34 +76,59 @@ This path is designed for instructor-led bootcamp cohorts or highly motivated in
 
 **End-of-day checkpoint:** Can build full-stack FHE dApps. Working confidential ERC-20 implementation.
 
-### Day 5: Advanced Applications & Capstone (Friday)
+### Day 5: Application Modules (Friday)
 
 | Time | Duration | Module/Activity |
 |---|---|---|
 | 09:00 -- 09:30 | 30m | Day 4 review and Q&A |
-| 09:30 -- 13:00 | 3.5h | **Module 12:** Confidential Voting (condensed to 3.5h) |
-| 13:00 -- 14:00 | 1h | Lunch break |
-| 14:00 -- 17:00 | 3h | **Module 13:** Sealed-Bid Auction (condensed to 3h) |
-| 17:00 -- 17:30 | 30m | Break |
-| 17:30 -- 19:30 | 2h | **Module 14:** Capstone - Confidential DAO (condensed: design + implement) |
-| 19:30 -- 20:00 | 30m | Capstone presentations + graduation |
+| 09:30 -- 13:30 | 4h | **Module 12:** Confidential Voting |
+| 13:30 -- 14:30 | 1h | Lunch break |
+| 14:30 -- 18:30 | 4h | **Module 13:** Sealed-Bid Auction |
 
-**End-of-day checkpoint:** Exposure to all application modules. Capstone project started (or mini-capstone completed).
+**End-of-day checkpoint:** Two complete FHE application contracts built and tested.
+
+### Day 6: Advanced Topics (Monday)
+
+| Time | Duration | Module/Activity |
+|---|---|---|
+| 09:00 -- 09:30 | 30m | Week 1 review and Q&A |
+| 09:30 -- 12:30 | 3h | **Module 14:** Testing & Debugging FHE Contracts |
+| 12:30 -- 13:30 | 1h | Lunch break |
+| 13:30 -- 16:30 | 3h | **Module 15:** Gas Optimization for FHE |
+| 16:30 -- 17:00 | 30m | Break |
+| 17:00 -- 19:00 | 2h | **Module 16:** Security Best Practices for FHE (first part) |
+
+**End-of-day checkpoint:** FHE testing and debugging mastered. Gas optimization skills gained. Starting security best practices.
+
+### Day 7: Expert Topics & Capstone (Tuesday)
+
+| Time | Duration | Module/Activity |
+|---|---|---|
+| 09:00 -- 09:30 | 30m | Day 6 review and Q&A |
+| 09:30 -- 10:30 | 1h | **Module 16:** Security Best Practices (complete) |
+| 10:30 -- 14:00 | 3.5h | **Module 17:** Advanced FHE Design Patterns (condensed to 3.5h) |
+| 14:00 -- 15:00 | 1h | Lunch break |
+| 15:00 -- 18:00 | 3h | **Module 18:** Confidential DeFi (condensed to 3h) |
+| 18:00 -- 18:30 | 30m | Break |
+| 18:30 -- 20:30 | 2h | **Module 19:** Capstone - Confidential DAO (condensed: design + implement) |
+| 20:30 -- 21:00 | 30m | Capstone presentations + graduation |
+
+**End-of-day checkpoint:** Exposure to all advanced and expert modules. Capstone project started (or mini-capstone completed).
 
 ### Intensive Path Notes
 
-- The Day 5 application modules (12-13) are run in condensed format: key concepts + guided implementation (skip some exercises).
-- The capstone on Day 5 is a "mini-capstone" -- a simplified version that demonstrates core competency.
-- For a more thorough experience, extend to 7 days and give applications and capstone full time.
+- Days 5-7 cover the advanced and expert modules. Day 7 modules (17-18) are run in condensed format: key concepts + guided implementation (skip some exercises).
+- The capstone on Day 7 is a "mini-capstone" -- a simplified version that demonstrates core competency.
+- For a more thorough experience, extend to 9 days and give expert modules and capstone full time.
 - Instructor-led cohorts should have TAs available for individual debugging support.
-- Evening "office hours" (optional 20:00-21:00) are recommended for students who need extra help.
+- Evening "office hours" (optional 21:00-22:00) are recommended for students who need extra help.
 
 ---
 
-## Path 2: Part-Time (4 Weeks)
+## Path 2: Part-Time (6 Weeks)
 
-**Total Hours:** ~46 hours
-**Weekly Commitment:** ~12 hours/week
+**Total Hours:** ~63 hours
+**Weekly Commitment:** ~11 hours/week
 **Suggested Schedule:** 2 hours on weekday evenings (Mon-Thu) + 4 hours on weekends
 
 This path is designed for working professionals who can dedicate evenings and weekends to the bootcamp.
@@ -136,7 +161,7 @@ This path is designed for working professionals who can dedicate evenings and we
 **Week 2 Total: 11 hours**
 **Checkpoint:** ACL mastered. Input/output pipeline understood. Starting conditional logic.
 
-### Week 3: Advanced Concepts & Applications
+### Week 3: Integration & Token
 
 | Day | Time | Duration | Activity |
 |---|---|---|---|
@@ -150,7 +175,7 @@ This path is designed for working professionals who can dedicate evenings and we
 **Week 3 Total: 11 hours**
 **Checkpoint:** Conditional logic and randomness understood. Frontend skills gained. Confidential ERC-20 complete.
 
-### Week 4: Applications and Capstone
+### Week 4: Application Modules
 
 | Day | Time | Duration | Activity |
 |---|---|---|---|
@@ -158,11 +183,39 @@ This path is designed for working professionals who can dedicate evenings and we
 | Tuesday | Evening | 2h | **Module 12:** Confidential Voting (Part 2: Eligibility, reveal, tests) |
 | Wednesday | Evening | 2h | **Module 13:** Sealed-Bid Auction (Part 1: First-price auction) |
 | Thursday | Evening | 2h | **Module 13:** Sealed-Bid Auction (Part 2: Vickrey, deposits, tests) |
-| Saturday | Full day | 3h | **Module 14:** Capstone - Confidential DAO (proposal + design + implementation) |
-| Sunday | Full day | 2h | **Module 14:** Capstone (testing + documentation + presentation prep) |
+| Saturday | Morning | 2h | **Module 14:** Testing & Debugging FHE Contracts (Part 1: Mock setup, createEncryptedInput) |
+| Sunday | Morning | 1h | **Module 14:** Testing & Debugging (complete exercises) + Quiz |
 
-**Week 4 Total: 13 hours**
-**Checkpoint:** All modules complete. Capstone project delivered.
+**Week 4 Total: 11 hours**
+**Checkpoint:** Voting and auction contracts built. FHE testing and debugging skills gained.
+
+### Week 5: Advanced & Expert Topics
+
+| Day | Time | Duration | Activity |
+|---|---|---|---|
+| Monday | Evening | 2h | **Module 15:** Gas Optimization for FHE (Part 1: Gas model, benchmarking) |
+| Tuesday | Evening | 1h | **Module 15:** Gas Optimization (complete exercises) + Quiz |
+| Wednesday | Evening | 2h | **Module 16:** Security Best Practices (Part 1: Side-channels, VulnerableDemo analysis) |
+| Thursday | Evening | 1h | **Module 16:** Security Best Practices (complete exercises) + Quiz |
+| Saturday | Morning | 2h | **Module 17:** Advanced FHE Design Patterns (Part 1: State machines, LastError) |
+| Sunday | Morning | 2h | **Module 17:** Advanced Design Patterns (Part 2: Registries, escrow exercise) |
+
+**Week 5 Total: 10 hours**
+**Checkpoint:** Gas optimization, security, and advanced patterns mastered.
+
+### Week 6: Expert DeFi & Capstone
+
+| Day | Time | Duration | Activity |
+|---|---|---|---|
+| Monday | Evening | 2h | **Module 18:** Confidential DeFi (Part 1: Lending, LTV checks) |
+| Tuesday | Evening | 2h | **Module 18:** Confidential DeFi (Part 2: Order book, swap) |
+| Wednesday | Evening | 1h | **Module 19:** Capstone - Confidential DAO (proposal + design) |
+| Thursday | Evening | 2h | **Module 19:** Capstone (implementation start) |
+| Saturday | Full day | 3h | **Module 19:** Capstone (implementation + testing) |
+| Sunday | Full day | 2h | **Module 19:** Capstone (documentation + presentation prep) |
+
+**Week 6 Total: 12 hours**
+**Checkpoint:** All 20 modules complete. Capstone project delivered.
 
 ### Part-Time Path Notes
 
@@ -171,13 +224,14 @@ This path is designed for working professionals who can dedicate evenings and we
 - If you fall behind, use the following week's evening sessions to catch up and shift the schedule.
 - Pair programming with a study partner is strongly recommended for the Part-Time path.
 - The capstone project scope should be adjusted for the Part-Time path -- aim for a focused, well-tested contract rather than a multi-contract system.
+- Weeks 4-5 cover the new advanced modules (14-17). If time is tight, Modules 15-16 can be combined into a single weekend session.
 
 ---
 
 ## Path 3: Self-Paced
 
-**Total Hours:** ~46 hours
-**Suggested Duration:** 6-10 weeks
+**Total Hours:** ~63 hours
+**Suggested Duration:** 8-14 weeks
 **Minimum Weekly Commitment:** 5 hours
 
 This path is for independent learners who want to work through the material at their own speed. There is no fixed schedule, but milestones help track progress.
@@ -226,29 +280,54 @@ This path is for independent learners who want to work through the material at t
 
 ### Phase D: Applications (Weeks 7-8)
 
-**Goal:** Build real-world FHE applications.
+**Goal:** Build real-world FHE applications and learn testing/debugging.
 
 | Module | Estimated Time | Milestone |
 |---|---|---|
 | 12: Confidential Voting | 4h | Working voting contract with tests |
 | 13: Sealed-Bid Auction | 4h | Working Vickrey auction with tests |
+| 14: Testing & Debugging FHE Contracts | 3h | Comprehensive test suite for ConfidentialERC20 complete |
 
-**Phase D Total: 8 hours**
-**Self-Check:** You have built multiple FHE application types beyond the ERC-20.
+**Phase D Total: 11 hours**
+**Self-Check:** You have built multiple FHE application types and can write thorough test suites for encrypted contracts.
 
-### Phase E: Capstone (Weeks 9-10)
+### Phase E: Advanced Topics (Weeks 9-10)
 
-**Goal:** Design and implement a Confidential DAO integrating all learned concepts.
+**Goal:** Master gas optimization, security best practices, and advanced design patterns.
+
+| Module | Estimated Time | Milestone |
+|---|---|---|
+| 15: Gas Optimization for FHE | 3h | Gas benchmark analysis complete, inefficient token optimized |
+| 16: Security Best Practices for FHE | 3h | Security audit challenge complete, VulnerableDemo analyzed |
+| 17: Advanced FHE Design Patterns | 4h | Encrypted state machine and escrow exercises complete |
+
+**Phase E Total: 10 hours**
+**Self-Check:** You can optimize FHE contracts for gas, perform a security audit, and implement advanced patterns like state machines and cross-contract composability.
+
+### Phase F: Expert DeFi (Weeks 11-12)
+
+**Goal:** Build confidential DeFi applications.
+
+| Module | Estimated Time | Milestone |
+|---|---|---|
+| 18: Confidential DeFi | 4h | Working lending protocol and order book with tests |
+
+**Phase F Total: 4 hours**
+**Self-Check:** You understand the trade-offs of DeFi privacy and can implement confidential lending and order matching.
+
+### Phase G: Capstone (Weeks 13-14)
+
+**Goal:** Design and implement a Confidential DAO integrating all learned concepts from Modules 00-18.
 
 | Activity | Estimated Time | Milestone |
 |---|---|---|
 | Project proposal and design | 1h | Written proposal with architecture diagram |
 | Implementation | 2h | Core smart contracts deployed to devnet |
-| Testing | 1h | All tests passing |
-| Documentation and presentation | 1h | README, security doc, and presentation |
+| Testing | 1h | All tests passing (using Module 14 techniques) |
+| Documentation and presentation | 1h | README, security doc (using Module 16 checklist), and presentation |
 
-**Phase E Total: 5 hours**
-**Self-Check:** Your capstone compiles, deploys, passes all tests, and you can demo it.
+**Phase G Total: 5 hours**
+**Self-Check:** Your capstone compiles, deploys, passes all tests, applies gas optimization (Module 15) and security best practices (Module 16), and you can demo it.
 
 ### Self-Paced Path Notes
 
@@ -259,6 +338,7 @@ This path is for independent learners who want to work through the material at t
 - The resources directory (cheatsheet, common pitfalls, gas guide) is your reference library -- use it actively.
 - If you get stuck on a module for more than 2 sessions, skip to the next module and return later. Sometimes later material clarifies earlier confusion.
 - Consider finding a study partner or forming a small group even in self-paced mode.
+- Phases E-F (Modules 15-18) are the advanced/expert material. Take extra time here if needed -- these topics build on everything from earlier phases.
 
 ---
 
@@ -266,12 +346,13 @@ This path is for independent learners who want to work through the material at t
 
 | Criteria | Intensive | Part-Time | Self-Paced |
 |---|---|---|---|
-| Total duration | 5 days | 4 weeks | 6-10 weeks |
+| Total duration | 7 days | 6 weeks | 8-14 weeks |
 | Daily commitment | ~9 hours | ~2-4 hours | Variable |
 | Instructor support | Required | Recommended | Optional |
 | Peer interaction | High | Medium | Low (unless in group) |
 | Capstone depth | Mini-capstone | Standard | Full |
-| Modules 12-13 coverage | Condensed | Full | Full |
+| Modules 17-18 coverage | Condensed | Full | Full |
+| Advanced modules (14-16) | Full | Full | Full |
 | Best completion rate | High (structured) | Medium | Depends on discipline |
 | Flexibility | None | Some | Complete |
 
@@ -281,9 +362,9 @@ This path is for independent learners who want to work through the material at t
 
 You can switch paths at any time. The module structure is the same regardless of path.
 
-- **Intensive to Part-Time:** If Day 5 feels rushed, switch to Part-Time for the application modules (Weeks 3-4).
+- **Intensive to Part-Time:** If Day 5 feels rushed, switch to Part-Time for the advanced/expert modules and capstone (Weeks 4-6).
 - **Part-Time to Self-Paced:** If you miss a week, switch to Self-Paced and pick up where you left off.
-- **Self-Paced to Intensive:** If you complete Phases A-C on your own, join an intensive cohort starting from Day 5 for the application modules and capstone.
+- **Self-Paced to Intensive:** If you complete Phases A-C on your own, join an intensive cohort starting from Day 5 for the application modules, advanced topics, and capstone.
 
 ---
 

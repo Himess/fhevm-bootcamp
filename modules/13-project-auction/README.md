@@ -38,4 +38,4 @@ By the end of this module, you will be able to:
 
 ## Next Module
 
-> [Module 14: Capstone -- Confidential DAO](../14-capstone/)
+> [Module 14: Testing & Debugging FHE Contracts](../14-testing-debugging/)

@@ -1,194 +1,252 @@
 // SOLUTION: Module 14 - Capstone Confidential DAO
-// This is the complete implementation of the ConfidentialDAO.
+// Complete implementation matching the exercise architecture.
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, euint32, euint8, externalEuint64, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint64, ebool, externalEuint64, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialDAO - Module 14 Capstone: DAO with encrypted voting + treasury
-/// @notice Combines encrypted governance tokens, private voting, and treasury management
-contract ConfidentialDAO is ZamaEthereumConfig {
+// ============================================================
+// PART 1: GovernanceToken
+// ============================================================
+
+/// @title Solution 14 (Part 1): Governance Token
+/// @notice A confidential ERC-20 token with DAO access support for weighted voting
+contract GovernanceToken is ZamaEthereumConfig {
     string public name;
-    address public admin;
+    string public symbol;
+    uint8 public constant decimals = 6;
+    uint64 public totalSupply;
 
-    // Governance token balances (encrypted)
-    mapping(address => euint64) internal _tokenBalances;
-    uint64 public totalTokenSupply;
+    mapping(address => euint64) private _balances;
+    mapping(address => bool) private _initialized;
 
-    // Proposals
-    struct Proposal {
-        string description;
-        address payable recipient;
-        uint256 amount;
-        euint32 yesVotes;
-        euint32 noVotes;
-        uint256 deadline;
-        bool executed;
-        bool revealed;
-        uint32 yesResult;
-        uint32 noResult;
+    address public owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
     }
 
-    mapping(uint256 => Proposal) public proposals;
-    mapping(uint256 => mapping(address => bool)) public hasVoted;
+    constructor(string memory _name, string memory _symbol) {
+        name = _name;
+        symbol = _symbol;
+        owner = msg.sender;
+    }
+
+    /// @dev Initializes an account's encrypted balance to 0 if not already initialized
+    function _initBalance(address account) internal {
+        if (!_initialized[account]) {
+            _balances[account] = FHE.asEuint64(0);
+            FHE.allowThis(_balances[account]);
+            FHE.allow(_balances[account], account);
+            _initialized[account] = true;
+        }
+    }
+
+    /// @notice Mint tokens to an address (owner only, plaintext amount)
+    function mint(address to, uint64 amount) public onlyOwner {
+        _initBalance(to);
+        _balances[to] = FHE.add(_balances[to], FHE.asEuint64(amount));
+        FHE.allowThis(_balances[to]);
+        FHE.allow(_balances[to], to);
+        totalSupply += amount;
+    }
+
+    /// @notice Returns the encrypted balance of an account
+    function balanceOf(address account) public view returns (euint64) {
+        return _balances[account];
+    }
+
+    /// SOLUTION TODO 1: Grant a DAO contract read access to the caller's encrypted balance
+    function grantDAOAccess(address dao) public {
+        require(_initialized[msg.sender], "No balance");
+        FHE.allow(_balances[msg.sender], dao);
+    }
+
+    /// @notice Transfer tokens to another address
+    function transfer(address to, externalEuint64 encryptedAmount, bytes calldata inputProof) external {
+        euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);
+        _transfer(msg.sender, to, amount);
+    }
+
+    /// SOLUTION TODO 2: Internal transfer using the no-revert pattern
+    function _transfer(address from, address to, euint64 amount) internal {
+        _initBalance(from);
+        _initBalance(to);
+
+        ebool hasEnough = FHE.ge(_balances[from], amount);
+        euint64 transferAmount = FHE.select(hasEnough, amount, FHE.asEuint64(0));
+
+        _balances[from] = FHE.sub(_balances[from], transferAmount);
+        _balances[to] = FHE.add(_balances[to], transferAmount);
+
+        FHE.allowThis(_balances[from]);
+        FHE.allow(_balances[from], from);
+        FHE.allowThis(_balances[to]);
+        FHE.allow(_balances[to], to);
+    }
+}
+
+// ============================================================
+// PART 2: ConfidentialDAO
+// ============================================================
+
+interface IGovernanceToken {
+    function balanceOf(address account) external view returns (euint64);
+}
+
+/// @title Solution 14 (Part 2): Confidential DAO
+/// @notice Proposals, weighted encrypted voting, treasury management, and execution
+contract ConfidentialDAO is ZamaEthereumConfig {
+    struct Proposal {
+        string description;
+        address recipient;
+        uint256 amount;
+        uint256 startTime;
+        uint256 endTime;
+        euint64 yesVotes;
+        euint64 noVotes;
+        bool exists;
+        bool finalized;
+        bool executed;
+    }
+
+    address public admin;
+    IGovernanceToken public governanceToken;
     uint256 public proposalCount;
+    uint256 public votingDuration;
 
-    // Minimum token balance to create proposal
-    uint64 public constant PROPOSAL_THRESHOLD = 100;
+    mapping(uint256 => Proposal) public proposals;
+    mapping(uint256 => mapping(address => bool)) private _hasVoted;
 
-    event TokensMinted(address indexed to, uint64 amount);
-    event ProposalCreated(uint256 indexed id, string description, address recipient, uint256 amount);
+    event ProposalCreated(uint256 indexed proposalId, string description, address recipient, uint256 amount);
     event VoteCast(uint256 indexed proposalId, address indexed voter);
-    event ProposalFinalized(uint256 indexed proposalId, uint32 yesVotes, uint32 noVotes);
-    event ProposalExecuted(uint256 indexed proposalId);
+    event ProposalFinalized(uint256 indexed proposalId);
+    event ProposalExecuted(uint256 indexed proposalId, address recipient, uint256 amount);
+    event TreasuryFunded(address indexed from, uint256 amount);
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Not admin");
         _;
     }
 
-    constructor(string memory _name) {
-        name = _name;
+    constructor(address _governanceToken, uint256 _votingDuration) {
         admin = msg.sender;
+        governanceToken = IGovernanceToken(_governanceToken);
+        votingDuration = _votingDuration;
     }
 
-    /// @notice Mint governance tokens
-    function mintTokens(address to, uint64 amount) external onlyAdmin {
-        totalTokenSupply += amount;
-        _initBalance(to);
-        _tokenBalances[to] = FHE.add(_tokenBalances[to], FHE.asEuint64(amount));
-        FHE.allowThis(_tokenBalances[to]);
-        FHE.allow(_tokenBalances[to], to);
-        emit TokensMinted(to, amount);
+    /// @notice Accept ETH deposits to fund the treasury
+    receive() external payable {
+        emit TreasuryFunded(msg.sender, msg.value);
     }
 
-    mapping(address => bool) private _initialized;
-
-    function _initBalance(address account) internal {
-        if (!_initialized[account]) {
-            _tokenBalances[account] = FHE.asEuint64(0);
-            FHE.allowThis(_tokenBalances[account]);
-            _initialized[account] = true;
-        }
-    }
-
-    /// @notice Get encrypted token balance
-    function tokenBalanceOf(address account) external view returns (euint64) {
-        return _tokenBalances[account];
-    }
-
-    /// @notice Create a treasury spending proposal
-    /// @dev PROPOSAL_THRESHOLD cannot be enforced on-chain with encrypted balances
-    /// because ebool cannot be used in require(). In production, consider requiring
-    /// a governance NFT or a plaintext ETH deposit to gate proposal creation.
+    /// SOLUTION TODO 3: Create a new proposal
     function createProposal(
         string calldata description,
-        address payable recipient,
-        uint256 amount,
-        uint256 duration
-    ) external {
-        uint256 id = proposalCount++;
-        proposals[id].description = description;
-        proposals[id].recipient = recipient;
-        proposals[id].amount = amount;
-        proposals[id].yesVotes = FHE.asEuint32(0);
-        proposals[id].noVotes = FHE.asEuint32(0);
-        proposals[id].deadline = block.timestamp + duration;
+        address recipient,
+        uint256 amount
+    ) public returns (uint256) {
+        uint256 proposalId = proposalCount++;
 
-        FHE.allowThis(proposals[id].yesVotes);
-        FHE.allowThis(proposals[id].noVotes);
+        Proposal storage p = proposals[proposalId];
+        p.description = description;
+        p.recipient = recipient;
+        p.amount = amount;
+        p.startTime = block.timestamp;
+        p.endTime = block.timestamp + votingDuration;
+        p.exists = true;
+        p.finalized = false;
+        p.executed = false;
 
-        emit ProposalCreated(id, description, recipient, amount);
+        p.yesVotes = FHE.asEuint64(0);
+        p.noVotes = FHE.asEuint64(0);
+        FHE.allowThis(p.yesVotes);
+        FHE.allowThis(p.noVotes);
+
+        emit ProposalCreated(proposalId, description, recipient, amount);
+
+        return proposalId;
     }
 
-    /// @notice Cast an encrypted vote (0 = no, 1 = yes)
-    function vote(uint256 proposalId, externalEuint8 encVote, bytes calldata inputProof) external {
-        require(proposalId < proposalCount, "Invalid proposal");
-        require(block.timestamp <= proposals[proposalId].deadline, "Voting ended");
-        require(!hasVoted[proposalId][msg.sender], "Already voted");
+    /// SOLUTION TODO 4: Cast a weighted encrypted vote
+    function vote(uint256 proposalId, externalEbool encryptedVote, bytes calldata inputProof) external {
+        Proposal storage p = proposals[proposalId];
 
-        euint8 voteValue = FHE.fromExternal(encVote, inputProof);
-        ebool isYes = FHE.eq(voteValue, FHE.asEuint8(1));
+        require(p.exists, "Proposal does not exist");
+        require(block.timestamp >= p.startTime && block.timestamp < p.endTime, "Voting not active");
+        require(!_hasVoted[proposalId][msg.sender], "Already voted");
 
-        euint32 one = FHE.asEuint32(1);
-        euint32 zero = FHE.asEuint32(0);
+        _hasVoted[proposalId][msg.sender] = true;
 
-        proposals[proposalId].yesVotes = FHE.add(
-            proposals[proposalId].yesVotes,
-            FHE.select(isYes, one, zero)
-        );
-        proposals[proposalId].noVotes = FHE.add(
-            proposals[proposalId].noVotes,
-            FHE.select(isYes, zero, one)
-        );
+        euint64 weight = governanceToken.balanceOf(msg.sender);
+        ebool voteYes = FHE.fromExternal(encryptedVote, inputProof);
 
-        FHE.allowThis(proposals[proposalId].yesVotes);
-        FHE.allowThis(proposals[proposalId].noVotes);
+        euint64 zero = FHE.asEuint64(0);
+        euint64 yesWeight = FHE.select(voteYes, weight, zero);
+        euint64 noWeight = FHE.select(voteYes, zero, weight);
 
-        hasVoted[proposalId][msg.sender] = true;
+        p.yesVotes = FHE.add(p.yesVotes, yesWeight);
+        p.noVotes = FHE.add(p.noVotes, noWeight);
+
+        FHE.allowThis(p.yesVotes);
+        FHE.allowThis(p.noVotes);
+
         emit VoteCast(proposalId, msg.sender);
     }
 
-    /// @notice Fund the DAO treasury
-    receive() external payable {}
+    /// SOLUTION TODO 5: Finalize a proposal after voting ends (admin only)
+    function finalize(uint256 proposalId) public onlyAdmin {
+        Proposal storage p = proposals[proposalId];
 
-    /// @notice Finalize voting: make results publicly decryptable and store plaintext results
-    /// @dev In production, a Gateway callback would deliver decrypted values automatically.
-    ///      For the bootcamp, the admin reads publicly decryptable values off-chain and
-    ///      submits them via setResults() before executing.
-    function finalizeProposal(uint256 proposalId) external onlyAdmin {
-        require(proposalId < proposalCount, "Invalid proposal");
-        require(block.timestamp > proposals[proposalId].deadline, "Voting ongoing");
-        require(!proposals[proposalId].revealed, "Already revealed");
+        require(p.exists, "Proposal does not exist");
+        require(block.timestamp >= p.endTime, "Voting not ended");
+        require(!p.finalized, "Already finalized");
 
-        FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
-        FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
+        p.finalized = true;
+
+        FHE.allow(p.yesVotes, admin);
+        FHE.allow(p.noVotes, admin);
+
+        emit ProposalFinalized(proposalId);
     }
 
-    /// @notice Store decrypted vote results after off-chain decryption
-    /// @dev In production, this would be the Gateway callback receiving decrypted values.
-    ///      For the bootcamp, admin submits the values after reading publicly decryptable data.
-    function setResults(uint256 proposalId, uint32 yesResult, uint32 noResult) external onlyAdmin {
-        require(proposalId < proposalCount, "Invalid proposal");
-        require(!proposals[proposalId].revealed, "Already revealed");
+    /// SOLUTION TODO 6: Execute an approved proposal (admin only)
+    function executeProposal(
+        uint256 proposalId,
+        uint64 decryptedYes,
+        uint64 decryptedNo
+    ) public onlyAdmin {
+        Proposal storage p = proposals[proposalId];
 
-        proposals[proposalId].revealed = true;
-        proposals[proposalId].yesResult = yesResult;
-        proposals[proposalId].noResult = noResult;
+        require(p.finalized, "Not finalized");
+        require(!p.executed, "Already executed");
+        require(decryptedYes > decryptedNo, "Not approved");
+        require(address(this).balance >= p.amount, "Insufficient treasury");
 
-        emit ProposalFinalized(proposalId, yesResult, noResult);
+        p.executed = true;
+
+        payable(p.recipient).transfer(p.amount);
+
+        emit ProposalExecuted(proposalId, p.recipient, p.amount);
     }
 
-    /// @notice Execute a finalized proposal (transfer treasury funds to recipient)
-    function executeProposal(uint256 proposalId) external onlyAdmin {
-        require(proposalId < proposalCount, "Invalid proposal");
-        require(proposals[proposalId].revealed, "Not finalized");
-        require(!proposals[proposalId].executed, "Already executed");
-        require(proposals[proposalId].yesResult > proposals[proposalId].noResult, "Proposal did not pass");
-        require(address(this).balance >= proposals[proposalId].amount, "Insufficient treasury");
-
-        proposals[proposalId].executed = true;
-
-        (bool sent,) = proposals[proposalId].recipient.call{value: proposals[proposalId].amount}("");
-        require(sent, "Transfer failed");
-
-        emit ProposalExecuted(proposalId);
+    /// @notice Returns encrypted vote tallies for a finalized proposal
+    function getProposalResults(uint256 proposalId) public view returns (euint64, euint64) {
+        Proposal storage p = proposals[proposalId];
+        require(p.finalized, "Not finalized");
+        return (p.yesVotes, p.noVotes);
     }
 
-    /// @notice Get treasury balance
-    function treasuryBalance() external view returns (uint256) {
+    /// @notice Check if an address has voted on a proposal
+    function hasVoted(uint256 proposalId, address voter) public view returns (bool) {
+        return _hasVoted[proposalId][voter];
+    }
+
+    /// @notice Returns the current treasury balance
+    function treasuryBalance() public view returns (uint256) {
         return address(this).balance;
-    }
-
-    /// @notice Get encrypted yes votes
-    function getYesVotes(uint256 proposalId) external view returns (euint32) {
-        return proposals[proposalId].yesVotes;
-    }
-
-    /// @notice Get encrypted no votes
-    function getNoVotes(uint256 proposalId) external view returns (euint32) {
-        return proposals[proposalId].noVotes;
     }
 }

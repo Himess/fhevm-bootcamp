@@ -16,7 +16,7 @@ Master every encrypted data type in FHEVM.
 
 | Type | Bits | Example Use |
 |------|------|-------------|
-| `ebool` | 1 | Flags, conditions |
+| `ebool` | 2 | Flags, conditions |
 | `euint8` | 8 | Scores, small counters |
 | `euint16` | 16 | Item counts |
 | `euint32` | 32 | General purpose |

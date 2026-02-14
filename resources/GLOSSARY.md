@@ -35,8 +35,8 @@ A programming paradigm where control flow does not depend on runtime values. In 
 
 ## C
 
-**Callback**
-A function that the Gateway calls when an asynchronous decryption request is complete. The callback receives the decrypted plaintext value and must be protected so that only the Gateway can invoke it.
+**Callback** *(Deprecated pattern)*
+In earlier fhEVM versions (pre-v0.9), a function that the Gateway called when an asynchronous decryption request was complete. In the current version, decryption uses `FHE.makePubliclyDecryptable()` instead, which does not require callbacks.
 
 **CKKS (Cheon-Kim-Kim-Song)**
 An FHE scheme optimized for approximate arithmetic on real numbers. CKKS is commonly used in machine learning on encrypted data but is not used in fhEVM (which uses TFHE for exact integer arithmetic).
@@ -58,10 +58,10 @@ The challenge of managing encrypted value permissions when one contract passes e
 ## D
 
 **Decryption**
-The process of converting a ciphertext back to plaintext. In fhEVM, decryption is either done through the Gateway (asynchronous on-chain reveal) or through re-encryption (user-specific off-chain decryption). Decryption requires the network's private key, which is distributed among validators.
+The process of converting a ciphertext back to plaintext. In fhEVM, decryption is either done through `FHE.makePubliclyDecryptable()` (on-chain reveal) or through re-encryption (user-specific off-chain decryption via `instance.userDecrypt()`). Decryption requires the network's private key, which is distributed among validators.
 
-**Decryption Oracle**
-See "Gateway."
+**Decryption Oracle** *(Deprecated)*
+See "Gateway." The current API uses `FHE.makePubliclyDecryptable()` instead.
 
 **Devnet**
 A development network provided by Zama for testing fhEVM contracts with real FHE operations (as opposed to mock mode which simulates FHE locally).

@@ -2,10 +2,10 @@
 
 ## Summary
 - **25 Solidity contracts** - All compiling successfully
-- **25 test files** - 210/210 tests passing
+- **25 test files** - 216/216 tests passing
 - **15 learning modules** (00-14) - Each with README, lesson, slides, exercise, quiz
 - **6 architecture diagrams** - Mermaid format
-- **12 exercise templates** + **13 solutions** - For hands-on learning
+- **14 exercise templates** + **15 solutions** - For hands-on learning
 - **CI/CD pipelines** - GitHub Actions for test + slides build
 - **Deployment scripts** - For local and Ethereum Sepolia
 - **Setup script** - Automated environment setup (scripts/setup.sh)
@@ -43,7 +43,7 @@
 
 ## Test Results
 ```
-210 passing (8s)
+216 passing (8s)
 0 failing
 ```
 

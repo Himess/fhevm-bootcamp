@@ -137,9 +137,9 @@ contract SealedBidAuction is ZamaEthereumConfig {
         emit AuctionFinalized(auctionId, winnerAddress, winningBid);
     }
 
-    /// @notice Withdraw ETH deposit (non-winners only, after auction ends)
+    /// @notice Withdraw ETH deposit (non-winners only, after auction is finalized)
     function withdrawDeposit(uint256 auctionId) external {
-        require(auctions[auctionId].ended, "Auction not ended");
+        require(auctions[auctionId].finalized, "Auction not finalized");
         require(msg.sender != winner[auctionId], "Winner cannot withdraw");
         uint256 amount = deposits[auctionId][msg.sender];
         require(amount > 0, "No deposit");

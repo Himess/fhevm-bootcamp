@@ -234,7 +234,7 @@ describe("SealedBidAuction", function () {
     expect(await auction.deposits(0, alice.address)).to.equal(0n);
   });
 
-  it("should reject withdrawal before auction ends", async function () {
+  it("should reject withdrawal before auction is finalized", async function () {
     await (await auction.createAuction("Early Withdraw", 3600, 0)).wait();
 
     const enc = await fhevm
@@ -249,7 +249,7 @@ describe("SealedBidAuction", function () {
       await auction.connect(alice).withdrawDeposit(0);
       expect.fail("Should have reverted");
     } catch (error: any) {
-      expect(error.message).to.include("Auction not ended");
+      expect(error.message).to.include("Auction not finalized");
     }
   });
 });

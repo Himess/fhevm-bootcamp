@@ -37,7 +37,7 @@ contract ACLDemo is ZamaEthereumConfig {
 
     /// @notice Increment the secret (demonstrates ACL reset after operations)
     function incrementSecret() external onlyOwner {
-        _ownerSecret = FHE.add(_ownerSecret, FHE.asEuint32(1));
+        _ownerSecret = FHE.add(_ownerSecret, 1);
         FHE.allowThis(_ownerSecret);
         FHE.allow(_ownerSecret, msg.sender);
         emit SecretUpdated(msg.sender);

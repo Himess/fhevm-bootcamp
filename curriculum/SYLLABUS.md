@@ -1,8 +1,8 @@
 # FHEVM Bootcamp -- Full Syllabus
 
-**Version:** 2.0
-**Total Modules:** 15 (Modules 00 through 14)
-**Total Duration:** ~46 hours
+**Version:** 3.0
+**Total Modules:** 20 (Modules 00 through 19)
+**Total Duration:** ~63 hours
 **API Version:** New FHEVM API (`FHE` library, `externalEuintXX` inputs, `FHE.fromExternal(value, proof)`)
 
 ---
@@ -324,19 +324,19 @@ Eventually, encrypted results must be revealed. This module covers the asynchron
 
 By the end of this module, students will be able to:
 
-1. Request asynchronous decryption through the Gateway and handle the callback.
-2. Implement the callback pattern with proper validation and state management.
-3. Use ACL (`FHE.allow()`) to grant user access, enabling client-side decryption via `instance.userDecrypt()`.
+1. Use `FHE.makePubliclyDecryptable()` to mark encrypted values for on-chain reveal.
+2. Use ACL (`FHE.allow()`) to grant user access, enabling client-side decryption via `instance.userDecrypt()`.
+3. Understand the historical Gateway callback pattern *(deprecated in v0.9+)* and why it was replaced.
 4. Evaluate the privacy implications of different decryption strategies.
 5. Design contracts that minimize unnecessary decryption.
 
 ### Topics Covered
 
-- The Gateway: decryption oracle architecture
-- Requesting decryption: `FHE.makePubliclyDecryptable()`
+- Decryption architecture overview
+- Public decryption: `FHE.makePubliclyDecryptable()` for on-chain reveal
   - *Note: `Gateway.requestDecryption()` was the pre-v0.9 method and is now deprecated.*
-- Callback functions: receiving decrypted values asynchronously
-- Callback validation: ensuring only the Gateway can call back
+- Historical context: the deprecated Gateway callback pattern (for reference only)
+- Understanding asynchronous decryption on production networks
 - Re-encryption: ACL grants + client-side `instance.userDecrypt()` for user-specific decryption
 - Client-side re-encryption with the Relayer SDK (`@zama-fhe/relayer-sdk`)
 - Privacy analysis: what information leaks when you decrypt?
@@ -602,15 +602,217 @@ By the end of this module, students will be able to:
 
 ---
 
-## Module 14: Capstone: Confidential DAO
+## Module 14: Testing & Debugging FHE Contracts
 
 **Level:** Advanced
-**Duration:** 5 hours
-**Prerequisites:** All previous modules (00--13)
+**Duration:** 3 hours
+**Prerequisites:** Module 13
 
 ### Description
 
-The capstone project is the culminating assessment of the bootcamp. Students design and implement a Confidential DAO that combines encrypted governance (voting with hidden vote weights), private treasury management (encrypted balances), and confidential proposal execution. This project demonstrates mastery of encrypted types, ACL management, conditional logic with `FHE.select`, decryption patterns, encrypted inputs via `externalEuintXX`, on-chain randomness, and frontend integration.
+Testing FHE contracts presents unique challenges: encrypted values cannot be directly inspected, failures are often silent, and standard assertion patterns do not apply. This module teaches students to set up the fhEVM mock testing environment, write meaningful tests for encrypted logic, debug contracts where state changes are invisible, and handle the silent failure patterns inherent to FHE programming.
+
+### Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. Set up fhEVM mock testing using `@fhevm/hardhat-plugin`.
+2. Write comprehensive tests for FHE contracts including encrypted input creation and decryption assertions.
+3. Debug encrypted contracts where failures are silent and state is not directly observable.
+4. Handle and diagnose silent failures caused by FHE.select-based conditional logic.
+5. Test ACL permissions and verify correct access control behavior.
+
+### Topics Covered
+
+- Mock testing environment: `@fhevm/hardhat-plugin` setup and configuration
+- Creating encrypted test inputs with `createEncryptedInput`
+- Decrypting test outputs with `userDecryptEuint` helpers
+- Event-driven debugging: using events to trace encrypted contract behavior
+- Testing ACL permissions: verifying `FHE.allow`, `FHE.allowThis`, and `FHE.allowTransient`
+- Silent failure testing: asserting that state does NOT change on invalid operations
+- Test patterns for `FHE.select`-based conditional logic
+- Gas usage profiling in tests
+- Integration testing patterns for multi-contract FHE systems
+
+### Hands-on Activities
+
+- **Exercise 1:** Set up a complete test environment and write basic tests for the `TestableVault.sol` contract.
+- **Exercise 2:** Write a comprehensive test suite for the `ConfidentialERC20` from Module 11, covering transfers, insufficient balances, approvals, ACL correctness, and silent failure behavior.
+- **Exercise 3:** Debug a provided contract with 5 hidden bugs using only test-driven techniques (no access to plaintext state).
+- **Quiz:** 10 questions on FHE testing patterns, mock environment usage, and debugging strategies.
+
+---
+
+## Module 15: Gas Optimization for FHE
+
+**Level:** Advanced
+**Duration:** 3 hours
+**Prerequisites:** Module 14
+
+### Description
+
+FHE operations are orders of magnitude more expensive than their plaintext equivalents. This module teaches students to understand the gas cost model for each encrypted type and operation, optimize type selection to minimize costs, leverage plaintext second operands for cheaper computation, and apply batching and caching patterns to reduce overall gas consumption.
+
+### Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. Understand the FHE gas cost model and explain cost differences per encrypted type and operation.
+2. Optimize type selection (e.g., prefer `euint8` over `euint64` where possible) to reduce gas usage.
+3. Use plaintext second operands (mixed encrypted/plaintext operations) to halve gas costs where applicable.
+4. Apply batch processing and caching patterns to minimize redundant FHE computations.
+5. Profile and benchmark gas usage for FHE contracts.
+
+### Topics Covered
+
+- Gas cost model: cost per type (`euint8` vs `euint16` vs `euint32` vs `euint64`) and per operation
+- Type selection optimization: choosing the smallest sufficient type
+- Plaintext second operands: `FHE.add(encrypted, plaintext)` is cheaper than `FHE.add(encrypted, encrypted)`
+- Caching intermediate encrypted results to avoid recomputation
+- Lazy evaluation: deferring expensive operations until necessary
+- Batch processing: combining multiple operations to reduce overhead
+- Storage vs memory patterns for encrypted values
+- Benchmarking gas with Hardhat gas reporter
+
+### Hands-on Activities
+
+- **Exercise 1:** Build and deploy `GasBenchmark.sol` to measure gas costs for every operation type across `euint8`, `euint32`, and `euint64`.
+- **Exercise 2:** Analyze `GasOptimized.sol` and compare its gas usage to a naive implementation of the same logic.
+- **Exercise 3:** Take a provided inefficient encrypted token contract and optimize it to reduce gas usage by at least 30%.
+- **Quiz:** 10 questions on FHE gas costs, optimization strategies, and type selection trade-offs.
+
+---
+
+## Module 16: Security Best Practices for FHE
+
+**Level:** Advanced
+**Duration:** 3 hours
+**Prerequisites:** Module 15
+
+### Description
+
+FHE contracts face unique security challenges beyond standard smart contract vulnerabilities. This module covers information leakage through gas consumption patterns, proper ACL management to prevent unauthorized access, input validation for encrypted data, DoS prevention strategies, and the LastError pattern for encrypted error reporting. Students perform a hands-on security audit of an intentionally vulnerable contract.
+
+### Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. Prevent information leakage via gas consumption side-channels in FHE contracts.
+2. Implement proper ACL management to avoid unauthorized ciphertext access.
+3. Validate encrypted inputs and prevent malformed or out-of-range submissions.
+4. Protect FHE contracts against denial-of-service attacks targeting expensive operations.
+5. Implement the LastError pattern for encrypted error codes that do not leak information.
+
+### Topics Covered
+
+- Gas side-channel attacks: how variable gas costs can leak encrypted values
+- Constant-gas patterns: `FHE.select` vs `if/else` to prevent gas-based leakage
+- `FHE.isInitialized()`: checking for uninitialized encrypted values
+- ACL management security: over-permissioning, stale permissions, permission escalation
+- Input validation: range bounds on encrypted inputs, non-zero assertions
+- Rate limiting and DoS prevention for expensive FHE operations
+- Encrypted error codes: the LastError pattern for reporting failures without leaking information
+- FHE security audit checklist: a systematic approach to reviewing FHE contracts
+- Common vulnerability patterns in FHE contracts
+
+### Hands-on Activities
+
+- **Exercise 1:** Analyze `VulnerableDemo.sol` (intentionally broken, educational) and identify all security vulnerabilities. Document each finding.
+- **Exercise 2:** Implement `SecurityPatterns.sol` with correct constant-gas logic, ACL management, and the LastError pattern.
+- **Exercise 3:** Security audit challenge: review a provided contract against the FHE audit checklist and write a formal audit report.
+- **Quiz:** 10 questions on FHE security patterns, side-channel prevention, and ACL best practices.
+
+---
+
+## Module 17: Advanced FHE Design Patterns
+
+**Level:** Expert
+**Duration:** 4 hours
+**Prerequisites:** Module 16
+
+### Description
+
+This module explores advanced architectural patterns for building sophisticated FHE applications. Students learn to implement encrypted state machines with threshold-based transitions, the LastError pattern for rich error handling, encrypted key-value registries for per-user private data, and cross-contract composability patterns that maintain encryption across contract boundaries.
+
+### Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. Implement encrypted state machines with threshold-based transitions that operate entirely on ciphertext.
+2. Apply the LastError pattern for encrypted error codes in complex multi-step workflows.
+3. Build encrypted registries with per-user key-value stores for private data management.
+4. Design cross-contract composability using `FHE.allow` to pass encrypted values between contracts.
+5. Implement batch processing and time-locked value patterns for advanced FHE workflows.
+
+### Topics Covered
+
+- Encrypted state machines: states, transitions, and threshold checks on encrypted values
+- LastError pattern: per-user encrypted error codes for debugging without information leakage
+- Encrypted registries: `mapping(address => mapping(bytes32 => euint64))` for per-user private data
+- Cross-contract composability: `FHE.allow(ciphertext, targetContract)` for inter-contract encrypted data flow
+- Batch processing patterns: operating on arrays of encrypted values efficiently
+- Time-locked encrypted values: values that become decryptable after a deadline
+- Encrypted queues and priority systems
+- Composing multiple FHE patterns into cohesive architectures
+
+### Hands-on Activities
+
+- **Exercise 1:** Implement `EncryptedStateMachine.sol` with 4 states and encrypted threshold transitions.
+- **Exercise 2:** Build `LastErrorPattern.sol` and `EncryptedRegistry.sol` with per-user error tracking and private data stores.
+- **Exercise 3:** Build an encrypted escrow contract that uses state machines, cross-contract ACL, and time-locked reveals.
+- **Quiz:** 10 questions on design patterns, state machines, cross-contract composability, and encrypted registries.
+
+---
+
+## Module 18: Confidential DeFi
+
+**Level:** Expert
+**Duration:** 4 hours
+**Prerequisites:** Module 17
+
+### Description
+
+Decentralized finance is one of the most compelling use cases for FHE on blockchain. This module explores how to build DeFi primitives with confidential data: lending protocols with encrypted collateral, order books with sealed orders, and swap mechanisms with front-running prevention. Students analyze the trade-offs between privacy and transparency in DeFi and learn about the emerging ERC-7984 standard for confidential tokens.
+
+### Learning Objectives
+
+By the end of this module, students will be able to:
+
+1. Design and implement a confidential lending protocol with encrypted collateral and FHE-based LTV checks.
+2. Build an encrypted order book with sealed orders and encrypted matching logic.
+3. Analyze DeFi privacy trade-offs: what must remain transparent (e.g., protocol solvency) vs what can be private.
+4. Implement front-running prevention using encrypted transaction data.
+5. Describe the ERC-7984 standard and its role in confidential DeFi interoperability.
+
+### Topics Covered
+
+- Confidential lending: encrypted collateral deposits, 50% LTV checks using `FHE.ge` and `FHE.select`
+- Encrypted order books: sealed limit orders, encrypted price and amount fields
+- Encrypted order matching: comparing encrypted prices, executing trades without revealing order details
+- Front-running prevention: how encrypted orders eliminate MEV extraction
+- DeFi privacy trade-offs: protocol solvency proofs, regulatory considerations, auditability
+- ERC-7984: the emerging standard for confidential tokens and DeFi composability
+- Liquidation mechanisms with encrypted health factors
+- Interest rate calculations on encrypted balances
+
+### Hands-on Activities
+
+- **Exercise 1:** Implement `ConfidentialLending.sol` with encrypted collateral deposits, encrypted borrow amounts, and a 50% LTV health check using `FHE.ge` and `FHE.select`.
+- **Exercise 2:** Build `EncryptedOrderBook.sol` with sealed limit orders, encrypted matching, and selective result reveal.
+- **Exercise 3:** Build a confidential swap mechanism that takes encrypted input amounts and executes trades without revealing order sizes until settlement.
+- **Quiz:** 10 questions on confidential DeFi design, LTV checks, order book patterns, and privacy trade-offs.
+
+---
+
+## Module 19: Capstone: Confidential DAO
+
+**Level:** Expert
+**Duration:** 5 hours
+**Prerequisites:** All previous modules (00--18)
+
+### Description
+
+The capstone project is the culminating assessment of the bootcamp. Students design and implement a Confidential DAO that combines encrypted governance (voting with hidden vote weights), private treasury management (encrypted balances), and confidential proposal execution. This project demonstrates mastery of all 18 preceding modules: encrypted types, ACL management, conditional logic with `FHE.select`, decryption patterns, encrypted inputs via `externalEuintXX`, on-chain randomness, frontend integration, testing and debugging, gas optimization, security best practices, advanced design patterns, and confidential DeFi concepts.
 
 ### Learning Objectives
 
@@ -618,18 +820,21 @@ By the end of this module, students will be able to:
 
 1. Independently design an FHE application architecture from requirements to implementation.
 2. Implement a complete Confidential DAO with encrypted governance, private treasury, and confidential proposals.
-3. Integrate multiple FHE patterns: encrypted inputs (`externalEuintXX` + `FHE.fromExternal(value, proof)`), ACL management, `FHE.select`, Gateway decryption, `instance.userDecrypt()`, and `FHE.randEuintXX()`.
-4. Write comprehensive tests that validate all encrypted logic paths.
-5. Document the security model, trust assumptions, and known limitations.
+3. Integrate multiple FHE patterns: encrypted inputs (`externalEuintXX` + `FHE.fromExternal(value, proof)`), ACL management, `FHE.select`, Gateway decryption, `instance.userDecrypt()`, `FHE.randEuintXX()`, encrypted state machines, and LastError pattern.
+4. Write comprehensive tests that validate all encrypted logic paths, applying techniques from Module 14.
+5. Apply security best practices (Module 16), gas optimization (Module 15), and advanced design patterns (Module 17) to the DAO architecture.
+6. Document the security model, trust assumptions, and known limitations.
 
 ### Topics Covered
 
 - Project scoping and architecture design for a Confidential DAO
 - Encrypted governance: hidden voting power, private delegation, shielded proposals
-- Private treasury: encrypted balances, confidential fund allocation
-- Combining all FHE patterns: types, operations, ACL, inputs, decryption, conditionals, randomness
-- Testing strategies for complex multi-contract FHE systems
-- Security analysis and threat modeling for DAO governance
+- Private treasury: encrypted balances, confidential fund allocation, DeFi integration (Module 18)
+- Combining all FHE patterns: types, operations, ACL, inputs, decryption, conditionals, randomness, state machines, LastError
+- Testing strategies for complex multi-contract FHE systems (Module 14 techniques)
+- Gas optimization for production-quality DAO contracts (Module 15 techniques)
+- Security analysis and threat modeling for DAO governance (Module 16 checklist)
+- Advanced design patterns: encrypted state machines, cross-contract composability (Module 17)
 - Documentation standards: README, architecture diagram, security model
 
 ### Suggested Confidential DAO Features
@@ -701,7 +906,17 @@ Module 12       Module 13
 (Voting)        (Auction)
   \   /
    \ /
-Module 14 (Capstone: Confidential DAO)
+Module 14 (Testing & Debugging FHE Contracts)
+    |
+Module 15 (Gas Optimization for FHE)
+    |
+Module 16 (Security Best Practices for FHE)
+    |
+Module 17 (Advanced FHE Design Patterns)
+    |
+Module 18 (Confidential DeFi)
+    |
+Module 19 (Capstone: Confidential DAO)
 ```
 
 ---
@@ -724,8 +939,13 @@ Module 14 (Capstone: Confidential DAO)
 | 11 | Confidential ERC-20 | Advanced | 4 | Complete encrypted ERC-20 implementation |
 | 12 | Confidential Voting | Advanced | 4 | Working confidential voting system |
 | 13 | Sealed-Bid Auction | Advanced | 4 | Working sealed-bid auction |
-| 14 | Capstone: Confidential DAO | Advanced | 5 | Original Confidential DAO project |
-| | **Total** | | **46** | |
+| 14 | Testing & Debugging FHE Contracts | Advanced | 3 | FHE test suite mastery and debugging skills |
+| 15 | Gas Optimization for FHE | Advanced | 3 | Optimized FHE contracts with profiled gas usage |
+| 16 | Security Best Practices for FHE | Advanced | 3 | Secure FHE contract patterns and audit skills |
+| 17 | Advanced FHE Design Patterns | Expert | 4 | State machines, registries, cross-contract FHE |
+| 18 | Confidential DeFi | Expert | 4 | Lending, order books, and DeFi privacy patterns |
+| 19 | Capstone: Confidential DAO | Expert | 5 | Original Confidential DAO project |
+| | **Total** | | **63** | |
 
 ---
 

@@ -20,7 +20,7 @@ This guide provides teaching notes, discussion prompts, time management tips, co
 
 ### Curriculum Summary
 
-The bootcamp consists of 15 modules (Modules 00-14) totaling approximately 46 hours of instruction. The curriculum includes 25 smart contracts and 210 tests across all exercises and projects.
+The bootcamp consists of 20 modules (Modules 00-19) totaling approximately 63 hours of instruction. The curriculum includes 35 smart contracts and 328 tests across all exercises and projects.
 
 | Module | Title | Duration |
 |---|---|---|
@@ -38,7 +38,12 @@ The bootcamp consists of 15 modules (Modules 00-14) totaling approximately 46 ho
 | 11 | Confidential ERC-20 | 4 hrs |
 | 12 | Confidential Voting | 4 hrs |
 | 13 | Sealed-Bid Auction | 4 hrs |
-| 14 | Capstone - Confidential DAO | 5 hrs |
+| 14 | Testing & Debugging FHE Contracts | 3 hrs |
+| 15 | Gas Optimization for FHE | 3 hrs |
+| 16 | Security Best Practices for FHE | 3 hrs |
+| 17 | Advanced FHE Design Patterns | 4 hrs |
+| 18 | Confidential DeFi | 4 hrs |
+| 19 | Capstone - Confidential DAO | 5 hrs |
 
 ### Before the Bootcamp
 
@@ -100,7 +105,11 @@ The single biggest conceptual hurdle is the shift from imperative programming (i
 The Confidential ERC-20 (Module 11) is the central artifact of the bootcamp. Reference it constantly in later modules:
 - Module 12: "Let's apply voting patterns we learned to our ERC-20 governance."
 - Module 13: "Let's use our ERC-20 as the payment token in the auction."
-- Module 14: "Let's integrate our ERC-20 into the DAO capstone."
+- Module 14: "Let's write a proper test suite for our ERC-20."
+- Module 15: "Let's optimize our ERC-20's gas consumption."
+- Module 16: "Let's audit our ERC-20 for security vulnerabilities."
+- Module 18: "Let's use our ERC-20 as the base token in the DeFi protocols."
+- Module 19: "Let's integrate our ERC-20 into the DAO capstone."
 
 ### 4. Encourage Mistakes
 
@@ -596,15 +605,203 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 
 ---
 
-### Module 14: Capstone - Confidential DAO
+### Module 14: Testing & Debugging FHE Contracts
+
+**Duration:** 3 hours
+**Teaching Style:** Live coding + hands-on testing workshop
+
+**Key Teaching Points:**
+- This is where students learn to debug -- use live coding extensively. Show a failing test, then walk through the debugging process step by step.
+- The mock environment (`@fhevm/hardhat-plugin`) is key: demonstrate `createEncryptedInput` and `userDecryptEuint` with real examples.
+- Silent failures are the #1 debugging challenge in FHE. Show how a transfer with insufficient balance "succeeds" (no revert) but leaves state unchanged -- and how to write tests that catch this.
+- Event-driven debugging is essential: since you cannot inspect encrypted state directly, events become the primary debugging tool.
+- ACL testing deserves special attention: show students how to test that unauthorized users are correctly denied access.
+- Bring back the ConfidentialERC20 from Module 11 as the test target -- students already understand the contract logic, so they can focus on testing techniques.
+
+**Discussion Questions:**
+1. "How do you test that a transfer correctly fails when the sender has insufficient balance, given that the transaction does not revert?"
+2. "What are the limitations of mock testing vs testing on a real fhEVM network?"
+3. "How would you set up continuous integration for FHE contract testing?"
+
+**Common Pitfalls:**
+- Students expect `expect(tx).to.be.reverted` to work for FHE failures -- it will not, because failures are silent.
+- Forgetting to set up ACL permissions in test setup, leading to confusing "unauthorized" errors.
+- Not understanding that mock mode simulates but does not truly encrypt -- tests pass in mock but may behave differently on-chain.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| Mock environment setup and overview | 20 min |
+| createEncryptedInput and userDecryptEuint demos | 25 min |
+| Silent failure testing patterns (live coding) | 25 min |
+| Exercise 1: TestableVault tests | 30 min |
+| Event-driven debugging techniques | 15 min |
+| Exercise 2: ConfidentialERC20 test suite | 40 min |
+| ACL testing patterns | 10 min |
+| Quiz | 10 min |
+
+---
+
+### Module 15: Gas Optimization for FHE
+
+**Duration:** 3 hours
+**Teaching Style:** Benchmark-driven exploration + optimization challenge
+
+**Key Teaching Points:**
+- Start with the gas benchmark contract (`GasBenchmark.sol`) -- let students see the raw numbers for each operation and type.
+- The key insight: `euint8` operations can be 2-5x cheaper than `euint64`. Always use the smallest type that fits.
+- Plaintext second operands (e.g., `FHE.add(encrypted, 5)`) are significantly cheaper than two-encrypted operands -- show the benchmark side by side.
+- Caching is crucial: store intermediate results rather than recomputing them.
+- Lazy evaluation: do not compute encrypted values until they are actually needed.
+- The optimization exercise is very engaging -- students compete to get the lowest gas usage.
+
+**Discussion Questions:**
+1. "When is it worth using `euint64` despite the higher gas cost?"
+2. "How do you balance gas optimization with code readability?"
+3. "What is the gas cost of a `FHE.select` compared to the two branches it replaces?"
+
+**Common Pitfalls:**
+- Students over-optimize and break correctness (e.g., using `euint8` when the value can exceed 255).
+- Forgetting that storage writes for encrypted values are also expensive -- not just the FHE operations.
+- Premature optimization: emphasize "make it work, make it right, make it fast" in that order.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| FHE gas cost model overview | 20 min |
+| GasBenchmark.sol deployment and analysis | 25 min |
+| Type selection optimization | 20 min |
+| Plaintext operand optimization | 15 min |
+| Exercise 1: Gas Benchmark | 25 min |
+| Caching and lazy evaluation patterns | 15 min |
+| Exercise 2: GasOptimized.sol analysis | 20 min |
+| Exercise 3: Optimize inefficient token | 25 min |
+| Quiz | 10 min |
+
+---
+
+### Module 16: Security Best Practices for FHE
+
+**Duration:** 3 hours
+**Teaching Style:** Vulnerability analysis + group discussion + audit exercise
+
+**Key Teaching Points:**
+- `VulnerableDemo.sol` is intentionally broken -- this is great for group discussion. Project the code and have students find vulnerabilities before revealing them. This contract should never be deployed in production.
+- Gas side-channels are subtle: show how an `if/else` on an encrypted condition leaks information through gas usage, while `FHE.select` does not.
+- `FHE.isInitialized()` is often overlooked -- demonstrate how uninitialized encrypted values can lead to unexpected behavior.
+- The LastError pattern is introduced here and expanded in Module 17: show how to use encrypted error codes to report failures without leaking information.
+- The audit checklist exercise prepares students for real-world FHE contract reviews.
+- Pair this module with Module 14 (testing) -- students should write tests to verify each security pattern.
+
+**Discussion Questions:**
+1. "How can a gas observer determine the outcome of an encrypted `if/else` branch?"
+2. "What is the difference between `FHE.select` and `if/else` from a security perspective?"
+3. "If all errors are encrypted, how does a user know what went wrong?"
+
+**Common Pitfalls:**
+- Students underestimate gas side-channels because they are not visible in test output.
+- Over-permissioning with `FHE.allow` -- granting access to addresses that do not need it.
+- Students forget that events with plaintext data can leak information about encrypted state.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| FHE-specific security threat overview | 20 min |
+| Gas side-channel demonstration | 20 min |
+| VulnerableDemo.sol group analysis | 25 min |
+| Exercise 1: Vulnerability identification | 25 min |
+| LastError pattern and FHE.isInitialized | 15 min |
+| Exercise 2: SecurityPatterns.sol | 25 min |
+| FHE audit checklist walkthrough | 10 min |
+| Exercise 3: Security audit challenge | 20 min |
+| Quiz | 10 min |
+
+---
+
+### Module 17: Advanced FHE Design Patterns
+
+**Duration:** 4 hours
+**Teaching Style:** Architecture discussion + guided implementation
+
+**Key Teaching Points:**
+- Encrypted state machines are a powerful pattern: show how states and transitions can be fully encrypted, with the current state being an `euint8` and transitions guarded by `FHE.select`.
+- The LastError pattern is the FHE equivalent of `require()` error messages: since you cannot revert with a reason on encrypted conditions, you store an encrypted error code that the user can decrypt.
+- Encrypted registries (`mapping(address => mapping(bytes32 => euint64))`) enable per-user private data stores -- very useful for DeFi and identity applications.
+- Cross-contract composability requires careful ACL management: `FHE.allow(ciphertext, targetContract)` grants another contract permission to operate on the value.
+- The escrow exercise ties everything together: state machine + ACL + time locks + cross-contract calls.
+
+**Discussion Questions:**
+1. "How do you handle invalid state transitions in an encrypted state machine where you cannot revert?"
+2. "What are the gas implications of encrypted state machines compared to plaintext ones?"
+3. "How does `FHE.allow(ciphertext, contractAddress)` differ from `FHE.allowThis(ciphertext)`?"
+
+**Common Pitfalls:**
+- Students design overly complex state machines with too many states -- start simple (3-4 states).
+- Forgetting to re-allow after state transitions (the new encrypted state handle needs fresh ACL).
+- Cross-contract ACL is the most error-prone pattern -- have TAs ready for debugging support.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| Encrypted state machine architecture | 25 min |
+| EncryptedStateMachine.sol walkthrough | 20 min |
+| Exercise 1: State machine implementation | 35 min |
+| LastError pattern deep dive | 20 min |
+| Encrypted registry patterns | 15 min |
+| Exercise 2: LastError + Registry | 30 min |
+| Cross-contract composability | 20 min |
+| Exercise 3: Encrypted escrow | 35 min |
+| Quiz | 10 min |
+
+---
+
+### Module 18: Confidential DeFi
+
+**Duration:** 4 hours
+**Teaching Style:** Design discussion + guided implementation
+
+**Key Teaching Points:**
+- DeFi is where FHE's value proposition is clearest: front-running elimination, private positions, confidential trading.
+- The 50% LTV check in `ConfidentialLending.sol` is a great example of `FHE.ge` + `FHE.select`: if collateral is insufficient, the borrow silently fails.
+- The encrypted order book is the most complex contract in the bootcamp -- walk through the matching algorithm carefully.
+- ERC-7984 is an emerging standard that students should be aware of, even if the final specification is not yet stable.
+- Discuss the fundamental tension: DeFi protocols need some transparency (e.g., total value locked, solvency proofs) while keeping individual positions private.
+
+**Discussion Questions:**
+1. "How can a lending protocol prove it is solvent if all positions are encrypted?"
+2. "What information does a confidential order book still leak? (e.g., number of orders, timing)"
+3. "How does encrypted DeFi interact with regulatory requirements for transparency?"
+
+**Common Pitfalls:**
+- Students forget that interest calculations on encrypted balances require careful handling of decimal precision.
+- The order matching algorithm is complex -- students may get confused by the encrypted comparison logic.
+- Liquidation mechanics with encrypted health factors are tricky -- walk through the edge cases.
+
+**Time Allocation:**
+| Segment | Duration |
+|---|---|
+| Confidential DeFi landscape and motivation | 20 min |
+| Confidential lending design | 20 min |
+| Exercise 1: ConfidentialLending.sol | 40 min |
+| Encrypted order book architecture | 25 min |
+| Exercise 2: EncryptedOrderBook.sol | 40 min |
+| Front-running prevention and ERC-7984 | 15 min |
+| DeFi privacy trade-offs discussion | 15 min |
+| Exercise 3: Confidential swap | 30 min |
+| Quiz | 10 min |
+
+---
+
+### Module 19: Capstone - Confidential DAO
 
 **Duration:** 5 hours
-**Prerequisites:** Modules 00-13
+**Prerequisites:** Modules 00-18
 **Teaching Style:** Mentored independent work
 
 **Key Teaching Points:**
-- The capstone integrates concepts from all prior modules: encrypted types, ACL, conditional logic, decryption, ERC-20, and voting.
+- The capstone integrates concepts from all 18 prior modules: encrypted types, ACL, conditional logic, decryption, ERC-20, voting, testing, gas optimization, security, advanced patterns, and DeFi.
 - Students build a Confidential DAO that combines governance token (confidential ERC-20) with encrypted voting and proposal execution.
+- Encourage students to apply Module 14 testing practices, Module 15 gas optimization, Module 16 security checklist, and Module 17 design patterns (state machines, LastError) in their capstone.
 - The instructor's role shifts from teacher to mentor. Give guidance, not answers.
 - Require a written proposal before implementation begins. This prevents scope creep.
 - Check in with each student/team at least 3 times during implementation.
@@ -614,6 +811,8 @@ For exercises, pair weaker students with stronger ones. Both benefit: the strong
 1. "What data in your DAO needs to be encrypted? What can remain in plaintext?"
 2. "How does your DAO prevent vote buying if balances and votes are both encrypted?"
 3. "What are the security assumptions and trust boundaries?"
+4. "Have you applied the security checklist from Module 16?"
+5. "What gas optimizations from Module 15 are you applying?"
 
 **Time Allocation:**
 | Segment | Duration |
@@ -708,6 +907,7 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 3. **Batch Q&A:** Instead of answering questions during exercises, collect them and address them in a dedicated Q&A block.
 4. **Assign homework:** Move the final exercise of a module to homework (Part-Time path only).
 5. **Condense Module 13:** Sealed-Bid Auction can be reduced to a design discussion + one exercise if time is tight.
+6. **Combine Modules 15-16:** Gas optimization and security can be merged into a single session by focusing on the most critical patterns from each.
 
 ### Signals You Are Running Ahead
 

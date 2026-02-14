@@ -70,7 +70,7 @@
 ## Summary
 
 ```
-7 on-chain + 18 local-only = 25 contracts fully tested
+7 on-chain + 28 local-only = 35 contracts fully tested (328 tests)
 ```
 
 All FHE operations verified on Ethereum Sepolia:
@@ -89,7 +89,7 @@ All FHE operations verified on Ethereum Sepolia:
 
 ## Local Test Coverage
 
-All 25 contracts are verified via the Hardhat test suite (212+ tests passing). The following contracts have local-only test coverage:
+All 35 contracts are verified via the Hardhat test suite (328 tests passing). The following contracts have local-only test coverage:
 
 | Contract | Module | Local Tests |
 |----------|--------|-------------|
@@ -107,12 +107,23 @@ All 25 contracts are verified via the Hardhat test suite (212+ tests passing). T
 | EncryptedLottery | 09 | 5 tests |
 | SimpleCounter | 10 | 3 tests |
 | SealedBidAuction | 13 | 6 tests |
-| ConfidentialDAO | 14 | 7 tests |
+| ConfidentialDAO | 19 | 7 tests |
 | EncryptedMarketplace | 08 | 9 tests |
 | RevealableAuction | 07 | 6 tests |
 | PrivateVoting | 08 | 5 tests |
 
-> These 18 contracts were not deployed to Sepolia due to gas costs but are fully verified locally with encrypted operations, ACL checks, and edge case coverage.
+| TestableVault | 14 | 27 tests |
+| GasOptimized | 15 | 10 tests |
+| GasBenchmark | 15 | 12 tests |
+| SecurityPatterns | 16 | 11 tests |
+| VulnerableDemo | 16 | 5 tests |
+| EncryptedStateMachine | 17 | 10 tests |
+| LastErrorPattern | 17 | 9 tests |
+| EncryptedRegistry | 17 | 9 tests |
+| ConfidentialLending | 18 | 10 tests |
+| EncryptedOrderBook | 18 | 8 tests |
+
+> These 28 contracts are verified locally via the fhEVM mock environment with full encrypted operations, ACL checks, and edge case coverage. On-chain deployment is optional — the 7 contracts above demonstrate real Sepolia deployment capability.
 
 ## How to Reproduce
 

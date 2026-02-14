@@ -92,9 +92,9 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
 
         // Tiered discount using nested FHE.select()
         euint64 multiplier = FHE.asEuint64(100);
-        multiplier = FHE.select(FHE.ge(qty, FHE.asEuint32(10)), FHE.asEuint64(95), multiplier);
-        multiplier = FHE.select(FHE.ge(qty, FHE.asEuint32(50)), FHE.asEuint64(90), multiplier);
-        multiplier = FHE.select(FHE.ge(qty, FHE.asEuint32(100)), FHE.asEuint64(80), multiplier);
+        multiplier = FHE.select(FHE.ge(qty, 10), FHE.asEuint64(95), multiplier);
+        multiplier = FHE.select(FHE.ge(qty, 50), FHE.asEuint64(90), multiplier);
+        multiplier = FHE.select(FHE.ge(qty, 100), FHE.asEuint64(80), multiplier);
 
         // Total cost = (price * quantity * multiplier) / 100
         euint64 baseTotal = FHE.mul(_items[itemId].pricePerUnit, FHE.asEuint64(quantity));

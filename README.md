@@ -1,8 +1,8 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Solidity](https://img.shields.io/badge/Solidity-0.8.27-363636?logo=solidity)
-![Tests](https://img.shields.io/badge/Tests-216%20passing-brightgreen)
-![Modules](https://img.shields.io/badge/Modules-15-blue)
-![Contracts](https://img.shields.io/badge/Contracts-25-orange)
+![Tests](https://img.shields.io/badge/Tests-328%20passing-brightgreen)
+![Modules](https://img.shields.io/badge/Modules-20-blue)
+![Contracts](https://img.shields.io/badge/Contracts-35-orange)
 ![Network](https://img.shields.io/badge/Network-Ethereum%20Sepolia-purple)
 
 # FHEVM Bootcamp Curriculum
@@ -76,7 +76,7 @@ contract HelloFHEVM is ZamaEthereumConfig {
 
 ## Curriculum Overview
 
-This bootcamp consists of **15 modules** organized into four progressive phases. Each module includes lecture content, code examples, hands-on exercises, and assessments.
+This bootcamp consists of **20 modules** organized into five progressive phases. Each module includes lecture content, code examples, hands-on exercises, and assessments.
 
 ### Module Map
 
@@ -96,9 +96,14 @@ This bootcamp consists of **15 modules** organized into four progressive phases.
 | 11 | [Confidential ERC-20](modules/11-project-erc20/) | Advanced | 4 hrs | Applications |
 | 12 | [Confidential Voting](modules/12-project-voting/) | Advanced | 4 hrs | Applications |
 | 13 | [Sealed-Bid Auction](modules/13-project-auction/) | Advanced | 4 hrs | Applications |
-| 14 | [Capstone: Confidential DAO](modules/14-capstone/) | Advanced | 5 hrs | Capstone |
+| 14 | [Testing & Debugging FHE Contracts](modules/14-testing-debugging/) | Advanced | 3 hrs | Mastery |
+| 15 | [Gas Optimization for FHE](modules/15-gas-optimization/) | Advanced | 3 hrs | Mastery |
+| 16 | [Security Best Practices for FHE](modules/16-security/) | Advanced | 3 hrs | Mastery |
+| 17 | [Advanced FHE Design Patterns](modules/17-advanced-patterns/) | Expert | 4 hrs | Mastery |
+| 18 | [Confidential DeFi](modules/18-confidential-defi/) | Expert | 4 hrs | Mastery |
+| 19 | [Capstone: Confidential DAO](modules/19-capstone/) | Expert | 5 hrs | Capstone |
 
-**Total Duration: ~46 hours**
+**Total Duration: ~63 hours**
 
 ### Phase Breakdown
 
@@ -112,7 +117,10 @@ Phase 2: Core Development (Modules 04-09)     ~17 hours
 Phase 3: Applications (Modules 10-13)         ~15 hours
   Frontend integration, confidential ERC-20, voting, sealed-bid auction.
 
-Phase 4: Capstone (Module 14)                 ~5 hours
+Phase 4: Mastery (Modules 14-18)              ~17 hours
+  Testing & debugging, gas optimization, security, design patterns, DeFi.
+
+Phase 5: Capstone (Module 19)                 ~5 hours
   Build a complete Confidential DAO combining all concepts.
 ```
 
@@ -124,8 +132,8 @@ We offer three pacing options to fit different schedules:
 
 | Path | Duration | Pace | Best For |
 |---|---|---|---|
-| **Intensive** | 1 week (5 days) | Full-time, ~9 hrs/day | Bootcamp cohorts, dedicated learners |
-| **Part-Time** | 4 weeks | ~12 hrs/week | Working professionals |
+| **Intensive** | 7 days (1.5 weeks) | Full-time, ~9 hrs/day | Bootcamp cohorts, dedicated learners |
+| **Part-Time** | 6 weeks | ~11 hrs/week | Working professionals |
 | **Self-Paced** | Flexible | Your schedule | Independent learners |
 
 See [curriculum/LEARNING_PATHS.md](curriculum/LEARNING_PATHS.md) for detailed schedules.
@@ -158,14 +166,18 @@ fhevm-bootcamp/
 ├── .github/workflows/                 # CI/CD pipelines
 │   ├── test.yml                       # Run tests on PR/push
 │   └── slides.yml                     # Build Marp slides
-├── contracts/                         # 25 Solidity contracts
+├── contracts/                         # 35 Solidity contracts
 │   ├── SimpleStorage.sol              # Module 00
 │   ├── HelloFHEVM.sol                 # Module 02
 │   ├── ConfidentialERC20.sol          # Module 11
-│   ├── ConfidentialDAO.sol            # Module 14 (capstone)
+│   ├── TestableVault.sol              # Module 14
+│   ├── GasOptimized.sol               # Module 15
+│   ├── SecurityPatterns.sol           # Module 16
+│   ├── ConfidentialLending.sol        # Module 18
+│   ├── ConfidentialDAO.sol            # Module 19 (capstone)
 │   └── ...
-├── test/                              # 25 test files (216 tests)
-├── modules/                           # 15 learning modules
+├── test/                              # 35 test files (328 tests)
+├── modules/                           # 20 learning modules
 │   ├── 00-prerequisites/
 │   │   ├── README.md                  # Module overview
 │   │   ├── lesson.md                  # Detailed lesson
@@ -174,10 +186,10 @@ fhevm-bootcamp/
 │   │   └── quiz.md                    # Assessment
 │   ├── 01-intro-to-fhe/
 │   │   └── ...
-│   └── 14-capstone/
+│   └── 19-capstone/
 │       └── ...
 ├── curriculum/
-│   ├── SYLLABUS.md                    # Full 15-module syllabus
+│   ├── SYLLABUS.md                    # Full 20-module syllabus
 │   ├── LEARNING_PATHS.md              # Pacing options & schedules
 │   └── INSTRUCTOR_GUIDE.md           # Teaching notes & rubrics
 ├── resources/
@@ -186,8 +198,8 @@ fhevm-bootcamp/
 │   ├── GAS_GUIDE.md                   # Gas cost reference
 │   ├── SECURITY_CHECKLIST.md          # Audit checklist
 │   └── GLOSSARY.md                    # A-Z terminology
-├── exercises/                         # 14 exercise starter templates
-├── solutions/                         # 15 complete solutions
+├── exercises/                         # 20 exercise starter templates
+├── solutions/                         # 20 complete solutions
 ├── frontend/                          # Interactive React demo dApp
 ├── diagrams/                          # 6 architecture diagrams (Mermaid)
 └── scripts/
@@ -291,6 +303,16 @@ All contracts have been deployed and verified on Ethereum Sepolia testnet.
 | ConfidentialERC20 | `0x5127acf277ac514b275f0824d8cc5aDe39dC1f33` | [View](https://sepolia.etherscan.io/address/0x5127acf277ac514b275f0824d8cc5aDe39dC1f33) |
 | ConfidentialVoting | `0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3` | [View](https://sepolia.etherscan.io/address/0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3) |
 | SealedBidAuction | `0x1AB15668906f288dE4dF3064B8B50e91eFBD771D` | [View](https://sepolia.etherscan.io/address/0x1AB15668906f288dE4dF3064B8B50e91eFBD771D) |
+| TestableVault | -- | Module 14: Multi-user encrypted vault for testing patterns |
+| GasOptimized | -- | Module 15: Gas optimization patterns (before/after) |
+| GasBenchmark | -- | Module 15: FHE operation gas benchmarks |
+| SecurityPatterns | -- | Module 16: Secure FHE development patterns |
+| VulnerableDemo | -- | Module 16: Deliberately vulnerable contract (educational) |
+| EncryptedStateMachine | -- | Module 17: State machine with encrypted thresholds |
+| LastErrorPattern | -- | Module 17: Encrypted error codes pattern |
+| EncryptedRegistry | -- | Module 17: Encrypted key-value storage |
+| ConfidentialLending | -- | Module 18: Encrypted lending protocol |
+| EncryptedOrderBook | -- | Module 18: Sealed-bid order book |
 | ConfidentialDAO | `0x2eDadE60f5Db5da59c73ADd9159ec7519E127770` | [View](https://sepolia.etherscan.io/address/0x2eDadE60f5Db5da59c73ADd9159ec7519E127770) |
 
 ---

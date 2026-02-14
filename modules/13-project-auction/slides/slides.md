@@ -342,7 +342,7 @@ Speaker notes: Recap the auction module. This is the most complex project so far
 
 # Next Up
 
-**Module 14: Capstone -- Confidential DAO**
+**Module 14: Testing & Debugging FHE Contracts**
 
 Combine tokens, voting, and treasury into a full DAO!
 
