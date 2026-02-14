@@ -2,11 +2,11 @@
 marp: true
 theme: default
 paginate: true
-header: "FHEVM Bootcamp - Module 14: Capstone - Confidential DAO"
+header: "FHEVM Bootcamp - Module 19: Capstone - Confidential DAO"
 footer: "Zama Developer Program"
 ---
 
-# Module 14: Capstone -- Confidential DAO
+# Module 19: Capstone -- Confidential DAO
 
 Combining tokens, voting, and treasury into a full DAO.
 
@@ -101,9 +101,9 @@ Speaker notes: Compare this with Module 12's voting: instead of adding 1 or 0, w
 
 ---
 
-# Module 12 vs. Module 14 Voting
+# Module 12 vs. Module 19 Voting
 
-| Feature | Module 12 | Module 14 |
+| Feature | Module 12 | Module 19 |
 |---------|-----------|-----------|
 | Vote weight | 1 per voter | Token balance |
 | Token integration | None | Cross-contract ACL |

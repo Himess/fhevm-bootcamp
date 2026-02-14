@@ -1,4 +1,4 @@
-# Module 14: Capstone Reference Contracts
+# Module 19: Capstone Reference Contracts
 
 The reference implementation for the Confidential DAO capstone project is located in the project root:
 

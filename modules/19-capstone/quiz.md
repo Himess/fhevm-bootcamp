@@ -1,4 +1,4 @@
-# Module 14: Quiz -- Confidential DAO Capstone
+# Module 19: Quiz -- Confidential DAO Capstone
 
 Test your comprehensive understanding of building a full confidential DAO with FHEVM.
 

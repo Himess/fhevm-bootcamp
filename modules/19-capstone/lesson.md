@@ -1,4 +1,4 @@
-# Module 14: Capstone -- Confidential DAO -- Lesson
+# Module 19: Capstone -- Confidential DAO -- Lesson
 
 ## Introduction
 

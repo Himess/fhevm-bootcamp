@@ -1,4 +1,4 @@
-# Module 14: Exercise -- Build a Confidential DAO
+# Module 19: Exercise -- Build a Confidential DAO
 
 ## Objective
 

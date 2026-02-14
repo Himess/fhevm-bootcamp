@@ -1,4 +1,4 @@
-# Module 14: Capstone -- Confidential DAO
+# Module 19: Capstone -- Confidential DAO
 
 > Combine everything you have learned into a comprehensive Confidential DAO with encrypted governance tokens, private voting, and treasury management.
 
@@ -6,7 +6,7 @@
 |---|---|
 | **Level** | Advanced |
 | **Duration** | 5h |
-| **Prerequisites** | Modules 00-13 |
+| **Prerequisites** | Modules 00-18 |
 
 ## Learning Objectives
 
@@ -42,4 +42,4 @@ By the end of this module, you will be able to:
 After completing this capstone, you have mastered FHEVM development. Consider:
 - Contributing to Zama's open-source repositories
 - Building your own confidential dApp
-- Exploring advanced FHE patterns and optimizations
+- Joining the Zama community and sharing your projects

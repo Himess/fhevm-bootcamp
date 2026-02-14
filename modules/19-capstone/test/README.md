@@ -1,4 +1,4 @@
-# Module 14: Capstone Tests
+# Module 19: Capstone Tests
 
 The reference test suite is located at the project root:
 
