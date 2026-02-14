@@ -9,7 +9,7 @@ Test your knowledge of FHE-specific testing patterns and debugging techniques.
 What is the correct way to create an encrypted input for a test transaction?
 
 - A) `fhevm.encrypt(contractAddress, value)`
-- B) `fhevm.createEncryptedInput(contractAddress, signer.address).add64(value).encrypt()`
+- B) `fhevm.createEncryptedInput(contractAddress, signer.address).add64(value).encrypt()` ✅
 - C) `FHE.encrypt(value)` called from the test file
 - D) `ethers.utils.encrypt(value, contractAddress)`
 
@@ -22,7 +22,7 @@ What is the correct way to create an encrypted input for a test transaction?
 Why must you use `equal(42n)` instead of `equal(42)` when asserting decrypted values?
 
 - A) Because Solidity uses unsigned integers
-- B) Because `fhevm.userDecryptEuint()` returns a BigInt, and BigInt comparisons require the `n` suffix
+- B) Because `fhevm.userDecryptEuint()` returns a BigInt, and BigInt comparisons require the `n` suffix ✅
 - C) Because the `n` suffix adds error tolerance
 - D) Because Hardhat requires BigInt for all numeric comparisons
 
@@ -36,7 +36,7 @@ What happens when an FHE contract uses `FHE.select(hasEnough, amount, FHE.asEuin
 
 - A) The transaction reverts with "Insufficient balance"
 - B) The function returns an error code
-- C) The selected value is `FHE.asEuint64(0)`, so the operation proceeds with 0 -- no revert occurs
+- C) The selected value is `FHE.asEuint64(0)`, so the operation proceeds with 0 -- no revert occurs ✅
 - D) The EVM throws an out-of-gas exception
 
 > `FHE.select()` is the encrypted equivalent of a ternary operator. When the condition is false, it picks the third argument (0 in this case). The transaction succeeds but effectively does nothing useful. This is called "silent failure" and it is by design for privacy.
@@ -49,7 +49,7 @@ How do you verify that a "failed" encrypted operation (e.g., overdraft withdrawa
 
 - A) Use `expect(tx).to.be.revertedWith("Insufficient balance")`
 - B) Check that the transaction receipt contains an error event
-- C) Decrypt the balance after the operation and verify it is unchanged
+- C) Decrypt the balance after the operation and verify it is unchanged ✅
 - D) Use `expect(tx).to.emit(contract, "Error")`
 
 > Since FHE contracts do not revert on encrypted condition failures, you cannot use `revertedWith`. Instead, decrypt the state after the operation and verify it equals the state before the operation (i.e., nothing changed).
@@ -62,7 +62,7 @@ What is the primary debugging tool for FHE contracts, given that `console.log()`
 
 - A) Hardhat's built-in debugger
 - B) Remix IDE's step-through debugger
-- C) Events emitted by the contract with plaintext metadata
+- C) Events emitted by the contract with plaintext metadata ✅
 - D) The FHE.decrypt() function called inside the contract
 
 > Events are the primary debugging mechanism. They can emit plaintext data like addresses, counters, and indices that help you trace execution without revealing encrypted values. `console.log()` on an encrypted handle only prints a meaningless handle identifier.
@@ -74,7 +74,7 @@ What is the primary debugging tool for FHE contracts, given that `console.log()`
 What happens if you pass `alice.address` to `createEncryptedInput()` but call the contract with `bob` as the signer?
 
 - A) The input is automatically re-encrypted for Bob
-- B) The proof verification fails because the encrypted input is bound to Alice's address
+- B) The proof verification fails because the encrypted input is bound to Alice's address ✅
 - C) The operation succeeds but the value is decrypted incorrectly
 - D) Nothing -- the addresses are only used for logging
 
@@ -87,7 +87,7 @@ What happens if you pass `alice.address` to `createEncryptedInput()` but call th
 Which of the following is the correct way to decrypt an `euint64` value in a test?
 
 - A) `await fhevm.decrypt(handle)`
-- B) `await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, signer)`
+- B) `await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, signer)` ✅
 - C) `await contract.decrypt(handle)`
 - D) `await fhevm.userDecryptEuint(handle, contractAddress)`
 
@@ -100,7 +100,7 @@ Which of the following is the correct way to decrypt an `euint64` value in a tes
 Why do FHE contracts use the select pattern (`FHE.select(condition, valueIfTrue, valueIfFalse)`) instead of `require()` for encrypted conditions?
 
 - A) Because `FHE.select()` uses less gas
-- B) Because `require()` cannot evaluate an `ebool` -- encrypted booleans are not native Solidity bools
+- B) Because `require()` cannot evaluate an `ebool` -- encrypted booleans are not native Solidity bools ✅
 - C) Because `FHE.select()` is more secure
 - D) Because Hardhat does not support `require()` in FHE mode
 
@@ -113,7 +113,7 @@ Why do FHE contracts use the select pattern (`FHE.select(condition, valueIfTrue,
 When testing ACL permissions, how do you verify that user B cannot access user A's encrypted balance?
 
 - A) Call `contract.hasPermission(bob, handle)` and check it returns false
-- B) Attempt to decrypt the handle as Bob and expect the decryption to fail
+- B) Attempt to decrypt the handle as Bob and expect the decryption to fail ✅
 - C) Check that `FHE.allow()` was not called for Bob by reading contract storage
 - D) ACL cannot be tested in the mock environment
 
@@ -127,7 +127,7 @@ What is the purpose of adding plaintext counters (like `depositCount`) to an FHE
 
 - A) They are required by the FHE runtime
 - B) They allow gas estimation for encrypted operations
-- C) They provide instantly readable state that tests can verify without the encrypt/decrypt cycle
+- C) They provide instantly readable state that tests can verify without the encrypt/decrypt cycle ✅
 - D) They replace events for debugging
 
 > Plaintext counters and status variables can be read with a simple view call (`vault.depositCount()`), which is much faster and simpler than the full encrypt-act-decrypt-assert cycle. They serve as quick sanity checks that operations executed as expected.
