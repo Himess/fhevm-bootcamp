@@ -200,8 +200,12 @@ fhevm-bootcamp/
 │   └── GLOSSARY.md                    # A-Z terminology
 ├── exercises/                         # 20 exercise starter templates
 ├── solutions/                         # 20 complete solutions
-├── frontend/                          # Interactive React demo dApp
+├── frontend/                          # Interactive React demo dApp (Vercel deployed)
+├── quiz/                              # Interactive web-based quiz (215 questions)
 ├── diagrams/                          # 6 architecture diagrams (Mermaid)
+├── Dockerfile                         # Docker support for reproducible builds
+├── docker-compose.yml                 # One-command test execution
+├── QUICK_START.md                     # 10-minute setup guide
 └── scripts/
     ├── deploy-all.ts                  # Deploy all contracts
     ├── build-slides.js                # Build Marp slides
@@ -277,43 +281,47 @@ euint32 rand = FHE.randEuint32();
 
 ## Deployed Contracts (Ethereum Sepolia)
 
-All contracts have been deployed and verified on Ethereum Sepolia testnet.
+All 35 contracts deployed and verified on Ethereum Sepolia testnet. See [ONCHAIN_TESTS.md](ONCHAIN_TESTS.md) for full test results.
 
 **Deployer:** `0xF505e2E71df58D7244189072008f25f6b6aaE5ae`
 
-| Contract | Address | Etherscan |
-|----------|---------|-----------|
-| SimpleStorage | `0x8A5CBAe9F9629Ea4f7359Bb364E11aB7B19df302` | [View](https://sepolia.etherscan.io/address/0x8A5CBAe9F9629Ea4f7359Bb364E11aB7B19df302) |
-| BasicToken | `0x392762A3BE63A0AE826994Cb84D351a65D7f143b` | [View](https://sepolia.etherscan.io/address/0x392762A3BE63A0AE826994Cb84D351a65D7f143b) |
-| HelloFHEVM | `0xDC1739aAC5040545AF6dbEF86218e274450a1e99` | [View](https://sepolia.etherscan.io/address/0xDC1739aAC5040545AF6dbEF86218e274450a1e99) |
-| EncryptedTypes | `0xB12cCd422222837382eB788fb0525A76cf4b7117` | [View](https://sepolia.etherscan.io/address/0xB12cCd422222837382eB788fb0525A76cf4b7117) |
-| TypeConversions | `0xF31035dfBC2C7FA39e821d4EED9026F1C09b9c23` | [View](https://sepolia.etherscan.io/address/0xF31035dfBC2C7FA39e821d4EED9026F1C09b9c23) |
-| ArithmeticOps | `0x34660C089aB44eaE86990b7be908F7deab4A8ead` | [View](https://sepolia.etherscan.io/address/0x34660C089aB44eaE86990b7be908F7deab4A8ead) |
-| BitwiseOps | `0x35290555CbB959ff6A933a64c96b00142B22ffb2` | [View](https://sepolia.etherscan.io/address/0x35290555CbB959ff6A933a64c96b00142B22ffb2) |
-| ComparisonOps | `0x7f64637f8b95B9c2310B8682ED8f8dcA9a8c10BC` | [View](https://sepolia.etherscan.io/address/0x7f64637f8b95B9c2310B8682ED8f8dcA9a8c10BC) |
-| ACLDemo | `0x62fc4eF59B6250377738C2D04f456B33BF085E82` | [View](https://sepolia.etherscan.io/address/0x62fc4eF59B6250377738C2D04f456B33BF085E82) |
-| MultiUserVault | `0x81741436E652175A6CeD5212E8c2E1476FDF6f99` | [View](https://sepolia.etherscan.io/address/0x81741436E652175A6CeD5212E8c2E1476FDF6f99) |
-| SecureInput | `0xD0Bf225ce453dB1E463EfA73B84825eCCe4C0aDc` | [View](https://sepolia.etherscan.io/address/0xD0Bf225ce453dB1E463EfA73B84825eCCe4C0aDc) |
-| PublicDecrypt | `0x968A04fCcC620e1F8c4c5Cc31176cec063BbeDb8` | [View](https://sepolia.etherscan.io/address/0x968A04fCcC620e1F8c4c5Cc31176cec063BbeDb8) |
-| UserDecrypt | `0x1422971799DF47ee1492BE8c19227e7711f3BB03` | [View](https://sepolia.etherscan.io/address/0x1422971799DF47ee1492BE8c19227e7711f3BB03) |
-| ConditionalDemo | `0x739246740FF597F860372a549F106c9EC1cCF23B` | [View](https://sepolia.etherscan.io/address/0x739246740FF597F860372a549F106c9EC1cCF23B) |
-| EncryptedMinMax | `0x8d46e2e06F0A256255e75489CFc5527E37E6aB3B` | [View](https://sepolia.etherscan.io/address/0x8d46e2e06F0A256255e75489CFc5527E37E6aB3B) |
-| RandomDemo | `0x8836493F103fFB8226549b8aeA0c3E152Ac3b9e1` | [View](https://sepolia.etherscan.io/address/0x8836493F103fFB8226549b8aeA0c3E152Ac3b9e1) |
-| SimpleCounter | `0xB0370cEE99171735bE92b8Ec66506B443Ff6416C` | [View](https://sepolia.etherscan.io/address/0xB0370cEE99171735bE92b8Ec66506B443Ff6416C) |
-| ConfidentialERC20 | `0x5127acf277ac514b275f0824d8cc5aDe39dC1f33` | [View](https://sepolia.etherscan.io/address/0x5127acf277ac514b275f0824d8cc5aDe39dC1f33) |
-| ConfidentialVoting | `0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3` | [View](https://sepolia.etherscan.io/address/0x5fC4Fe7f107DdaeE5d68C6c4A15b2Fe42432d9C3) |
-| SealedBidAuction | `0x1AB15668906f288dE4dF3064B8B50e91eFBD771D` | [View](https://sepolia.etherscan.io/address/0x1AB15668906f288dE4dF3064B8B50e91eFBD771D) |
-| TestableVault | -- | Module 14: Multi-user encrypted vault for testing patterns |
-| GasOptimized | -- | Module 15: Gas optimization patterns (before/after) |
-| GasBenchmark | -- | Module 15: FHE operation gas benchmarks |
-| SecurityPatterns | -- | Module 16: Secure FHE development patterns |
-| VulnerableDemo | -- | Module 16: Deliberately vulnerable contract (educational) |
-| EncryptedStateMachine | -- | Module 17: State machine with encrypted thresholds |
-| LastErrorPattern | -- | Module 17: Encrypted error codes pattern |
-| EncryptedRegistry | -- | Module 17: Encrypted key-value storage |
-| ConfidentialLending | -- | Module 18: Encrypted lending protocol |
-| EncryptedOrderBook | -- | Module 18: Sealed-bid order book |
-| ConfidentialDAO | `0x2eDadE60f5Db5da59c73ADd9159ec7519E127770` | [View](https://sepolia.etherscan.io/address/0x2eDadE60f5Db5da59c73ADd9159ec7519E127770) |
+| Contract | Module | Address | Etherscan |
+|----------|--------|---------|-----------|
+| SimpleStorage | 00 | `0x8B7D25a45890d214db56790ae59afaE72273c1D3` | [View](https://sepolia.etherscan.io/address/0x8B7D25a45890d214db56790ae59afaE72273c1D3) |
+| BasicToken | 00 | `0x790f57EA01ec1f903645723D6990Eeaa2a36a814` | [View](https://sepolia.etherscan.io/address/0x790f57EA01ec1f903645723D6990Eeaa2a36a814) |
+| HelloFHEVM | 02 | `0xbFd008661B7222Dd974074f986D1eb18dD4dF1F1` | [View](https://sepolia.etherscan.io/address/0xbFd008661B7222Dd974074f986D1eb18dD4dF1F1) |
+| EncryptedTypes | 03 | `0x56c52A3b621346DC47B7B2A4bE0230721EE48c12` | [View](https://sepolia.etherscan.io/address/0x56c52A3b621346DC47B7B2A4bE0230721EE48c12) |
+| TypeConversions | 03 | `0x11c8ebc9A95B2A1DA4155b167dadA9B5925dde8f` | [View](https://sepolia.etherscan.io/address/0x11c8ebc9A95B2A1DA4155b167dadA9B5925dde8f) |
+| ArithmeticOps | 04 | `0xB6D81352EA3Cd0426838B655D15097E0FaE80177` | [View](https://sepolia.etherscan.io/address/0xB6D81352EA3Cd0426838B655D15097E0FaE80177) |
+| BitwiseOps | 04 | `0xb0bd1D30eDfaAbA1fc02F7A917820fD9edB24438` | [View](https://sepolia.etherscan.io/address/0xb0bd1D30eDfaAbA1fc02F7A917820fD9edB24438) |
+| ComparisonOps | 04 | `0xB1141F0b2588aAb0C1fe819b1B6AF1C0a7564490` | [View](https://sepolia.etherscan.io/address/0xB1141F0b2588aAb0C1fe819b1B6AF1C0a7564490) |
+| ACLDemo | 05 | `0xc4f08eB557DF912E3D1FdE79bf3465d5242ea53d` | [View](https://sepolia.etherscan.io/address/0xc4f08eB557DF912E3D1FdE79bf3465d5242ea53d) |
+| MultiUserVault | 05 | `0xa988F5BFD7Fc19481Fdac5b55027b7Dc126a67e6` | [View](https://sepolia.etherscan.io/address/0xa988F5BFD7Fc19481Fdac5b55027b7Dc126a67e6) |
+| SecureInput | 06 | `0x27d2b5247949606f913Db8c314EABB917fcffd96` | [View](https://sepolia.etherscan.io/address/0x27d2b5247949606f913Db8c314EABB917fcffd96) |
+| PublicDecrypt | 07 | `0x605002BbB689457101104e8Ee3C76a8d5D23e5c8` | [View](https://sepolia.etherscan.io/address/0x605002BbB689457101104e8Ee3C76a8d5D23e5c8) |
+| UserDecrypt | 07 | `0x5E3ef9A91AD33270f84B32ACFF91068Eea44c5ee` | [View](https://sepolia.etherscan.io/address/0x5E3ef9A91AD33270f84B32ACFF91068Eea44c5ee) |
+| ConditionalDemo | 08 | `0x0A206f2BC275012703BA262B9577ABC49A4f6782` | [View](https://sepolia.etherscan.io/address/0x0A206f2BC275012703BA262B9577ABC49A4f6782) |
+| EncryptedMinMax | 08 | `0xbA5c38093CefBbFA08577b08b0494D5c7738E4F6` | [View](https://sepolia.etherscan.io/address/0xbA5c38093CefBbFA08577b08b0494D5c7738E4F6) |
+| RandomDemo | 09 | `0xe473aF953d269601402DEBcB2cc899aB594Ad31e` | [View](https://sepolia.etherscan.io/address/0xe473aF953d269601402DEBcB2cc899aB594Ad31e) |
+| SimpleCounter | 10 | `0x17B6209385c2e36E6095b89572273175902547f9` | [View](https://sepolia.etherscan.io/address/0x17B6209385c2e36E6095b89572273175902547f9) |
+| ConfidentialERC20 | 11 | `0x623b1653AB004661BC7832AC2930Eb42607C4013` | [View](https://sepolia.etherscan.io/address/0x623b1653AB004661BC7832AC2930Eb42607C4013) |
+| ConfidentialVoting | 12 | `0xd80537D04652E1B4B591319d83812BbA6a9c1B14` | [View](https://sepolia.etherscan.io/address/0xd80537D04652E1B4B591319d83812BbA6a9c1B14) |
+| PrivateVoting | 12 | `0x70Aa742C113218a12A6582f60155c2B299551A43` | [View](https://sepolia.etherscan.io/address/0x70Aa742C113218a12A6582f60155c2B299551A43) |
+| SealedBidAuction | 13 | `0xC53c8E05661450919951f51E4da829a3AABD76A2` | [View](https://sepolia.etherscan.io/address/0xC53c8E05661450919951f51E4da829a3AABD76A2) |
+| RevealableAuction | 13 | `0x8F1ae8209156C22dFD972352A415880040fB0b0c` | [View](https://sepolia.etherscan.io/address/0x8F1ae8209156C22dFD972352A415880040fB0b0c) |
+| EncryptedMarketplace | 13 | `0x1E44074dF559E4f46De367ddbA0793fC710DB3a7` | [View](https://sepolia.etherscan.io/address/0x1E44074dF559E4f46De367ddbA0793fC710DB3a7) |
+| EncryptedLottery | 09 | `0x32D3012EEE7e14175CA24Fc8e8dAb5b1Cebf929e` | [View](https://sepolia.etherscan.io/address/0x32D3012EEE7e14175CA24Fc8e8dAb5b1Cebf929e) |
+| TestableVault | 14 | `0xfa2a63616aDe3E5BE4abFEdAF8E58780eaF0feE9` | [View](https://sepolia.etherscan.io/address/0xfa2a63616aDe3E5BE4abFEdAF8E58780eaF0feE9) |
+| GasOptimized | 15 | `0x86daECb1Cc9Ce4862A8baFaF1f01aBe979a9b582` | [View](https://sepolia.etherscan.io/address/0x86daECb1Cc9Ce4862A8baFaF1f01aBe979a9b582) |
+| GasBenchmark | 15 | `0x76da41a5bD46F428E32E79a081065697C5151693` | [View](https://sepolia.etherscan.io/address/0x76da41a5bD46F428E32E79a081065697C5151693) |
+| SecurityPatterns | 16 | `0x59f51Da1Df210745bf64aABA55D1b874B26001f2` | [View](https://sepolia.etherscan.io/address/0x59f51Da1Df210745bf64aABA55D1b874B26001f2) |
+| VulnerableDemo | 16 | `0x5AC6485D93CD0b90A7cF94eC706ef6e70DAEB778` | [View](https://sepolia.etherscan.io/address/0x5AC6485D93CD0b90A7cF94eC706ef6e70DAEB778) |
+| EncryptedStateMachine | 17 | `0x17259782D5dB2C13a8A385211f8BE6b1001d0378` | [View](https://sepolia.etherscan.io/address/0x17259782D5dB2C13a8A385211f8BE6b1001d0378) |
+| LastErrorPattern | 17 | `0x7f12c6D6b13C1E985D0efD1d79873c3e7F9c6c41` | [View](https://sepolia.etherscan.io/address/0x7f12c6D6b13C1E985D0efD1d79873c3e7F9c6c41) |
+| EncryptedRegistry | 17 | `0xBF472B66b331303d9d7dF83195F7C355E332E137` | [View](https://sepolia.etherscan.io/address/0xBF472B66b331303d9d7dF83195F7C355E332E137) |
+| ConfidentialLending | 18 | `0x8B5526092F6a230E23651f0Eb559fd758C42967A` | [View](https://sepolia.etherscan.io/address/0x8B5526092F6a230E23651f0Eb559fd758C42967A) |
+| EncryptedOrderBook | 18 | `0xB0fcA1f21d598006c5Bd327c44140a3471787E82` | [View](https://sepolia.etherscan.io/address/0xB0fcA1f21d598006c5Bd327c44140a3471787E82) |
+| ConfidentialDAO | 19 | `0x6C41b7E9b4e8fe2366Ba842f04E975ed7a4e9d72` | [View](https://sepolia.etherscan.io/address/0x6C41b7E9b4e8fe2366Ba842f04E975ed7a4e9d72) |
 
 ---
 
@@ -330,6 +338,14 @@ All contracts have been deployed and verified on Ethereum Sepolia testnet.
 | [GitHub Actions](https://github.com/features/actions) | CI/CD pipeline |
 
 ---
+
+## Live Demo & Interactive Quiz
+
+| | Link |
+|---|---|
+| **Live Frontend** | [fhevm-bootcamp-demo.vercel.app](https://fhevm-bootcamp-demo.vercel.app) |
+| **Interactive Quiz** | Open `quiz/index.html` in browser (215 questions, 20 modules) |
+| **Quick Start** | [QUICK_START.md](QUICK_START.md) |
 
 ## Frontend Demo
 

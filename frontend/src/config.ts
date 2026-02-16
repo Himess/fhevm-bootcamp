@@ -5,7 +5,7 @@ export const RELAYER_URL = "https://relayer.testnet.zama.org";
 
 export const CONTRACTS = {
   SimpleCounter: {
-    address: "0xB0370cEE99171735bE92b8Ec66506B443Ff6416C",
+    address: "0x17B6209385c2e36E6095b89572273175902547f9",
     abi: [
       "function increment(bytes32 encValue, bytes calldata inputProof) external",
       "function getMyCount() external view returns (uint256)",
@@ -13,7 +13,7 @@ export const CONTRACTS = {
     ],
   },
   ConfidentialERC20: {
-    address: "0x5127acf277ac514b275f0824d8cc5aDe39dC1f33",
+    address: "0x623b1653AB004661BC7832AC2930Eb42607C4013",
     abi: [
       "function name() view returns (string)",
       "function symbol() view returns (string)",
