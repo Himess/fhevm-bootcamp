@@ -7,13 +7,16 @@ footer: "Zama Developer Program"
 ---
 
 <style>
-section { font-size: 22px; }
-h1 { font-size: 32px; }
-h2 { font-size: 28px; }
-code { font-size: 18px; }
-pre { font-size: 16px; line-height: 1.3; }
-li { margin-bottom: 2px; }
-table { font-size: 18px; }
+section { font-size: 18px; overflow: hidden; }
+h1 { font-size: 28px; margin-bottom: 8px; }
+h2 { font-size: 22px; margin-bottom: 6px; }
+h3 { font-size: 19px; }
+code { font-size: 15px; }
+pre { font-size: 13px; line-height: 1.25; margin: 6px 0; }
+li { margin-bottom: 1px; line-height: 1.4; }
+table { font-size: 15px; }
+p { margin-bottom: 4px; }
+ul, ol { margin-top: 4px; margin-bottom: 4px; }
 </style>
 
 # Module 01: Introduction to Fully Homomorphic Encryption
@@ -100,9 +103,9 @@ Speaker notes: Emphasize the historical progression -- FHE was considered a "hol
 
 ---
 
-# TFHE: Torus Fully Homomorphic Encryption
+# TFHE: The FHE Scheme Behind Zama
 
-## Why Zama chose TFHE
+## FHE = concept, TFHE = specific scheme Zama uses
 
 | Property                    | Benefit                               |
 |-----------------------------|---------------------------------------|
