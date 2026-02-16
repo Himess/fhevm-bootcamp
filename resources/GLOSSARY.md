@@ -53,6 +53,9 @@ A specialized computation engine in fhEVM that performs the actual FHE operation
 **Cross-Contract ACL**
 The challenge of managing encrypted value permissions when one contract passes encrypted values to another. Requires explicit use of `FHE.allowTransient()` or `FHE.allow()` for the calling contract.
 
+**cToken (Confidential Token)**
+A confidential token created by wrapping a standard ERC-20 token through Zama's fhEVM using the ERC-7984 standard. cTokens have encrypted balances and transfer amounts, providing on-chain privacy while maintaining fungibility. Examples: cUSDT, cUSDC, cETH. Zaiffer Protocol converts standard tokens into cTokens for use in confidential payments, trading, and yield vaults.
+
 ---
 
 ## D
@@ -89,7 +92,7 @@ Encrypted unsigned integer types in fhEVM, representing 8-bit through 256-bit en
 The type used for encrypted inputs in external function parameters (e.g., `externalEuint32`, `externalEuint64`). These represent raw encrypted data submitted by users via the Relayer SDK (`@zama-fhe/relayer-sdk`). Must be converted to the corresponding `euintXX` type using `FHE.fromExternal()` before use in FHE operations.
 
 **ERC-7984**
-A proposed standard for confidential tokens on fhEVM. Defines a standard interface for encrypted ERC-20 tokens with confidential balances and transfer amounts, including functions for encrypted transfers, ACL-gated balance queries, and integration with the fhEVM decryption infrastructure.
+Confidential fungible token standard co-developed by Zama and OpenZeppelin. Defines encrypted balance storage and transfer interfaces using fhEVM's `euint64` type. Where ERC-20 stores balances as plaintext `uint256`, ERC-7984 stores them as encrypted ciphertext handles, with ACL-gated balance queries and integration with the fhEVM decryption infrastructure. The OpenZeppelin security audit was completed in November 2025. Zaiffer Protocol uses ERC-7984 as the foundation for its confidential token products (see Module 11 for the implementation pattern).
 
 ---
 
@@ -295,6 +298,9 @@ The FHE scheme used by Zama's fhEVM. TFHE operates on bits and small integers, u
 **TFHE-rs**
 Zama's Rust implementation of the TFHE scheme. The underlying cryptographic engine used by the fhEVM coprocessor.
 
+**TVS (Total Value Shielded)**
+The total value of encrypted assets within the fhEVM protocol. Analogous to TVL (Total Value Locked) in traditional DeFi, TVS measures the aggregate amount of value protected by FHE encryption on-chain. TVS is Zama's north star metric for protocol adoption. The $ZAMA token auction demonstrated $121.3M TVS within 3 days of launch.
+
 **Threshold Decryption**
 A distributed decryption protocol where the decryption key is split among multiple parties (e.g., validators), and a threshold number must cooperate to decrypt. fhEVM uses threshold decryption to ensure no single party can unilaterally decrypt data.
 
@@ -314,6 +320,9 @@ In fhEVM, arithmetic underflow does not cause a revert. `FHE.sub(5, 10)` on `eui
 
 **Zama**
 The company behind fhEVM and TFHE-rs. Zama develops open-source FHE tools for blockchain privacy, machine learning on encrypted data, and general-purpose FHE computation.
+
+**Zaiffer**
+Joint venture between Zama and PyratzLabs (€2M backing, announced November 2025) building confidential token infrastructure using fhEVM and the ERC-7984 standard. Zaiffer converts standard ERC-20 tokens into confidential cTokens with encrypted balances. Products include ZaifferPay (payments), ZaifferSwaps (MEV-protected trading), and ZaifferYields (confidential yield vaults). Currently on Ethereum Sepolia testnet with mainnet launch planned.
 
 **ZamaEthereumConfig**
 The base contract in the new fhEVM API that provides the necessary configuration for FHE operations. Contracts using fhEVM must inherit from `ZamaEthereumConfig` (imported from `@fhevm/solidity/config/ZamaConfig.sol`).

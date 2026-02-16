@@ -303,6 +303,8 @@ Our Confidential ERC-20 intentionally breaks standard ERC-20 compatibility:
 
 These changes are necessary for privacy but mean the contract cannot be used with existing ERC-20 tooling (DEX routers, block explorers, etc.) without adaptation.
 
+> **Industry Standard:** The confidential ERC-20 pattern taught in this module is formalized as **ERC-7984** — a standard co-developed by Zama and OpenZeppelin for confidential fungible tokens. Zaiffer Protocol (a Zama + PyratzLabs joint venture, €2M backing) uses this exact pattern in production to convert standard ERC-20 tokens into confidential cTokens with encrypted balances. The OpenZeppelin audit was completed in November 2025.
+
 ---
 
 ## Summary

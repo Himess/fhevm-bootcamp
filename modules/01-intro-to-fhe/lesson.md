@@ -729,6 +729,36 @@ Every concept in this bootcamp maps directly to what was used in production:
 
 By completing this bootcamp, you will have the skills to build applications like the ones that processed $121M in encrypted value on Ethereum mainnet.
 
+### 10.6 Zaiffer Protocol and the ERC-7984 Standard
+
+One of the most significant ecosystem developments is **Zaiffer**, a joint venture between Zama and PyratzLabs backed by €2 million (announced November 2025). Zaiffer builds on the fhEVM to convert standard ERC-20 tokens into **confidential ERC-7984 tokens** (cTokens) with fully encrypted balances and transfer amounts.
+
+**ERC-7984** is a new token standard co-developed by Zama and OpenZeppelin that defines a confidential fungible token interface. Where ERC-20 stores balances as plaintext `uint256`, ERC-7984 stores them as encrypted `euint64` ciphertext handles — exactly the pattern taught in **Module 11** of this bootcamp. The OpenZeppelin security audit was completed in November 2025.
+
+**Zaiffer Products:**
+- **ZaifferPay** — Confidential payment tools for individuals and businesses
+- **ZaifferSwaps** — MEV-protected token trading (encrypted order amounts prevent front-running)
+- **ZaifferYields** — Confidential yield vaults integrated with DeFi protocols
+
+Zaiffer is currently on Ethereum Sepolia testnet with mainnet launch planned.
+
+> **Bootcamp Connection:** Module 11 (Confidential ERC-20) and Module 13 (Sealed-Bid Auction) teach the core patterns that Zaiffer uses in production — encrypted balances, silent-fail transfers, and MEV-resistant encrypted order matching.
+
+### 10.7 Zama 2026 Roadmap
+
+Zama has published an aggressive roadmap for 2026:
+
+| Timeline | Milestone |
+|----------|-----------|
+| H1 2026 | Confidential DeFi Yield — cUSDT/cUSDC/cETH staking on AAVE, Morpho |
+| H1 2026 | Cross-chain expansion to additional EVM chains |
+| H2 2026 | Solana support — confidential SVM applications |
+| End 2026 | GPU migration — 500-1000 TPS per chain (currently ~20 TPS on CPU) |
+
+The protocol's north star metric is **Total Value Shielded (TVS)** — the total amount of encrypted assets in the system. The $ZAMA token auction demonstrated $121.3M TVS within just 3 days, proving market demand for on-chain confidentiality.
+
+> **What this means for bootcamp graduates:** The skills taught here — encrypted types, ACL management, FHE operations, confidential DeFi patterns — will be directly applicable across multiple chains and ecosystems as Zama expands beyond Ethereum.
+
 ---
 
 ## 11. Summary

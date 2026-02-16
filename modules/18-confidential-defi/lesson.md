@@ -545,6 +545,8 @@ The FHE community is working on standards for confidential tokens and DeFi:
 - **Encrypted vaults:** ERC-4626-style vaults with encrypted deposits and withdrawals
 - **Cross-protocol composability:** How encrypted values move between DeFi protocols
 
+> **Production Example:** Zaiffer Protocol (a Zama + PyratzLabs joint venture) is building ZaifferSwaps (MEV-protected trading with encrypted order amounts) and ZaifferYields (confidential yield vaults) using the exact patterns covered in this module. Zama's 2026 roadmap includes cUSDT/cUSDC/cETH yield integration with AAVE and Morpho — demonstrating real market demand for confidential DeFi. The ERC-7984 standard (co-developed by Zama and OpenZeppelin) formalizes the confidential token interface that underpins these products.
+
 ---
 
 ## 5. Production Considerations
