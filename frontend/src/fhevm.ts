@@ -1,6 +1,5 @@
 import { createInstance, type FhevmInstance } from "@zama-fhe/relayer-sdk/web";
-import { BrowserProvider } from "ethers";
-import { RELAYER_URL, RPC_URL } from "./config";
+import { RELAYER_URL, RPC_URL, CHAIN_ID } from "./config";
 
 // Zama fhEVM coprocessor addresses on Ethereum Sepolia
 const ACL_ADDRESS = "0xf0Ffdc93b7E186bC2f8CB3dAA75D86d1930A433D";
@@ -19,20 +18,13 @@ let instance: FhevmInstance | null = null;
 export async function initFhevm(): Promise<FhevmInstance> {
   if (instance) return instance;
 
-  if (!window.ethereum) {
-    throw new Error("MetaMask is not installed");
-  }
-
-  const provider = new BrowserProvider(window.ethereum);
-  const network = await provider.getNetwork();
-
   instance = await createInstance({
     kmsContractAddress: KMS_ADDRESS,
     aclContractAddress: ACL_ADDRESS,
     inputVerifierContractAddress: INPUT_VERIFIER_ADDRESS,
     verifyingContractAddressDecryption: VERIFYING_CONTRACT_DECRYPTION,
     verifyingContractAddressInputVerification: VERIFYING_CONTRACT_INPUT,
-    chainId: Number(network.chainId),
+    chainId: CHAIN_ID,
     gatewayChainId: GATEWAY_CHAIN_ID,
     network: RPC_URL,
     relayerUrl: RELAYER_URL,
