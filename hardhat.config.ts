@@ -49,6 +49,9 @@ const config: HardhatUserConfig = {
       evmVersion: "cancun",
     },
   },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY || "",
+  },
   typechain: {
     outDir: "types",
     target: "ethers-v6",
