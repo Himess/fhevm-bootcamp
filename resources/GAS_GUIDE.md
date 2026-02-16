@@ -26,8 +26,8 @@ The following table provides approximate gas costs for FHE operations. Actual co
 | `FHE.add` | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
 | `FHE.sub` | ~80k | ~120k | ~180k | ~250k | ~400k | ~600k |
 | `FHE.mul` | ~150k | ~250k | ~400k | ~700k | ~1.2M | ~2M |
-| `FHE.div` | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
-| `FHE.rem` | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
+| `FHE.div` (scalar only) | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
+| `FHE.rem` (scalar only) | ~250k | ~400k | ~700k | ~1.2M | ~2M | ~3.5M |
 | `FHE.neg` | ~60k | ~90k | ~140k | ~200k | ~350k | ~500k |
 | `FHE.min` | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
 | `FHE.max` | ~180k | ~280k | ~450k | ~750k | ~1.3M | ~2.2M |
@@ -170,16 +170,16 @@ euint32 result = FHE.add(FHE.mul(sumXY, 2), FHE.mul(z, 2));
 
 Operations with a plaintext second operand are cheaper than fully encrypted operations.
 
-**Before (expensive):**
+**Before (WRONG -- div does not accept an encrypted second operand):**
 
 ```solidity
-euint32 fee = FHE.div(amount, FHE.asEuint32(100)); // div(encrypted, encrypted)
+euint32 fee = FHE.div(amount, FHE.asEuint32(100)); // WRONG: div/rem only accept plaintext divisor
 ```
 
-**After (cheaper):**
+**After (CORRECT -- scalar divisor):**
 
 ```solidity
-euint32 fee = FHE.div(amount, 100); // div(encrypted, plaintext) -- cheaper
+euint32 fee = FHE.div(amount, 100); // CORRECT: div requires a plaintext (scalar) second operand
 ```
 
 ### Strategy 3: Cache Intermediate Results

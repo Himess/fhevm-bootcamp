@@ -127,11 +127,13 @@ All operations return encrypted results. Both operands must be the same encrypte
 | Addition | `FHE.add(a, b)` | `euint32 sum = FHE.add(x, y);` |
 | Subtraction | `FHE.sub(a, b)` | `euint32 diff = FHE.sub(x, y);` |
 | Multiplication | `FHE.mul(a, b)` | `euint32 prod = FHE.mul(x, y);` |
-| Division | `FHE.div(a, b)` | `euint32 quot = FHE.div(x, y);` |
-| Remainder | `FHE.rem(a, b)` | `euint32 mod = FHE.rem(x, y);` |
+| Division | `FHE.div(a, plaintext)` | `euint32 quot = FHE.div(x, 2);` |
+| Remainder | `FHE.rem(a, plaintext)` | `euint32 mod = FHE.rem(x, 3);` |
 | Negation | `FHE.neg(a)` | `euint32 neg = FHE.neg(x);` |
 | Minimum | `FHE.min(a, b)` | `euint32 m = FHE.min(x, y);` |
 | Maximum | `FHE.max(a, b)` | `euint32 m = FHE.max(x, y);` |
+
+> **Note:** `div` and `rem` only accept a plaintext (scalar) second operand. You cannot divide or take the remainder by an encrypted value.
 
 **Mixed encrypted/plaintext:**
 

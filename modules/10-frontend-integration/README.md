@@ -36,6 +36,10 @@ By the end of this module, you will be able to:
 - **FHE Instance** -- The Relayer SDK object that holds the public key and provides encrypt/decrypt methods
 - **`externalEuint32` / `FHE.fromExternal()`** -- External types received from frontend, converted on-chain
 
+## Working dApp
+
+> **Note:** The `frontend/` subdirectory in this module contains a **static teaching mockup** that illustrates the UI structure. For the **full working dApp** (React + Vite + Relayer SDK), see the root [`/frontend/`](../../frontend/) directory of this repository.
+
 ## Next Module
 
 > [Module 11: Confidential ERC-20](../11-project-erc20/)

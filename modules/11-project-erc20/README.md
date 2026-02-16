@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Level** | Intermediate |
+| **Level** | Advanced |
 | **Duration** | 4h |
 | **Prerequisites** | Modules 01-10 |
 

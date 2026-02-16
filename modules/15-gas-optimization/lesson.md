@@ -43,7 +43,7 @@ Before you can optimize, you need to understand what things cost. The table belo
 | `FHE.neg` | ~45k | ~55k | ~75k | ~110k | ~155k | ~215k |
 | `FHE.shl` / `FHE.shr` | ~90k | ~100k | ~120k | ~160k | ~220k | ~300k |
 | `FHE.rotl` / `FHE.rotr` | ~90k | ~100k | ~120k | ~160k | ~220k | ~300k |
-| `FHE.randomEuintXX` | ~70k | ~90k | ~120k | ~170k | ~230k | ~310k |
+| `FHE.randEuintXX` | ~70k | ~90k | ~120k | ~170k | ~230k | ~310k |
 | `FHE.asEuintXX` (cast) | ~30k | ~35k | ~45k | ~65k | ~90k | ~125k |
 
 ### Key Observations

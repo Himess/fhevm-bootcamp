@@ -14,7 +14,7 @@ import "fhevm/lib/TFHE.sol";
 contract OldAPI {
     euint32 private value;
 
-    function setValue(einput encryptedInput, bytes calldata proof) external {
+    function setValue(einput encryptedInput, bytes calldata inputProof) external {
         value = TFHE.asEuint32(encryptedInput, proof);
         TFHE.allow(value, address(this));
     }
@@ -34,7 +34,7 @@ import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 contract NewAPI is ZamaEthereumConfig {
     euint32 private value;
 
-    function setValue(externalEuint32 encryptedInput, bytes calldata proof) external {
+    function setValue(externalEuint32 encryptedInput, bytes calldata inputProof) external {
         value = FHE.fromExternal(encryptedInput, proof);
         FHE.allowThis(value);
     }
@@ -48,7 +48,7 @@ contract NewAPI is ZamaEthereumConfig {
 ### Wrong
 
 ```solidity
-function deposit(externalEuint64 encAmount, bytes calldata proof) external {
+function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     balances[msg.sender] = FHE.add(balances[msg.sender], amount);
     // Missing: FHE.allowThis(balances[msg.sender]);
@@ -62,7 +62,7 @@ Every FHE operation produces a **new** ciphertext. The new ciphertext has an emp
 ### Correct
 
 ```solidity
-function deposit(externalEuint64 encAmount, bytes calldata proof) external {
+function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     balances[msg.sender] = FHE.add(balances[msg.sender], amount);
     FHE.allowThis(balances[msg.sender]);
@@ -77,7 +77,7 @@ function deposit(externalEuint64 encAmount, bytes calldata proof) external {
 ### Wrong
 
 ```solidity
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
 
     // WRONG: Cannot use encrypted value in an if statement
@@ -95,7 +95,7 @@ function transfer(address to, externalEuint64 encAmount, bytes calldata proof) e
 ### Correct
 
 ```solidity
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     ebool hasEnough = FHE.ge(balances[msg.sender], amount);
 
@@ -125,7 +125,7 @@ function transfer(address to, externalEuint64 encAmount, bytes calldata proof) e
 ### Wrong
 
 ```solidity
-function withdraw(externalEuint64 encAmount, bytes calldata proof) external {
+function withdraw(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
 
     // WRONG: Cannot require() on encrypted comparison
@@ -142,7 +142,7 @@ Two problems: (1) `FHE.ge()` returns `ebool`, not `bool`, so `require()` will no
 ### Correct
 
 ```solidity
-function withdraw(externalEuint64 encAmount, bytes calldata proof) external {
+function withdraw(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     ebool hasEnough = FHE.ge(balances[msg.sender], amount);
 
@@ -179,7 +179,7 @@ External functions that accept encrypted data from users must use the `externalE
 ### Correct
 
 ```solidity
-function setSecret(externalEuint32 encryptedValue, bytes calldata proof) external {
+function setSecret(externalEuint32 encryptedValue, bytes calldata inputProof) external {
     secretNumber = FHE.fromExternal(encryptedValue, proof);
     FHE.allowThis(secretNumber);
 }
@@ -192,7 +192,7 @@ function setSecret(externalEuint32 encryptedValue, bytes calldata proof) externa
 ### Wrong
 
 ```solidity
-function deposit(externalEuint64 encAmount, bytes calldata proof) external {
+function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     balances[msg.sender] = FHE.add(balances[msg.sender], amount);
     FHE.allowThis(balances[msg.sender]);
@@ -207,7 +207,7 @@ The contract can use the balance (because of `allowThis`), but the user cannot d
 ### Correct
 
 ```solidity
-function deposit(externalEuint64 encAmount, bytes calldata proof) external {
+function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     balances[msg.sender] = FHE.add(balances[msg.sender], amount);
     FHE.allowThis(balances[msg.sender]);
@@ -294,7 +294,7 @@ function revealMyBalance() external {
 ```solidity
 event Transfer(address indexed from, address indexed to, uint256 amount);
 
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     // ... transfer logic ...
 
@@ -313,7 +313,7 @@ Events expect plaintext types. You cannot pass an `euint64` where a `uint256` is
 // Option A: Emit event without the amount
 event Transfer(address indexed from, address indexed to);
 
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     // ... transfer logic ...
     emit Transfer(msg.sender, to);  // Amount is confidential
@@ -322,7 +322,7 @@ function transfer(address to, externalEuint64 encAmount, bytes calldata proof) e
 // Option B: Emit a placeholder or hash
 event TransferOccurred(address indexed from, address indexed to, uint256 indexed txNonce);
 
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     // ... transfer logic ...
     transferNonce++;
@@ -339,7 +339,7 @@ function transfer(address to, externalEuint64 encAmount, bytes calldata proof) e
 ```solidity
 mapping(address => euint64) private balances;
 
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
 
     // If balances[to] has never been set, it is an uninitialized ciphertext handle (zero value)
@@ -367,7 +367,7 @@ function _ensureInitialized(address account) internal {
     }
 }
 
-function transfer(address to, externalEuint64 encAmount, bytes calldata proof) external {
+function transfer(address to, externalEuint64 encAmount, bytes calldata inputProof) external {
     _ensureInitialized(msg.sender);
     _ensureInitialized(to);
 
@@ -387,12 +387,12 @@ function transfer(address to, externalEuint64 encAmount, bytes calldata proof) e
 // Using euint256 for a value that will never exceed 100
 euint256 private score;
 
-function setScore(externalEuint256 encScore, bytes calldata proof) external {
+function setScore(externalEuint256 encScore, bytes calldata inputProof) external {
     score = FHE.fromExternal(encScore, proof);
     FHE.allowThis(score);
 }
 
-function addToScore(externalEuint256 encBonus, bytes calldata proof) external {
+function addToScore(externalEuint256 encBonus, bytes calldata inputProof) external {
     euint256 bonus = FHE.fromExternal(encBonus, proof);
     score = FHE.add(score, bonus);
     FHE.allowThis(score);
@@ -409,12 +409,12 @@ FHE gas costs scale with bit width. Operations on `euint256` are significantly m
 // Use the smallest type that fits the data range
 euint8 private score;  // Scores 0-255 are plenty for a score up to 100
 
-function setScore(externalEuint8 encScore, bytes calldata proof) external {
+function setScore(externalEuint8 encScore, bytes calldata inputProof) external {
     score = FHE.fromExternal(encScore, proof);
     FHE.allowThis(score);
 }
 
-function addToScore(externalEuint8 encBonus, bytes calldata proof) external {
+function addToScore(externalEuint8 encBonus, bytes calldata inputProof) external {
     euint8 bonus = FHE.fromExternal(encBonus, proof);
     score = FHE.add(score, bonus);
     FHE.allowThis(score);
@@ -428,7 +428,7 @@ function addToScore(externalEuint8 encBonus, bytes calldata proof) external {
 ### Wrong
 
 ```solidity
-function processPayment(externalEuint64 encAmount, bytes calldata proof) external {
+function processPayment(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
     ebool isLargePayment = FHE.gt(amount, FHE.asEuint64(10000));
 
@@ -448,7 +448,7 @@ If different logical paths consume different amounts of gas, an observer can inf
 ### Correct
 
 ```solidity
-function processPayment(externalEuint64 encAmount, bytes calldata proof) external {
+function processPayment(externalEuint64 encAmount, bytes calldata inputProof) external {
     euint64 amount = FHE.fromExternal(encAmount, proof);
 
     // Always perform the same operations regardless of amount
@@ -462,7 +462,7 @@ function processPayment(externalEuint64 encAmount, bytes calldata proof) externa
     );
 
     // If fee logic is needed, always compute it, always apply via select
-    euint64 fee = FHE.div(amount, FHE.asEuint64(100));
+    euint64 fee = FHE.div(amount, 100); // div/rem require a plaintext (scalar) second operand
     euint64 feeApplied = FHE.select(hasEnough, fee, FHE.asEuint64(0));
 
     FHE.allowThis(balances[msg.sender]);

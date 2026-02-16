@@ -12,12 +12,12 @@ echo ""
 # Check Node.js
 echo "[1/5] Checking Node.js..."
 if ! command -v node &> /dev/null; then
-    echo "ERROR: Node.js is not installed. Please install Node.js 18+ from https://nodejs.org"
+    echo "ERROR: Node.js is not installed. Please install Node.js 20+ from https://nodejs.org"
     exit 1
 fi
 NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
-if [ "$NODE_VERSION" -lt 18 ]; then
-    echo "ERROR: Node.js 18+ required. Current version: $(node -v)"
+if [ "$NODE_VERSION" -lt 20 ]; then
+    echo "ERROR: Node.js 20+ required. Current version: $(node -v)"
     exit 1
 fi
 echo "  Node.js $(node -v) - OK"

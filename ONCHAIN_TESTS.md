@@ -143,7 +143,7 @@ Each contract was deployed and tested with real transactions on Sepolia.
 
 ## FHE Operations Verified On-Chain
 
-- Plaintext → encrypted conversion (`FHE.asEuint8`, `FHE.asEuint32`, `FHE.asEuint64`)
+- Plaintext → encrypted conversion (`FHE.asEuint32` for plaintext, `FHE.fromExternal` for external inputs)
 - Encrypted arithmetic (`FHE.add`, `FHE.mul`)
 - Encrypted bitwise operations (`FHE.and`)
 - Encrypted comparison (`FHE.gt`, `FHE.ge`)
