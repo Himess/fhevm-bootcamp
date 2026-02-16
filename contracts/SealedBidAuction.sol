@@ -122,9 +122,10 @@ contract SealedBidAuction is ZamaEthereumConfig {
     }
 
     /// @notice Finalize the auction by setting the winner after off-chain decryption
-    /// @dev In production, this would be a Gateway callback that receives the decrypted
-    ///      _highestBidder and _highestBid values. For the bootcamp, the admin sets
-    ///      the winner manually after reading the publicly decryptable values off-chain.
+    /// @dev fhEVM v0.9+ flow (Gateway was discontinued): after endAuction() marks values as
+    ///      publicly decryptable, admin calls publicDecrypt() off-chain via the relayer SDK
+    ///      to retrieve _highestBidder and _highestBid, then submits them here.
+    ///      Use FHE.checkSignatures() to verify decrypted results on-chain if needed.
     function finalizeAuction(uint256 auctionId, address winnerAddress, uint64 winningBid) external onlyOwner {
         require(auctionId < auctionCount, "Invalid auction");
         require(auctions[auctionId].ended, "Auction not ended");

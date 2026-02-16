@@ -59,7 +59,8 @@ contract EncryptedLottery is ZamaEthereumConfig {
     }
 
     /// @notice Reveal and store the winner (simplified: uses mock decrypt in tests)
-    /// @dev In production, this would use Gateway callback for async decryption
+    /// @dev In fhEVM v0.9+, use FHE.makePubliclyDecryptable() on the encrypted index,
+    ///      then call publicDecrypt() off-chain via the relayer SDK to get the plaintext
     function revealWinner(uint32 index) external onlyOwner {
         require(drawn, "Not drawn yet");
         require(winner == address(0), "Already revealed");

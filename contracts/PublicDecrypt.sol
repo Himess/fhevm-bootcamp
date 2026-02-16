@@ -6,31 +6,10 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title PublicDecrypt - Module 07: Public decryption demo
 /// @notice Demonstrates encrypted storage, user-specific decryption, and public decryptability
-/// @dev In production, public decryption uses the Gateway callback pattern (GatewayConfig).
-///      This contract demonstrates the `FHE.makePubliclyDecryptable()` pattern available in fhEVM v0.10.
-///
-// ──────────────────────────────────────────────────────────────────────
-// GATEWAY CALLBACK REFERENCE (for devnet/mainnet with Gateway deployed)
-// ──────────────────────────────────────────────────────────────────────
-//
-// On networks where the Gateway is deployed (Ethereum Sepolia, mainnet), you can
-// use the async decryption callback pattern instead of makePubliclyDecryptable():
-//
-//   import {Gateway} from "@fhevm/solidity/gateway/GatewayConfig.sol";
-//
-//   uint256[] memory cts = new uint256[](1);
-//   cts[0] = FHE.toUint256(_encryptedValue);
-//   Gateway.requestDecryption(cts, this.decryptionCallback.selector, 0, block.timestamp + 100, false);
-//
-//   function decryptionCallback(uint256 requestId, uint32 decryptedValue) public onlyGateway returns (bool) {
-//       revealedValue = decryptedValue;
-//       return true;
-//   }
-//
-// The Gateway pattern provides on-chain access to the decrypted plaintext via a callback.
-// makePubliclyDecryptable() instead marks values for off-chain decryption by anyone via the KMS.
-// Both patterns are valid; choose based on whether you need the plaintext on-chain or off-chain.
-// ──────────────────────────────────────────────────────────────────────
+/// @dev fhEVM v0.9+ decryption flow (Gateway/Oracle pattern was discontinued):
+///      1. On-chain:  FHE.makePubliclyDecryptable(ciphertext) marks a value for decryption
+///      2. Off-chain: publicDecrypt() via the relayer SDK retrieves the plaintext
+///      3. On-chain:  FHE.checkSignatures() verifies the decrypted result before use
 contract PublicDecrypt is ZamaEthereumConfig {
     euint32 private _encryptedValue;
     bool public hasValue;
@@ -60,7 +39,7 @@ contract PublicDecrypt is ZamaEthereumConfig {
     }
 
     /// @notice Make the encrypted value publicly decryptable
-    /// @dev After calling this, anyone with the handle can request decryption via the Gateway/KMS
+    /// @dev After calling this, anyone can retrieve the plaintext off-chain via publicDecrypt() (Relayer SDK)
     function makePublic() external {
         require(hasValue, "No value set");
         FHE.makePubliclyDecryptable(_encryptedValue);

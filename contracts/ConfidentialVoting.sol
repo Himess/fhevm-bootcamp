@@ -98,16 +98,15 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         FHE.makePubliclyDecryptable(proposals[proposalId].yesVotes);
         FHE.makePubliclyDecryptable(proposals[proposalId].noVotes);
 
-        // Note: In production with Gateway, you would use:
-        // Gateway.requestDecryption([yesVotes, noVotes], callbackSelector, ...)
-        // and handle the result in a callback function.
-        // Here we use makePubliclyDecryptable which marks the values for
-        // off-chain decryption by anyone via the KMS.
+        // fhEVM v0.9+ decryption flow (Gateway.requestDecryption was discontinued):
+        // 1. makePubliclyDecryptable() marks the encrypted tallies for decryption (done above)
+        // 2. Off-chain: publicDecrypt() via the relayer SDK retrieves the plaintext values
+        // 3. On-chain: FHE.checkSignatures() can verify decrypted results before use
     }
 
     /// @notice Store decrypted vote results after off-chain decryption
-    /// @dev In production, this would be the Gateway callback receiving decrypted values.
-    ///      For the bootcamp, owner submits the values after reading publicly decryptable data.
+    /// @dev The owner calls publicDecrypt() off-chain via the relayer SDK to get plaintext
+    ///      values, then submits them here. Use FHE.checkSignatures() to verify if needed.
     function setResults(uint256 proposalId, uint32 yesResult, uint32 noResult) external onlyOwner {
         require(proposalId < proposalCount, "Invalid proposal");
         require(!proposals[proposalId].revealed, "Already revealed");

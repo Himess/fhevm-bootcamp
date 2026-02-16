@@ -132,9 +132,9 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     receive() external payable {}
 
     /// @notice Finalize voting: make results publicly decryptable and store plaintext results
-    /// @dev In production, a Gateway callback would deliver decrypted values automatically.
-    ///      For the bootcamp, the admin reads publicly decryptable values off-chain and
-    ///      submits them via setResults() before executing.
+    /// @dev fhEVM v0.9+ flow (Gateway was discontinued): makePubliclyDecryptable() marks values
+    ///      for decryption below, then admin calls publicDecrypt() off-chain via the relayer SDK
+    ///      and submits plaintext results via setResults(). Use FHE.checkSignatures() to verify.
     function finalizeProposal(uint256 proposalId) external onlyAdmin {
         require(proposalId < proposalCount, "Invalid proposal");
         require(block.timestamp > proposals[proposalId].deadline, "Voting ongoing");
@@ -145,8 +145,8 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     }
 
     /// @notice Store decrypted vote results after off-chain decryption
-    /// @dev In production, this would be the Gateway callback receiving decrypted values.
-    ///      For the bootcamp, admin submits the values after reading publicly decryptable data.
+    /// @dev Admin calls publicDecrypt() off-chain via the relayer SDK to get plaintext
+    ///      values, then submits them here. Use FHE.checkSignatures() to verify if needed.
     function setResults(uint256 proposalId, uint32 yesResult, uint32 noResult) external onlyAdmin {
         require(proposalId < proposalCount, "Invalid proposal");
         require(!proposals[proposalId].revealed, "Already revealed");
