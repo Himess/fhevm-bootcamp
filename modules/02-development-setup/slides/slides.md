@@ -6,6 +6,16 @@ header: "FHEVM Bootcamp - Module 02: FHEVM Development Setup"
 footer: "Zama Developer Program"
 ---
 
+<style>
+section { font-size: 22px; }
+h1 { font-size: 32px; }
+h2 { font-size: 28px; }
+code { font-size: 18px; }
+pre { font-size: 16px; line-height: 1.3; }
+li { margin-bottom: 2px; }
+table { font-size: 18px; }
+</style>
+
 # Module 02: FHEVM Development Setup
 
 Set up your environment, write your first encrypted contract, compile and test it.
