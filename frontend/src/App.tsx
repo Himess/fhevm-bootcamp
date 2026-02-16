@@ -110,12 +110,23 @@ const FEATURES = [
 
 const QUICK_LINKS = [
   { label: "GitHub Repository", url: GITHUB_REPO, icon: "📦" },
-  { label: "Interactive Quiz", url: `${GITHUB_REPO}/blob/main/quiz/index.html`, icon: "📝" },
+  { label: "Interactive Quiz", url: "/quiz/index.html", icon: "📝" },
   { label: "Quick Start Guide", url: `${GITHUB_REPO}/blob/main/QUICK_START.md`, icon: "🚀" },
   { label: "Syllabus", url: `${GITHUB_REPO}/blob/main/curriculum/SYLLABUS.md`, icon: "📋" },
   { label: "Instructor Guide", url: `${GITHUB_REPO}/blob/main/curriculum/INSTRUCTOR_GUIDE.md`, icon: "👨‍🏫" },
   { label: "Cheatsheet", url: `${GITHUB_REPO}/blob/main/resources/CHEATSHEET.md`, icon: "⚡" },
 ];
+
+// Map module IDs to their folder names for slide links
+const MODULE_FOLDERS: Record<string, string> = {
+  "00": "00-prerequisites", "01": "01-intro-to-fhe", "02": "02-development-setup",
+  "03": "03-encrypted-types", "04": "04-operations", "05": "05-access-control",
+  "06": "06-encrypted-inputs", "07": "07-decryption", "08": "08-conditional-logic",
+  "09": "09-random", "10": "10-frontend-integration", "11": "11-project-erc20",
+  "12": "12-project-voting", "13": "13-project-auction", "14": "14-testing-debugging",
+  "15": "15-gas-optimization", "16": "16-security", "17": "17-advanced-patterns",
+  "18": "18-confidential-defi", "19": "19-capstone",
+};
 
 export default function App() {
   const [showAllContracts, setShowAllContracts] = React.useState(false);
@@ -194,19 +205,33 @@ export default function App() {
               <h3 className="phase-title">{phase.title}</h3>
               <div className="modules-list">
                 {phase.modules.map((m) => (
-                  <a
-                    key={m.id}
-                    href={`${GITHUB_REPO}/tree/main/modules/${m.id}-${m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-$/, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="module-card"
-                  >
+                  <div key={m.id} className="module-card">
                     <div className="module-id">{m.id}</div>
                     <div className="module-info">
                       <div className="module-name">{m.name}</div>
                       <div className="module-desc">{m.desc}</div>
                     </div>
-                  </a>
+                    <div className="module-actions">
+                      <a
+                        href={`${GITHUB_REPO}/tree/main/modules/${MODULE_FOLDERS[m.id]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="module-btn"
+                        title="View lesson on GitHub"
+                      >
+                        Lesson
+                      </a>
+                      <a
+                        href={`/slides/${MODULE_FOLDERS[m.id]}.html`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="module-btn module-btn-slide"
+                        title="View slides"
+                      >
+                        Slides
+                      </a>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
