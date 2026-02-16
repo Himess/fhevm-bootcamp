@@ -1,4 +1,5 @@
-import { createInstance, type FhevmInstance } from "@zama-fhe/relayer-sdk/web";
+import { initSDK, createInstance } from "@zama-fhe/relayer-sdk/bundle";
+import type { FhevmInstance } from "@zama-fhe/relayer-sdk/bundle";
 import { RELAYER_URL, RPC_URL, CHAIN_ID } from "./config";
 
 // Zama fhEVM coprocessor addresses on Ethereum Sepolia
@@ -18,6 +19,10 @@ let instance: FhevmInstance | null = null;
 export async function initFhevm(): Promise<FhevmInstance> {
   if (instance) return instance;
 
+  // Step 1: Initialize WASM modules (MUST be called before createInstance)
+  await initSDK();
+
+  // Step 2: Create the instance with Sepolia config
   instance = await createInstance({
     kmsContractAddress: KMS_ADDRESS,
     aclContractAddress: ACL_ADDRESS,
