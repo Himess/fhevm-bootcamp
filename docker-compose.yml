@@ -1,0 +1,7 @@
+services:
+  bootcamp:
+    build: .
+    command: npm test
+    env_file:
+      - path: .env
+        required: false
