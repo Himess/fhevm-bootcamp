@@ -7,22 +7,21 @@ footer: "Zama Developer Program"
 ---
 
 <style>
-section { font-size: 18px; overflow: hidden; background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%); color: #1E293B; }
-h1 { font-size: 28px; margin-bottom: 8px; color: #4F46E5; border-bottom: 3px solid #C7D2FE; padding-bottom: 6px; }
-h2 { font-size: 22px; margin-bottom: 6px; color: #0F766E; }
-h3 { font-size: 19px; color: #B45309; }
-code { font-size: 15px; background: #EEF2FF; color: #4338CA; padding: 1px 4px; border-radius: 3px; }
-pre { font-size: 13px; line-height: 1.25; margin: 6px 0; background: #1E293B; color: #E2E8F0; border-radius: 8px; padding: 12px; border-left: 4px solid #6366F1; }
+section { font-size: 18px; overflow: hidden; color: #1E293B; }
+h1 { font-size: 28px; margin-bottom: 8px; color: #1E40AF; border-bottom: 2px solid #DBEAFE; padding-bottom: 6px; }
+h2 { font-size: 22px; margin-bottom: 6px; color: #155E75; }
+h3 { font-size: 19px; color: #92400E; }
+code { font-size: 15px; background: #F1F5F9; color: #3730A3; padding: 1px 4px; border-radius: 3px; }
+pre { font-size: 13px; line-height: 1.25; margin: 6px 0; background: #1E293B; color: #E2E8F0; border-radius: 6px; padding: 10px; border-left: 3px solid #6366F1; }
 pre code { background: transparent; color: #E2E8F0; padding: 0; }
 li { margin-bottom: 1px; line-height: 1.4; }
 table { font-size: 15px; border-collapse: collapse; width: 100%; }
-th { background: #4F46E5; color: white; padding: 6px 10px; text-align: left; }
+th { background: #1E40AF; color: white; padding: 6px 10px; text-align: left; }
 td { padding: 5px 10px; border-bottom: 1px solid #E2E8F0; }
-tr:nth-child(even) { background: #F1F5F9; }
-strong { color: #7C3AED; }
+tr:nth-child(even) { background: #F8FAFC; }
 p { margin-bottom: 4px; }
 ul, ol { margin-top: 4px; margin-bottom: 4px; }
-header { color: #6366F1 !important; font-weight: 600; }
+header { color: #3B82F6 !important; }
 footer { color: #94A3B8 !important; }
 section.small { font-size: 15px; }
 section.small h1 { font-size: 24px; margin-bottom: 6px; }
