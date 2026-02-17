@@ -158,6 +158,8 @@ body {
   border: 1px solid var(--border); transition: all var(--transition);
 }
 .module-btn:hover { background: var(--yellow-50); border-color: var(--yellow-200); color: var(--yellow-700); }
+.module-btn-exercise { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+.module-btn-exercise:hover { background: #DBEAFE; }
 .module-btn-slide { background: var(--yellow-50); color: var(--yellow-700); border-color: var(--yellow-200); }
 .module-btn-slide:hover { background: var(--yellow-100); }
 

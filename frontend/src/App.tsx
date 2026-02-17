@@ -222,6 +222,15 @@ export default function App() {
                         Lesson
                       </a>
                       <a
+                        href={`${GITHUB_REPO}/blob/main/modules/${MODULE_FOLDERS[m.id]}/exercise.md`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="module-btn module-btn-exercise"
+                        title="View exercise"
+                      >
+                        Exercise
+                      </a>
+                      <a
                         href={`/slides/${MODULE_FOLDERS[m.id]}.html`}
                         target="_blank"
                         rel="noopener noreferrer"

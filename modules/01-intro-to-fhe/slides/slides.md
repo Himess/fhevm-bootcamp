@@ -17,6 +17,9 @@ li { margin-bottom: 1px; line-height: 1.4; }
 table { font-size: 15px; }
 p { margin-bottom: 4px; }
 ul, ol { margin-top: 4px; margin-bottom: 4px; }
+section.small { font-size: 15px; }
+section.small h1 { font-size: 24px; margin-bottom: 6px; }
+section.small ol li { margin-bottom: 0; line-height: 1.3; }
 </style>
 
 # Module 01: Introduction to Fully Homomorphic Encryption
@@ -378,6 +381,8 @@ Speaker notes: This is the motivational slide. Make the connection between block
 -->
 
 ---
+
+<!-- _class: small -->
 
 # Key Takeaways
 
