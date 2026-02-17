@@ -301,7 +301,7 @@ Speaker notes: Point out the naming convention: just add "e" prefix to the type.
 
 ---
 
-# Use Cases
+# Use Cases (1/2)
 
 ## Confidential DeFi
 - Private transfers (hidden amounts)
@@ -317,16 +317,30 @@ Speaker notes: Point out the naming convention: just add "e" prefix to the type.
 - Bids encrypted, compared on-chain
 - Only winning bid revealed
 
+<!--
+Speaker notes: These three use cases are the ones we will actually build in the project modules (token, voting, auction). Emphasize that these are not theoretical -- they are buildable today with fhEVM.
+-->
+
+---
+
+# Use Cases (2/2)
+
 ## Identity & Compliance
 - "Is user over 18?" without revealing age
 - Private KYC verification
+- Credential checks without exposing personal data
 
 ## Confidential Gaming
 - Hidden hands in card games
 - Fog-of-war in strategy games
+- Private inventories and loot
+
+## Healthcare & Data Sharing
+- Encrypted medical records on-chain
+- Research on patient data without exposing identity
 
 <!--
-Speaker notes: Go through use cases briefly and ask students which ones excite them most. Mention that we will actually build three of these (token, voting, auction) in the project modules. These are not theoretical -- they are buildable today.
+Speaker notes: Ask students which use cases excite them most. These categories are rapidly expanding -- any application where data privacy matters can benefit from FHE.
 -->
 
 ---
