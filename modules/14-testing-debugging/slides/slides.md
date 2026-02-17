@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 14: Testing & Debugging FHE Contracts"
-footer: "Zama Developer Program"
 ---
 
 <style>

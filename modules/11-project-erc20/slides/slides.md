@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 11: Confidential ERC-20"
-footer: "Zama Developer Program"
 ---
 
 <style>

@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 13: Sealed-Bid Auction"
-footer: "Zama Developer Program"
 ---
 
 <style>

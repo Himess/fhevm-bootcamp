@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 07: Decryption Patterns"
-footer: "Zama Developer Program"
 ---
 
 <style>

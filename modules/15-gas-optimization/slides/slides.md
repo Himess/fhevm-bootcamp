@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 15: Gas Optimization for FHE"
-footer: "Zama Developer Program"
 ---
 
 <style>

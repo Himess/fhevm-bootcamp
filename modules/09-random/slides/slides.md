@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 09: On-Chain Randomness"
-footer: "Zama Developer Program"
 ---
 
 <style>

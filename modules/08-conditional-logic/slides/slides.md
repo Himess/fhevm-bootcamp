@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 08: Conditional Logic"
-footer: "Zama Developer Program"
 ---
 
 <style>

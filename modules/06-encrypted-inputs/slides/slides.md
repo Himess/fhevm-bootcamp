@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 06: Encrypted Inputs & ZK Proofs"
-footer: "Zama Developer Program"
 ---
 
 <style>

@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 12: Confidential Voting"
-footer: "Zama Developer Program"
 ---
 
 <style>

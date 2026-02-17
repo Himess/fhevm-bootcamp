@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 03: Encrypted Types Deep Dive"
-footer: "Zama Developer Program"
 ---
 
 <style>

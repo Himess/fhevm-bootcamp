@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 18: Confidential DeFi"
-footer: "Zama Developer Program"
 ---
 
 <style>

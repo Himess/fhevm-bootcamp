@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 04: Operations on Encrypted Data"
-footer: "Zama Developer Program"
 ---
 
 <style>

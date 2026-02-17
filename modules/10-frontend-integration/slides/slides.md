@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 10: Frontend Integration"
-footer: "Zama Developer Program"
 ---
 
 <style>

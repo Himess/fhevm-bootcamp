@@ -3,7 +3,6 @@ marp: true
 theme: default
 paginate: true
 header: "FHEVM Bootcamp - Module 05: Access Control (ACL)"
-footer: "Zama Developer Program"
 ---
 
 <style>
