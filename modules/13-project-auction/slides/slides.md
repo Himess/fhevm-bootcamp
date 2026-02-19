@@ -365,8 +365,8 @@ Speaker notes: Recap the auction module. This is the most complex project so far
 
 **Module 14: Testing & Debugging FHE Contracts**
 
-Combine tokens, voting, and treasury into a full DAO!
+Learn how to test encrypted contracts with mock environments, debug FHE operations, and ensure correctness.
 
 <!--
-Speaker notes: Transition to the capstone by saying: "You have built tokens, voting, and auctions. Now we combine them all into a complete DAO -- the ultimate FHEVM application."
+Speaker notes: Transition to testing by saying: "Now that you have built real projects, you need to know how to test and debug them properly. FHE contracts require special testing patterns that we will cover next."
 -->

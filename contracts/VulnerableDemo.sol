@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32 } from "@fhevm/solidity/lib/FHE.sol";
+import { FHE, euint8, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
 import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title VulnerableDemo - Module 16: DELIBERATELY VULNERABLE for Educational Purposes

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { FHE, euint32, euint64, ebool, externalEuint32, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { FHE, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
 import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title TestableVault - Module 14: Multi-user encrypted vault for testing patterns
