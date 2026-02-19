@@ -1,6 +1,81 @@
 # FHEVM Bootcamp -- Learning Paths
 
-This document provides three structured learning paths for completing the FHEVM Bootcamp Curriculum. Choose the path that best fits your schedule, experience level, and goals.
+This document provides structured learning paths for completing the FHEVM Bootcamp Curriculum. Choose the path that best fits your schedule, experience level, and goals.
+
+---
+
+## Primary Path: 4-Week Bootcamp (Recommended)
+
+**Total Hours:** ~63 hours
+**Weekly Commitment:** ~16 hours/week
+**Format:** Cohort-based or self-paced with weekly deadlines
+
+This is the standard program structure designed for the Zama Developer Program.
+
+### Week 1: Foundation & Operations (Modules 00-04, ~12h)
+
+**Learning Objectives:**
+- Set up fhEVM development environment
+- Understand FHE theory, TFHE, and the fhEVM architecture
+- Master all encrypted types (ebool, euint8-256, eaddress)
+- Perform arithmetic, bitwise, comparison, and shift operations on encrypted data
+
+**Modules:** Prerequisites → Intro to FHE → Development Setup → Encrypted Types → Operations
+
+**Homework:** Encrypted Calculator — build a contract performing all FHE operations with tests. [Full spec](HOMEWORK.md#week-1-homework-encrypted-calculator)
+
+**Milestone:** Environment working. Can write contracts with encrypted types and all FHE operations.
+
+---
+
+### Week 2: Core Patterns (Modules 05-09, ~14h)
+
+**Learning Objectives:**
+- Implement ACL permissions (FHE.allow, FHE.allowThis)
+- Handle encrypted user inputs with FHE.fromExternal + inputProof
+- Implement decryption patterns (makePubliclyDecryptable, userDecrypt)
+- Use FHE.select for conditional logic without branching
+- Generate on-chain encrypted randomness
+
+**Modules:** Access Control → Encrypted Inputs → Decryption → Conditional Logic → Randomness
+
+**Homework:** Encrypted Vault with Access Control — deposit/withdraw with limits, ACL sharing, randomness. [Full spec](HOMEWORK.md#week-2-homework-encrypted-vault-with-access-control)
+
+**Milestone:** Can build complete encrypted workflows: input → process → conditional → output.
+
+---
+
+### Week 3: Applications & Testing (Modules 10-14, ~18h)
+
+**Learning Objectives:**
+- Integrate fhEVM contracts with React frontend using @zama-fhe/relayer-sdk
+- Build a confidential ERC-20 token (ERC-7984 pattern)
+- Implement encrypted voting with tally reveal
+- Design sealed-bid auctions with FHE comparisons
+- Test FHE contracts with mock environment and fhevm helpers
+
+**Modules:** Frontend Integration → Confidential ERC-20 → Voting → Auction → Testing & Debugging
+
+**Homework:** Confidential Token + Voting System — two contracts working together with 15+ tests. [Full spec](HOMEWORK.md#week-3-homework-confidential-token--voting-system)
+
+**Milestone:** Can build, test, and deploy complete confidential dApps.
+
+---
+
+### Week 4: Mastery & Capstone (Modules 15-19, ~19h)
+
+**Learning Objectives:**
+- Optimize gas costs for FHE operations (type selection, batching, plaintext operands)
+- Apply security best practices (no-revert, input validation, rate limiting, LastError)
+- Implement advanced patterns (state machines, registries, cross-contract FHE)
+- Build confidential DeFi primitives (lending, order books)
+- Design and implement a complete Confidential DAO
+
+**Modules:** Gas Optimization → Security → Advanced Patterns → Confidential DeFi → Capstone DAO
+
+**Homework:** Capstone Confidential DAO — governance tokens + voting + treasury, 20+ tests, security audit. [Full spec](HOMEWORK.md#week-4-homework-capstone--confidential-dao)
+
+**Milestone:** Can architect, build, optimize, and secure production-grade FHE applications.
 
 ---
 
@@ -8,6 +83,7 @@ This document provides three structured learning paths for completing the FHEVM 
 
 | Path | Duration | Weekly Commitment | Best For |
 |---|---|---|---|
+| **4-Week Bootcamp** | 4 weeks | ~16 hours/week | **Recommended** — standard program, weekly homework + grading |
 | **Intensive** | 7 days (1.5 weeks) | ~9 hours/day | Full-time bootcamp cohorts, dedicated learners with time off |
 | **Part-Time** | 6 weeks | ~11 hours/week | Working professionals studying evenings and weekends |
 | **Self-Paced** | Flexible (8-14 weeks) | Your schedule | Independent learners, reference material users |

@@ -78,62 +78,57 @@ contract HelloFHEVM is ZamaEthereumConfig {
 
 ## Curriculum Overview
 
-This bootcamp consists of **20 modules** organized into five progressive phases. Each module includes lecture content, code examples, hands-on exercises, and assessments.
+This bootcamp consists of **20 modules** organized into a 4-week progressive program. Each module includes lecture content, code examples, hands-on exercises, and assessments.
 
 ### Module Map
 
-| # | Module | Level | Duration | Phase |
+| # | Module | Level | Duration | Week |
 |---|---|---|---|---|
-| 00 | [Prerequisites & Solidity Review](modules/00-prerequisites/) | Beginner | 2 hrs | Foundation |
-| 01 | [Introduction to FHE](modules/01-intro-to-fhe/) | Beginner | 2 hrs | Foundation |
-| 02 | [Development Setup](modules/02-development-setup/) | Beginner | 2 hrs | Foundation |
-| 03 | [Encrypted Types](modules/03-encrypted-types/) | Beginner | 3 hrs | Foundation |
-| 04 | [Operations (Arithmetic, Bitwise, Comparison)](modules/04-operations/) | Intermediate | 3 hrs | Core |
-| 05 | [Access Control (ACL)](modules/05-access-control/) | Intermediate | 3 hrs | Core |
-| 06 | [Encrypted Inputs & Proofs](modules/06-encrypted-inputs/) | Intermediate | 3 hrs | Core |
-| 07 | [Decryption Patterns](modules/07-decryption/) | Intermediate | 3 hrs | Core |
-| 08 | [Conditional Logic](modules/08-conditional-logic/) | Intermediate | 3 hrs | Core |
-| 09 | [On-Chain Randomness](modules/09-random/) | Intermediate | 2 hrs | Core |
-| 10 | [Frontend Integration](modules/10-frontend-integration/) | Intermediate | 3 hrs | Applications |
-| 11 | [Confidential ERC-20](modules/11-project-erc20/) | Advanced | 4 hrs | Applications |
-| 12 | [Confidential Voting](modules/12-project-voting/) | Advanced | 4 hrs | Applications |
-| 13 | [Sealed-Bid Auction](modules/13-project-auction/) | Advanced | 4 hrs | Applications |
-| 14 | [Testing & Debugging FHE Contracts](modules/14-testing-debugging/) | Advanced | 3 hrs | Mastery |
-| 15 | [Gas Optimization for FHE](modules/15-gas-optimization/) | Advanced | 3 hrs | Mastery |
-| 16 | [Security Best Practices for FHE](modules/16-security/) | Advanced | 3 hrs | Mastery |
-| 17 | [Advanced FHE Design Patterns](modules/17-advanced-patterns/) | Expert | 4 hrs | Mastery |
-| 18 | [Confidential DeFi](modules/18-confidential-defi/) | Expert | 4 hrs | Mastery |
-| 19 | [Capstone: Confidential DAO](modules/19-capstone/) | Expert | 5 hrs | Capstone |
+| 00 | [Prerequisites & Solidity Review](modules/00-prerequisites/) | Beginner | 2 hrs | Week 1 |
+| 01 | [Introduction to FHE](modules/01-intro-to-fhe/) | Beginner | 2 hrs | Week 1 |
+| 02 | [Development Setup](modules/02-development-setup/) | Beginner | 2 hrs | Week 1 |
+| 03 | [Encrypted Types](modules/03-encrypted-types/) | Beginner | 3 hrs | Week 1 |
+| 04 | [Operations (Arithmetic, Bitwise, Comparison)](modules/04-operations/) | Intermediate | 3 hrs | Week 1 |
+| 05 | [Access Control (ACL)](modules/05-access-control/) | Intermediate | 3 hrs | Week 2 |
+| 06 | [Encrypted Inputs & Proofs](modules/06-encrypted-inputs/) | Intermediate | 3 hrs | Week 2 |
+| 07 | [Decryption Patterns](modules/07-decryption/) | Intermediate | 3 hrs | Week 2 |
+| 08 | [Conditional Logic](modules/08-conditional-logic/) | Intermediate | 3 hrs | Week 2 |
+| 09 | [On-Chain Randomness](modules/09-random/) | Intermediate | 2 hrs | Week 2 |
+| 10 | [Frontend Integration](modules/10-frontend-integration/) | Intermediate | 3 hrs | Week 3 |
+| 11 | [Confidential ERC-20](modules/11-project-erc20/) | Advanced | 4 hrs | Week 3 |
+| 12 | [Confidential Voting](modules/12-project-voting/) | Advanced | 4 hrs | Week 3 |
+| 13 | [Sealed-Bid Auction](modules/13-project-auction/) | Advanced | 4 hrs | Week 3 |
+| 14 | [Testing & Debugging FHE Contracts](modules/14-testing-debugging/) | Advanced | 3 hrs | Week 3 |
+| 15 | [Gas Optimization for FHE](modules/15-gas-optimization/) | Advanced | 3 hrs | Week 4 |
+| 16 | [Security Best Practices for FHE](modules/16-security/) | Advanced | 3 hrs | Week 4 |
+| 17 | [Advanced FHE Design Patterns](modules/17-advanced-patterns/) | Expert | 4 hrs | Week 4 |
+| 18 | [Confidential DeFi](modules/18-confidential-defi/) | Expert | 4 hrs | Week 4 |
+| 19 | [Capstone: Confidential DAO](modules/19-capstone/) | Expert | 5 hrs | Week 4 |
 
 **Total Duration: ~63 hours**
 
-### Phase Breakdown
+### 4-Week Schedule
 
-```
-Phase 1: Foundation (Modules 00-03)           ~9 hours
-  Solidity review, FHE concepts, development setup, encrypted types.
+| Week | Theme | Modules | Hours | Milestone |
+|------|-------|---------|-------|-----------|
+| **Week 1** | Foundation & Operations | 00-04 | ~12h | Environment ready, encrypted types mastered, all FHE operations understood |
+| **Week 2** | Core Patterns | 05-09 | ~14h | ACL, encrypted inputs, decryption, conditional logic, randomness |
+| **Week 3** | Applications & Testing | 10-14 | ~18h | Frontend integration, ERC-20, voting, auction built and tested |
+| **Week 4** | Mastery & Capstone | 15-19 | ~19h | Gas optimization, security audit, DeFi patterns, Confidential DAO |
 
-Phase 2: Core Development (Modules 04-09)     ~17 hours
-  Operations, ACL, encrypted inputs, decryption, conditional logic, randomness.
+**Total Duration: ~63 hours (~16h/week)**
 
-Phase 3: Applications (Modules 10-13)         ~15 hours
-  Frontend integration, confidential ERC-20, voting, sealed-bid auction.
-
-Phase 4: Mastery (Modules 14-18)              ~17 hours
-  Testing & debugging, gas optimization, security, design patterns, DeFi.
-
-Phase 5: Capstone (Module 19)                 ~5 hours
-  Build a complete Confidential DAO combining all concepts.
-```
+Each week ends with a **homework assignment** with formal grading criteria. See [curriculum/HOMEWORK.md](curriculum/HOMEWORK.md) for full specifications.
 
 ---
 
 ## Learning Paths
 
-We offer three pacing options to fit different schedules:
+We offer four pacing options to fit different schedules:
 
 | Path | Duration | Pace | Best For |
 |---|---|---|---|
+| **4-Week Bootcamp** | 4 weeks | ~16 hrs/week | **Recommended** — matches the standard curriculum structure |
 | **Intensive** | 7 days (1.5 weeks) | Full-time, ~9 hrs/day | Bootcamp cohorts, dedicated learners |
 | **Part-Time** | 6 weeks | ~11 hrs/week | Working professionals |
 | **Self-Paced** | Flexible | Your schedule | Independent learners |
@@ -151,6 +146,8 @@ See [curriculum/LEARNING_PATHS.md](curriculum/LEARNING_PATHS.md) for detailed sc
 | Capstone Project | 40% | Original FHE application with documentation and presentation |
 
 **Passing score: 70% overall, with at least 60% in each component.**
+
+Weekly homework assignments include detailed grading rubrics. See [curriculum/HOMEWORK.md](curriculum/HOMEWORK.md).
 
 ---
 

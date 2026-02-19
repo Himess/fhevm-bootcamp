@@ -13,18 +13,18 @@ const STATS = [
 
 const PHASES = [
   {
-    title: "Phase 1 — Foundation",
+    title: "Week 1 — Foundation & Operations",
     modules: [
       { id: "00", name: "Prerequisites", desc: "Solidity, Hardhat, cryptography basics" },
       { id: "01", name: "Intro to FHE", desc: "What is FHE, Zama ecosystem, use cases" },
       { id: "02", name: "Development Setup", desc: "fhEVM toolchain, project structure" },
       { id: "03", name: "Encrypted Types", desc: "euint8–256, ebool, eaddress, ebytes" },
+      { id: "04", name: "FHE Operations", desc: "Arithmetic, bitwise, comparison, shifts" },
     ],
   },
   {
-    title: "Phase 2 — Core",
+    title: "Week 2 — Core Patterns",
     modules: [
-      { id: "04", name: "FHE Operations", desc: "Arithmetic, bitwise, comparison, shifts" },
       { id: "05", name: "Access Control (ACL)", desc: "FHE.allow, FHE.allowTransient, permissions" },
       { id: "06", name: "Encrypted Inputs", desc: "createEncryptedInput, inputProof, fromExternal" },
       { id: "07", name: "Decryption Patterns", desc: "makePubliclyDecryptable, userDecrypt, sealOutput" },
@@ -33,27 +33,22 @@ const PHASES = [
     ],
   },
   {
-    title: "Phase 3 — Applications",
+    title: "Week 3 — Applications & Testing",
     modules: [
       { id: "10", name: "Frontend Integration", desc: "React + Relayer SDK + encrypted transactions" },
       { id: "11", name: "Confidential ERC-20", desc: "Private balances, encrypted transfers, ERC-7984" },
       { id: "12", name: "Private Voting", desc: "Encrypted ballots, tallying, result reveal" },
       { id: "13", name: "Sealed-Bid Auction", desc: "Hidden bids, encrypted comparison, winner reveal" },
+      { id: "14", name: "Testing & Debugging", desc: "fhEVM mock, createEncryptedInput in tests" },
     ],
   },
   {
-    title: "Phase 4 — Mastery",
+    title: "Week 4 — Mastery & Capstone",
     modules: [
-      { id: "14", name: "Testing & Debugging", desc: "fhEVM mock, createEncryptedInput in tests" },
       { id: "15", name: "Gas Optimization", desc: "Type selection, batching, scalar ops, benchmarks" },
       { id: "16", name: "Security Best Practices", desc: "Silent-fail, timing attacks, ACL patterns" },
       { id: "17", name: "Advanced FHE Patterns", desc: "State machines, registries, cross-contract FHE" },
       { id: "18", name: "Confidential DeFi", desc: "Lending, order books, Zaiffer, cUSDT mainnet" },
-    ],
-  },
-  {
-    title: "Phase 5 — Capstone",
-    modules: [
       { id: "19", name: "ConfidentialDAO", desc: "Encrypted governance, proposals, voting, treasury" },
     ],
   },
@@ -199,7 +194,7 @@ export default function App() {
 
         {/* Curriculum */}
         <section className="section">
-          <h2 className="section-title">Curriculum — 20 Modules</h2>
+          <h2 className="section-title">4-Week Curriculum — 20 Modules</h2>
           {PHASES.map((phase) => (
             <div key={phase.title} className="phase">
               <h3 className="phase-title">{phase.title}</h3>

@@ -2,8 +2,21 @@
 
 **Version:** 3.0
 **Total Modules:** 20 (Modules 00 through 19)
-**Total Duration:** ~63 hours
+**Total Duration:** ~63 hours (4 weeks at ~16h/week)
 **API Version:** New FHEVM API (`FHE` library, `externalEuintXX` inputs, `FHE.fromExternal(value, proof)`)
+
+---
+
+## 4-Week Program Structure
+
+| Week | Theme | Modules | Hours | Homework |
+|------|-------|---------|-------|----------|
+| **Week 1** | Foundation & Operations | 00-04 | ~12h | Encrypted Calculator |
+| **Week 2** | Core Patterns | 05-09 | ~14h | Encrypted Vault with Access Control |
+| **Week 3** | Applications & Testing | 10-14 | ~18h | Confidential Token + Voting System |
+| **Week 4** | Mastery & Capstone | 15-19 | ~19h | Capstone: Confidential DAO |
+
+Each week concludes with a homework assignment. See [HOMEWORK.md](HOMEWORK.md) for full specifications and grading rubrics.
 
 ---
 

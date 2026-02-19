@@ -893,6 +893,17 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 
 ## Time Management Guide
 
+### 4-Week Program Schedule
+
+The bootcamp is structured as a 4-week program with weekly milestones:
+
+- **Week 1 (Modules 00-04):** Foundation & Operations — students set up their environment, learn FHE theory, and master all encrypted operations. Homework: Encrypted Calculator.
+- **Week 2 (Modules 05-09):** Core Patterns — ACL, encrypted inputs, decryption, conditional logic, and randomness. Homework: Encrypted Vault with Access Control.
+- **Week 3 (Modules 10-14):** Applications & Testing — frontend integration, build real projects (ERC-20, voting, auction), and learn FHE testing. Homework: Confidential Token + Voting System.
+- **Week 4 (Modules 15-19):** Mastery & Capstone — gas optimization, security, advanced patterns, DeFi, and the capstone DAO. Homework: Capstone Confidential DAO.
+
+Weekly homework assignments include detailed grading rubrics in [HOMEWORK.md](HOMEWORK.md).
+
 ### Signals You Are Running Behind
 
 - Module exercises are taking 50%+ longer than allocated.
@@ -905,7 +916,7 @@ A: Foundry has limited fhEVM support compared to Hardhat. The Hardhat fhEVM plug
 1. **Skip optional exercises:** Each module has a core exercise and optional extensions. Skip extensions when behind.
 2. **Provide solutions:** If an exercise is taking too long, live-code the solution and let students follow along.
 3. **Batch Q&A:** Instead of answering questions during exercises, collect them and address them in a dedicated Q&A block.
-4. **Assign homework:** Move the final exercise of a module to homework (Part-Time path only).
+4. **Assign homework:** Move the final exercise of a module to homework (Part-Time path only). See [HOMEWORK.md](HOMEWORK.md) for weekly homework specifications and rubrics.
 5. **Condense Module 13:** Sealed-Bid Auction can be reduced to a design discussion + one exercise if time is tight.
 6. **Combine Modules 15-16:** Gas optimization and security can be merged into a single session by focusing on the most critical patterns from each.
 
