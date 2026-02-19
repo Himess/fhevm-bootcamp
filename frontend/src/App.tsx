@@ -1,4 +1,5 @@
 import React from "react";
+import LessonViewer from "./LessonViewer";
 
 const GITHUB_REPO = "https://github.com/Himess/fhevm-bootcamp";
 
@@ -54,6 +55,9 @@ const PHASES = [
   },
 ];
 
+// Flat list of all modules for navigation
+const ALL_MODULES = PHASES.flatMap((p) => p.modules);
+
 const CONTRACTS = [
   { name: "SimpleStorage", address: "0x8B7D25a45890d214db56790ae59afaE72273c1D3" },
   { name: "BasicToken", address: "0x790f57EA01ec1f903645723D6990Eeaa2a36a814" },
@@ -106,7 +110,7 @@ const FEATURES = [
 const QUICK_LINKS = [
   { label: "GitHub Repository", url: GITHUB_REPO, icon: "📦" },
   { label: "Interactive Quiz", url: "/quiz/index.html", icon: "📝" },
-  { label: "Quick Start Guide", url: `${GITHUB_REPO}/blob/main/QUICK_START.md`, icon: "🚀" },
+  { label: "Homework & Grading", url: `${GITHUB_REPO}/blob/main/curriculum/HOMEWORK.md`, icon: "📄" },
   { label: "Syllabus", url: `${GITHUB_REPO}/blob/main/curriculum/SYLLABUS.md`, icon: "📋" },
   { label: "Instructor Guide", url: `${GITHUB_REPO}/blob/main/curriculum/INSTRUCTOR_GUIDE.md`, icon: "👨‍🏫" },
   { label: "Cheatsheet", url: `${GITHUB_REPO}/blob/main/resources/CHEATSHEET.md`, icon: "⚡" },
@@ -125,7 +129,28 @@ const MODULE_FOLDERS: Record<string, string> = {
 
 export default function App() {
   const [showAllContracts, setShowAllContracts] = React.useState(false);
+  const [selectedModule, setSelectedModule] = React.useState<string | null>(null);
   const displayedContracts = showAllContracts ? CONTRACTS : CONTRACTS.slice(0, 10);
+
+  const selectedIdx = selectedModule ? ALL_MODULES.findIndex((m) => m.id === selectedModule) : -1;
+  const selectedMod = selectedIdx >= 0 ? ALL_MODULES[selectedIdx] : null;
+
+  const openLesson = (moduleId: string) => {
+    setSelectedModule(moduleId);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeLesson = () => {
+    setSelectedModule(null);
+    document.body.style.overflow = "";
+  };
+
+  const navigateLesson = (direction: "prev" | "next") => {
+    const newIdx = direction === "prev" ? selectedIdx - 1 : selectedIdx + 1;
+    if (newIdx >= 0 && newIdx < ALL_MODULES.length) {
+      setSelectedModule(ALL_MODULES[newIdx].id);
+    }
+  };
 
   return (
     <div className="app">
@@ -207,24 +232,20 @@ export default function App() {
                       <div className="module-desc">{m.desc}</div>
                     </div>
                     <div className="module-actions">
-                      <a
-                        href={`${GITHUB_REPO}/tree/main/modules/${MODULE_FOLDERS[m.id]}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="module-btn"
-                        title="View lesson on GitHub"
+                      <button
+                        className="module-btn module-btn-lesson"
+                        onClick={() => openLesson(m.id)}
+                        title="Open lesson"
                       >
                         Lesson
-                      </a>
-                      <a
-                        href={`${GITHUB_REPO}/blob/main/modules/${MODULE_FOLDERS[m.id]}/exercise.md`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      </button>
+                      <button
                         className="module-btn module-btn-exercise"
-                        title="View exercise"
+                        onClick={() => { setSelectedModule(m.id); document.body.style.overflow = "hidden"; }}
+                        title="Open exercise"
                       >
                         Exercise
-                      </a>
+                      </button>
                       <a
                         href={`/slides/${MODULE_FOLDERS[m.id]}.html`}
                         target="_blank"
@@ -298,6 +319,19 @@ export default function App() {
           — Bounty Track
         </footer>
       </main>
+
+      {/* Lesson Viewer Modal */}
+      {selectedMod && (
+        <LessonViewer
+          moduleId={selectedMod.id}
+          moduleName={selectedMod.name}
+          moduleFolder={MODULE_FOLDERS[selectedMod.id]}
+          onClose={closeLesson}
+          onNavigate={navigateLesson}
+          hasPrev={selectedIdx > 0}
+          hasNext={selectedIdx < ALL_MODULES.length - 1}
+        />
+      )}
     </div>
   );
 }

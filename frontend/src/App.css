@@ -204,12 +204,161 @@ body {
 .footer a { color: var(--yellow-600); text-decoration: none; }
 .footer a:hover { text-decoration: underline; }
 
+/* ===== Lesson Viewer Overlay ===== */
+.lesson-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.lesson-viewer {
+  background: var(--bg-card); border-radius: var(--radius);
+  width: 100%; max-width: 900px; height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* Lesson Header */
+.lesson-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.lesson-header-left {
+  display: flex; align-items: center; gap: 10px;
+  min-width: 0; flex-shrink: 1;
+}
+.lesson-module-badge {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: var(--yellow-50); border: 1px solid var(--yellow-200);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8125rem; font-weight: 700; color: var(--yellow-700);
+}
+.lesson-module-name {
+  font-size: 1rem; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Lesson Tabs */
+.lesson-tabs {
+  display: flex; gap: 4px; margin-left: auto; flex-shrink: 0;
+}
+.lesson-tab {
+  padding: 6px 14px; border-radius: 6px; font-size: 0.8125rem; font-weight: 500;
+  background: transparent; border: 1px solid transparent; cursor: pointer;
+  color: var(--text-secondary); transition: all var(--transition);
+  text-decoration: none; display: inline-flex; align-items: center;
+  font-family: inherit;
+}
+.lesson-tab:hover { background: var(--yellow-50); color: var(--yellow-700); }
+.lesson-tab-active {
+  background: var(--yellow-400); color: var(--text-primary); font-weight: 600;
+}
+.lesson-tab-link { color: var(--text-muted); font-size: 0.75rem; }
+
+/* Lesson Close */
+.lesson-close {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: transparent; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  font-size: 1.25rem; color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); margin-left: 8px;
+}
+.lesson-close:hover { background: #FEE2E2; color: #DC2626; border-color: #FECACA; }
+
+/* Lesson Body */
+.lesson-body {
+  flex: 1; overflow-y: auto; padding: 24px 32px;
+}
+.lesson-empty {
+  text-align: center; color: var(--text-muted); padding: 4rem 0;
+  font-size: 0.9375rem;
+}
+
+/* Lesson Footer */
+.lesson-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.lesson-footer-hint { font-size: 0.75rem; color: var(--text-muted); }
+.lesson-nav-btn {
+  padding: 6px 16px; border-radius: 6px; font-size: 0.8125rem; font-weight: 500;
+  background: var(--yellow-50); border: 1px solid var(--yellow-200);
+  color: var(--yellow-700); cursor: pointer; transition: all var(--transition);
+  font-family: inherit;
+}
+.lesson-nav-btn:hover:not(:disabled) { background: var(--yellow-100); }
+.lesson-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ===== Markdown Rendering ===== */
+.lesson-markdown { font-size: 0.9375rem; line-height: 1.7; color: var(--text-primary); }
+.lesson-markdown h1 { font-size: 1.75rem; font-weight: 700; margin: 0 0 1rem; color: #1E40AF; border-bottom: 2px solid #DBEAFE; padding-bottom: 8px; }
+.lesson-markdown h2 { font-size: 1.375rem; font-weight: 600; margin: 2rem 0 0.75rem; color: #155E75; }
+.lesson-markdown h3 { font-size: 1.125rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #92400E; }
+.lesson-markdown h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.lesson-markdown p { margin: 0 0 1rem; }
+.lesson-markdown ul, .lesson-markdown ol { margin: 0 0 1rem; padding-left: 1.5rem; }
+.lesson-markdown li { margin-bottom: 4px; }
+.lesson-markdown li > ul, .lesson-markdown li > ol { margin-top: 4px; margin-bottom: 4px; }
+.lesson-markdown strong { font-weight: 600; }
+.lesson-markdown a { color: #2563EB; text-decoration: none; }
+.lesson-markdown a:hover { text-decoration: underline; }
+.lesson-markdown blockquote {
+  margin: 0 0 1rem; padding: 12px 16px;
+  border-left: 4px solid var(--yellow-400); background: var(--yellow-50);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+}
+.lesson-markdown blockquote p:last-child { margin-bottom: 0; }
+.lesson-markdown code {
+  font-size: 0.85em; background: #F1F5F9; color: #3730A3;
+  padding: 2px 6px; border-radius: 4px;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+.lesson-markdown pre {
+  margin: 0 0 1rem; padding: 16px; border-radius: var(--radius-sm);
+  background: #1E293B; overflow-x: auto; border-left: 3px solid #6366F1;
+}
+.lesson-markdown pre code {
+  background: transparent; color: #E2E8F0; padding: 0;
+  font-size: 0.8125rem; line-height: 1.5;
+}
+.lesson-markdown table {
+  width: 100%; border-collapse: collapse; margin: 0 0 1rem;
+  font-size: 0.875rem;
+}
+.lesson-markdown th {
+  background: #1E40AF; color: white;
+  padding: 8px 12px; text-align: left; font-weight: 600;
+}
+.lesson-markdown td {
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+}
+.lesson-markdown tr:nth-child(even) { background: #F8FAFC; }
+.lesson-markdown hr { border: none; border-top: 2px solid var(--border); margin: 2rem 0; }
+.lesson-markdown img { max-width: 100%; border-radius: var(--radius-sm); }
+
+/* Module button as real button (not link) */
+.module-btn-lesson {
+  cursor: pointer; font-family: inherit;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(3, 1fr); }
   .links-grid { grid-template-columns: repeat(2, 1fr); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .hero h1 { font-size: 1.75rem; }
+  .lesson-overlay { padding: 8px; }
+  .lesson-viewer { height: 95vh; }
+  .lesson-body { padding: 16px 20px; }
+  .lesson-tabs { gap: 2px; }
+  .lesson-tab { padding: 4px 8px; font-size: 0.75rem; }
+  .lesson-tab-link { display: none; }
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -217,4 +366,6 @@ body {
   .features-grid { grid-template-columns: 1fr 1fr; }
   .hero h1 { font-size: 1.5rem; }
   .contracts-header, .contract-row { font-size: 0.75rem; }
+  .lesson-overlay { padding: 0; }
+  .lesson-viewer { height: 100vh; border-radius: 0; }
 }
