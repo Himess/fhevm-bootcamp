@@ -1,21 +1,9 @@
 import React from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { lessons, exercises } from "./lessonData";
 
 const GITHUB_REPO = "https://github.com/Himess/fhevm-bootcamp";
-
-// Import all lesson and exercise markdown at build time
-const lessonFiles = import.meta.glob<string>("../../modules/*/lesson.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
-
-const exerciseFiles = import.meta.glob<string>("../../modules/*/exercise.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
 
 type Tab = "lesson" | "exercise";
 
@@ -41,13 +29,8 @@ export default function LessonViewer({
   const [tab, setTab] = React.useState<Tab>("lesson");
   const contentRef = React.useRef<HTMLDivElement>(null);
 
-  // Find content by folder name
-  const lessonKey = Object.keys(lessonFiles).find((k) => k.includes(moduleFolder));
-  const exerciseKey = Object.keys(exerciseFiles).find((k) => k.includes(moduleFolder));
-
-  const lessonContent = lessonKey ? lessonFiles[lessonKey] : null;
-  const exerciseContent = exerciseKey ? exerciseFiles[exerciseKey] : null;
-
+  const lessonContent = lessons[moduleFolder] ?? null;
+  const exerciseContent = exercises[moduleFolder] ?? null;
   const content = tab === "lesson" ? lessonContent : exerciseContent;
 
   // Scroll to top on tab or module change
