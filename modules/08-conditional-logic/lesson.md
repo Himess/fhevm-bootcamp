@@ -1,5 +1,12 @@
 # Module 08: Conditional Logic — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 07
+**Learning Objectives:**
+- Master FHE.select() for branchless conditionals
+- Implement the silent failure pattern
+- Build multi-condition encrypted logic
+
 ## Introduction
 
 In standard Solidity, you write `if (balance >= amount) { ... }` to branch on a condition. With encrypted values, this is **impossible** — you cannot branch on an encrypted boolean because the EVM does not know whether it is true or false.
@@ -37,6 +44,22 @@ balance = FHE.select(hasEnough, newBalance, balance);
 // If hasEnough: balance = newBalance
 // If !hasEnough: balance = balance (unchanged)
 ```
+
+---
+
+## The Silent Failure Pattern
+
+One of the most important design patterns in FHE development is the **silent failure pattern**: instead of reverting on failure, the operation always succeeds but transfers 0 (or performs no change) when conditions aren't met.
+
+**Why?** If a transaction reverts, an observer learns the condition failed (e.g., "balance was insufficient"). This leaks private information. With `FHE.select()`, both outcomes execute identically — the observer cannot distinguish success from failure.
+
+This pattern appears throughout the bootcamp:
+- **Module 11:** Confidential ERC-20 transfers send 0 on insufficient balance
+- **Module 12:** Duplicate votes are silently ignored
+- **Module 13:** Invalid auction bids have no effect
+- **Module 18:** DeFi operations fail silently on insufficient collateral
+
+You will see this pattern referred to as the **no-revert pattern** or **silent failure pattern** in later modules.
 
 ---
 

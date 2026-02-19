@@ -1,5 +1,12 @@
 # Module 00 - Lesson: Solidity Prerequisites
 
+**Duration:** 2 hours
+**Prerequisites:** Basic programming knowledge
+**Learning Objectives:**
+- Review Solidity fundamentals
+- Understand Hardhat workflow
+- Refresh cryptography basics
+
 ---
 
 ## Table of Contents

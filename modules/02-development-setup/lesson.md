@@ -1,5 +1,12 @@
 # Module 02: FHEVM Development Setup — Lesson
 
+**Duration:** 2 hours
+**Prerequisites:** Module 01
+**Learning Objectives:**
+- Set up fhEVM development environment
+- Write and deploy first encrypted contract
+- Understand project structure
+
 ## Introduction
 
 Before you can write confidential smart contracts, you need a proper development environment. This module walks you through every step — from installing Node.js and Hardhat to deploying and testing your first FHEVM contract.

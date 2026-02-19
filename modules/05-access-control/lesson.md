@@ -1,5 +1,12 @@
 # Module 05: Access Control (ACL) — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 04
+**Learning Objectives:**
+- Master the ACL system (allow/allowThis/allowTransient)
+- Implement multi-user encrypted data access
+- Understand permission lifecycles
+
 ## Introduction
 
 In a public blockchain, all state is readable by everyone. With FHE, the data is encrypted — but who decides who can **operate** on it or **decrypt** it? The FHEVM Access Control List (ACL) system answers this question.
@@ -320,6 +327,21 @@ FHE.allow(tempResult, helperContract);
 // Better — access expires after transaction
 FHE.allowTransient(tempResult, helperContract);
 ```
+
+---
+
+## Input Validation with FHE.isInitialized()
+
+Before operating on encrypted values received from external sources, validate they are properly initialized:
+
+```solidity
+function processValue(euint64 value) internal {
+    require(FHE.isInitialized(value), "Invalid encrypted input");
+    // Now safe to operate on value
+}
+```
+
+`FHE.isInitialized()` returns `true` if the handle points to a valid ciphertext. This prevents operating on uninitialized (zero) handles that could cause unexpected behavior. We'll explore this further in Module 16 (Security).
 
 ---
 

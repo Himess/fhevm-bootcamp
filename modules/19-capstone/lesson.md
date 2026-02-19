@@ -1,5 +1,12 @@
 # Module 19: Capstone -- Confidential DAO -- Lesson
 
+**Duration:** 5 hours
+**Prerequisites:** Modules 00-18
+**Learning Objectives:**
+- Build a complete Confidential DAO combining all learned patterns
+- Implement encrypted governance with weighted voting
+- Integrate cross-contract ACL and treasury management
+
 ## Introduction
 
 This capstone project brings together every concept from the bootcamp into a single, comprehensive application: a **Confidential DAO**. This DAO features:

@@ -1,5 +1,12 @@
 # Module 03: Encrypted Types Deep Dive — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 02
+**Learning Objectives:**
+- Master all encrypted types (ebool through euint256 and eaddress)
+- Understand type casting and conversions
+- Learn basic ACL patterns for storing encrypted values
+
 ## Introduction
 
 FHEVM provides a rich set of encrypted data types that mirror familiar Solidity types. Understanding these types — their sizes, capabilities, gas costs, and storage behavior — is fundamental to writing effective confidential smart contracts.
@@ -175,6 +182,18 @@ function setRecipient(address recipient) public {
 ```solidity
 ebool isSame = FHE.eq(_secretRecipient, FHE.asEaddress(msg.sender));
 ```
+
+### Encrypted Bytes Types
+
+fhEVM also provides encrypted byte string types for handling fixed-size binary data:
+
+| Type | Size | Use Case |
+|------|------|----------|
+| `ebytes64` | 64 bytes | Short encrypted messages, compact data |
+| `ebytes128` | 128 bytes | Medium encrypted payloads |
+| `ebytes256` | 256 bytes | Large encrypted data, hash-sized values |
+
+These types support equality comparison (`FHE.eq`) and bitwise operations but not arithmetic. They are useful when you need to store and compare encrypted data that doesn't represent a number.
 
 ---
 

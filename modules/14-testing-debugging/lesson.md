@@ -1,5 +1,12 @@
 # Module 14: Testing & Debugging FHE Contracts -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 13
+**Learning Objectives:**
+- Master the encrypt-act-decrypt-assert testing pattern
+- Test silent failures and ACL boundaries
+- Debug encrypted contract state
+
 ## Introduction: The Testing Challenge
 
 Testing smart contracts that use Fully Homomorphic Encryption (FHE) is fundamentally different from testing standard Solidity contracts. In a normal contract, you can:

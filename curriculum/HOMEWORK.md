@@ -18,7 +18,7 @@ This document defines the four weekly homework assignments for the FHEVM Bootcam
 ## Week 1 Homework: Encrypted Calculator
 
 **Due:** End of Week 1
-**Covers:** Modules 00-04 (Prerequisites, FHE Intro, Setup, Encrypted Types, Operations)
+**Covers:** Modules 00-04 (Prerequisites, FHE Intro, Setup, Encrypted Types, Operations). Note: basic ACL patterns (`FHE.allowThis`, `FHE.allow`) are introduced in Module 03 as part of storing encrypted values.
 **Estimated Time:** 3-4 hours
 
 ### Specification

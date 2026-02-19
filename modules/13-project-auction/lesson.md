@@ -1,5 +1,12 @@
 # Module 13: Sealed-Bid Auction -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 12
+**Learning Objectives:**
+- Build sealed-bid auction with encrypted comparisons
+- Implement MEV-protected bidding
+- Handle winner determination and deposit refunds
+
 ## Introduction
 
 Auctions on public blockchains suffer from a fundamental problem: **all bids are visible**. This enables:

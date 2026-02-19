@@ -1,5 +1,12 @@
 # Module 16: Security Best Practices for FHE -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 15
+**Learning Objectives:**
+- Identify and mitigate 7 critical FHE vulnerabilities
+- Implement LastError pattern for encrypted error handling
+- Validate inputs with FHE.isInitialized()
+
 ## Introduction: FHE Security is Different
 
 Security in traditional smart contracts focuses on reentrancy, integer overflow, access control, and front-running. The data itself is always public -- anyone can read any storage slot. The security model is about protecting *logic*, not *data*.

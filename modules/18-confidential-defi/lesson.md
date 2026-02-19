@@ -1,5 +1,12 @@
 # Module 18: Confidential DeFi -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 17
+**Learning Objectives:**
+- Build confidential lending protocol with encrypted collateral
+- Implement encrypted order book with price-time matching
+- Understand ERC-7984 and Zaiffer production patterns
+
 ## Introduction: Why Confidential DeFi?
 
 Decentralized finance has transformed how we think about financial services. Lending, trading, and asset management can now happen without intermediaries. But there is a fundamental problem: **everything is public**.

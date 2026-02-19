@@ -3,6 +3,13 @@
 export const lessons: Record<string, string> = {
   "00-prerequisites": `# Module 00 - Lesson: Solidity Prerequisites
 
+**Duration:** 2 hours
+**Prerequisites:** Basic programming knowledge
+**Learning Objectives:**
+- Review Solidity fundamentals
+- Understand Hardhat workflow
+- Refresh cryptography basics
+
 ---
 
 ## Table of Contents
@@ -523,6 +530,13 @@ These fundamentals form the foundation upon which fhEVM builds. In the next modu
 **Next:** [Module 01 - Introduction to FHE](../01-intro-to-fhe/README.md)
 `,
   "01-intro-to-fhe": `# Module 01 - Lesson: Introduction to Fully Homomorphic Encryption
+
+**Duration:** 2 hours
+**Prerequisites:** Module 00
+**Learning Objectives:**
+- Understand FHE concepts and types (PHE/SHE/FHE)
+- Learn TFHE scheme basics
+- Explore fhEVM architecture and use cases
 
 ---
 
@@ -1321,6 +1335,13 @@ And they can do all of this using familiar Solidity syntax, deploying to an EVM-
 `,
   "02-development-setup": `# Module 02: FHEVM Development Setup — Lesson
 
+**Duration:** 2 hours
+**Prerequisites:** Module 01
+**Learning Objectives:**
+- Set up fhEVM development environment
+- Write and deploy first encrypted contract
+- Understand project structure
+
 ## Introduction
 
 Before you can write confidential smart contracts, you need a proper development environment. This module walks you through every step — from installing Node.js and Hardhat to deploying and testing your first FHEVM contract.
@@ -1638,6 +1659,13 @@ You now have a fully functional FHEVM development environment. In the next modul
 `,
   "03-encrypted-types": `# Module 03: Encrypted Types Deep Dive — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 02
+**Learning Objectives:**
+- Master all encrypted types (ebool through euint256 and eaddress)
+- Understand type casting and conversions
+- Learn basic ACL patterns for storing encrypted values
+
 ## Introduction
 
 FHEVM provides a rich set of encrypted data types that mirror familiar Solidity types. Understanding these types — their sizes, capabilities, gas costs, and storage behavior — is fundamental to writing effective confidential smart contracts.
@@ -1813,6 +1841,18 @@ function setRecipient(address recipient) public {
 \`\`\`solidity
 ebool isSame = FHE.eq(_secretRecipient, FHE.asEaddress(msg.sender));
 \`\`\`
+
+### Encrypted Bytes Types
+
+fhEVM also provides encrypted byte string types for handling fixed-size binary data:
+
+| Type | Size | Use Case |
+|------|------|----------|
+| \`ebytes64\` | 64 bytes | Short encrypted messages, compact data |
+| \`ebytes128\` | 128 bytes | Medium encrypted payloads |
+| \`ebytes256\` | 256 bytes | Large encrypted data, hash-sized values |
+
+These types support equality comparison (\`FHE.eq\`) and bitwise operations but not arithmetic. They are useful when you need to store and compare encrypted data that doesn't represent a number.
 
 ---
 
@@ -2006,6 +2046,13 @@ function setSecret(uint32 val) public {
 - Choose the **smallest type** that fits your data to minimize gas costs.
 `,
   "04-operations": `# Module 04: Operations on Encrypted Data — Lesson
+
+**Duration:** 3 hours
+**Prerequisites:** Module 03
+**Learning Objectives:**
+- Perform arithmetic operations on encrypted values
+- Use bitwise and comparison operations
+- Understand gas costs of FHE operations
 
 ## Introduction
 
@@ -2440,6 +2487,13 @@ Operations ordered by approximate gas cost (lowest to highest):
 `,
   "05-access-control": `# Module 05: Access Control (ACL) — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 04
+**Learning Objectives:**
+- Master the ACL system (allow/allowThis/allowTransient)
+- Implement multi-user encrypted data access
+- Understand permission lifecycles
+
 ## Introduction
 
 In a public blockchain, all state is readable by everyone. With FHE, the data is encrypted — but who decides who can **operate** on it or **decrypt** it? The FHEVM Access Control List (ACL) system answers this question.
@@ -2763,6 +2817,21 @@ FHE.allowTransient(tempResult, helperContract);
 
 ---
 
+## Input Validation with FHE.isInitialized()
+
+Before operating on encrypted values received from external sources, validate they are properly initialized:
+
+\`\`\`solidity
+function processValue(euint64 value) internal {
+    require(FHE.isInitialized(value), "Invalid encrypted input");
+    // Now safe to operate on value
+}
+\`\`\`
+
+\`FHE.isInitialized()\` returns \`true\` if the handle points to a valid ciphertext. This prevents operating on uninitialized (zero) handles that could cause unexpected behavior. We'll explore this further in Module 16 (Security).
+
+---
+
 ## Summary
 
 | Function | Purpose | Duration |
@@ -2782,6 +2851,13 @@ FHE.allowTransient(tempResult, helperContract);
 6. No direct revocation — rotate data instead
 `,
   "06-encrypted-inputs": `# Module 06: Encrypted Inputs & ZK Proofs — Lesson
+
+**Duration:** 3 hours
+**Prerequisites:** Module 05
+**Learning Objectives:**
+- Handle encrypted inputs from users with FHE.fromExternal()
+- Understand ZK proof validation
+- Implement client-side encryption flow
 
 ## Introduction
 
@@ -3208,6 +3284,13 @@ await contract.myFunction(encrypted.handles[0], encrypted.inputProof);
 `,
   "07-decryption": `# Module 07: Decryption Patterns — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 06
+**Learning Objectives:**
+- Implement public decryption with makePubliclyDecryptable()
+- Implement user-specific decryption with Relayer SDK
+- Understand when and why to decrypt
+
 ## Introduction
 
 Encrypted data is only useful if you can eventually act on the plaintext. FHEVM provides two primary decryption approaches:
@@ -3252,6 +3335,8 @@ contract VoteRevealer is ZamaEthereumConfig {
     }
 }
 \`\`\`
+
+> **Warning:** \`FHE.makePubliclyDecryptable()\` is **irreversible**. Once a value is marked for public decryption, it cannot be made private again. Only use this for aggregate values (vote totals, auction results) — never for individual user data (balances, personal information). See Module 16 for security implications.
 
 ### When to Use
 - Vote results that should become public
@@ -3608,6 +3693,13 @@ _balance = FHE.add(_balance, amount);
 `,
   "08-conditional-logic": `# Module 08: Conditional Logic — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 07
+**Learning Objectives:**
+- Master FHE.select() for branchless conditionals
+- Implement the silent failure pattern
+- Build multi-condition encrypted logic
+
 ## Introduction
 
 In standard Solidity, you write \`if (balance >= amount) { ... }\` to branch on a condition. With encrypted values, this is **impossible** — you cannot branch on an encrypted boolean because the EVM does not know whether it is true or false.
@@ -3645,6 +3737,22 @@ balance = FHE.select(hasEnough, newBalance, balance);
 // If hasEnough: balance = newBalance
 // If !hasEnough: balance = balance (unchanged)
 \`\`\`
+
+---
+
+## The Silent Failure Pattern
+
+One of the most important design patterns in FHE development is the **silent failure pattern**: instead of reverting on failure, the operation always succeeds but transfers 0 (or performs no change) when conditions aren't met.
+
+**Why?** If a transaction reverts, an observer learns the condition failed (e.g., "balance was insufficient"). This leaks private information. With \`FHE.select()\`, both outcomes execute identically — the observer cannot distinguish success from failure.
+
+This pattern appears throughout the bootcamp:
+- **Module 11:** Confidential ERC-20 transfers send 0 on insufficient balance
+- **Module 12:** Duplicate votes are silently ignored
+- **Module 13:** Invalid auction bids have no effect
+- **Module 18:** DeFi operations fail silently on insufficient collateral
+
+You will see this pattern referred to as the **no-revert pattern** or **silent failure pattern** in later modules.
 
 ---
 
@@ -3969,6 +4077,13 @@ FHE.select(cond, euint32_a, euint32_b);  // OK
 **Key principle:** In FHE, you never branch — you always compute all paths and **select** the correct result.
 `,
   "09-random": `# Module 09: On-Chain Encrypted Randomness — Lesson
+
+**Duration:** 2 hours
+**Prerequisites:** Module 08
+**Learning Objectives:**
+- Generate on-chain encrypted randomness with FHE.randEuintXX()
+- Implement bounded random ranges
+- Build fair lottery and gaming mechanics
 
 ## Introduction
 
@@ -4776,6 +4891,13 @@ After \`makePubliclyDecryptable()\`, any user can decrypt the result client-side
 `,
   "10-frontend-integration": `# Module 10: Frontend Integration -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 09
+**Learning Objectives:**
+- Integrate fhEVM with React using Relayer SDK
+- Encrypt inputs client-side and submit transactions
+- Decrypt and display user-specific data
+
 ## Introduction
 
 So far we have written and tested FHEVM contracts using Hardhat. In a real application, users interact through a web frontend. This module covers everything needed to connect a React + ethers.js dApp to FHEVM contracts using the **Relayer SDK (\`@zama-fhe/relayer-sdk\`)**.
@@ -5206,6 +5328,13 @@ After calling \`makePubliclyDecryptable()\`, any user can decrypt the value with
 `,
   "11-project-erc20": `# Module 11: Confidential ERC-20 -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Modules 00-10
+**Learning Objectives:**
+- Build a confidential ERC-20 token with encrypted balances
+- Implement no-revert transfer pattern
+- Understand ERC-7984 standard
+
 ## Introduction
 
 A standard ERC-20 token exposes all balances and transfer amounts publicly on-chain. Anyone can see how much every address holds and every transfer that occurs. With FHEVM, we can build an ERC-20 where **balances are encrypted** and **transfer amounts are hidden**, while still preserving the core ERC-20 functionality.
@@ -5525,6 +5654,13 @@ These changes are necessary for privacy but mean the contract cannot be used wit
 `,
   "12-project-voting": `# Module 12: Confidential Voting -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 11
+**Learning Objectives:**
+- Build encrypted voting with homomorphic tallying
+- Prevent double voting without revealing voter identity
+- Implement result reveal mechanism
+
 ## Introduction
 
 Voting is one of the most compelling use cases for FHE on blockchain. In traditional on-chain voting (e.g., governance DAOs), every vote is publicly visible. This creates problems:
@@ -5814,6 +5950,13 @@ The voter sends an encrypted option index. The contract loops through all option
 - The pattern extends to multi-option voting with encrypted option indices (same \`euint8\` input type)
 `,
   "13-project-auction": `# Module 13: Sealed-Bid Auction -- Lesson
+
+**Duration:** 4 hours
+**Prerequisites:** Module 12
+**Learning Objectives:**
+- Build sealed-bid auction with encrypted comparisons
+- Implement MEV-protected bidding
+- Handle winner determination and deposit refunds
 
 ## Introduction
 
@@ -6272,6 +6415,13 @@ The \`reservePrice\` is stored per auction. It can be checked against the decryp
 - Privacy of deposit amounts requires fixed-deposit designs
 `,
   "14-testing-debugging": `# Module 14: Testing & Debugging FHE Contracts -- Lesson
+
+**Duration:** 3 hours
+**Prerequisites:** Module 13
+**Learning Objectives:**
+- Master the encrypt-act-decrypt-assert testing pattern
+- Test silent failures and ACL boundaries
+- Debug encrypted contract state
 
 ## Introduction: The Testing Challenge
 
@@ -7200,6 +7350,13 @@ Refer to \`test/TestableVault.test.ts\` for the complete implementation.
 `,
   "15-gas-optimization": `# Module 15: Gas Optimization for FHE -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 14
+**Learning Objectives:**
+- Optimize FHE gas costs through type selection and plaintext operands
+- Implement batch processing patterns
+- Profile and benchmark encrypted operations
+
 ## Introduction: Why Gas Matters Even More with FHE
 
 Every Solidity developer knows that gas optimization matters. But when you work with Fully Homomorphic Encryption on fhEVM, gas optimization is not a "nice to have" -- it is a survival skill.
@@ -7837,6 +7994,13 @@ Then, in the quiz, you will test your understanding of the gas cost model and op
 5. Ask yourself for every encrypted value: "Does this actually need to be secret?"
 `,
   "16-security": `# Module 16: Security Best Practices for FHE -- Lesson
+
+**Duration:** 3 hours
+**Prerequisites:** Module 15
+**Learning Objectives:**
+- Identify and mitigate 7 critical FHE vulnerabilities
+- Implement LastError pattern for encrypted error handling
+- Validate inputs with FHE.isInitialized()
 
 ## Introduction: FHE Security is Different
 
@@ -8523,6 +8687,13 @@ This is the discipline of FHE security.
 `,
   "17-advanced-patterns": `# Module 17: Advanced FHE Design Patterns -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 16
+**Learning Objectives:**
+- Implement encrypted state machines and registries
+- Master cross-contract FHE composability
+- Build advanced data structures with encrypted values
+
 ## Introduction: Beyond Basic FHE
 
 By now you know how to declare encrypted types, perform FHE operations, manage ACL permissions, handle encrypted inputs, request decryptions, and use conditional logic with \`FHE.select()\`. Those are the building blocks. This module teaches you how to combine them into **design patterns** that solve real problems in production confidential applications.
@@ -9158,6 +9329,13 @@ These patterns are not theoretical. They appear in every non-trivial FHE applica
 In the next module, you will see how these patterns scale to even more complex architectures as we approach the capstone project.
 `,
   "18-confidential-defi": `# Module 18: Confidential DeFi -- Lesson
+
+**Duration:** 4 hours
+**Prerequisites:** Module 17
+**Learning Objectives:**
+- Build confidential lending protocol with encrypted collateral
+- Implement encrypted order book with price-time matching
+- Understand ERC-7984 and Zaiffer production patterns
 
 ## Introduction: Why Confidential DeFi?
 
@@ -9971,6 +10149,13 @@ Key testing patterns for DeFi:
 - FHE-based DeFi is not theoretical -- the contracts in this module are functional and testable today
 `,
   "19-capstone": `# Module 19: Capstone -- Confidential DAO -- Lesson
+
+**Duration:** 5 hours
+**Prerequisites:** Modules 00-18
+**Learning Objectives:**
+- Build a complete Confidential DAO combining all learned patterns
+- Implement encrypted governance with weighted voting
+- Integrate cross-contract ACL and treasury management
 
 ## Introduction
 

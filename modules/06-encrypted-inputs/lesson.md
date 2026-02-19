@@ -1,5 +1,12 @@
 # Module 06: Encrypted Inputs & ZK Proofs — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 05
+**Learning Objectives:**
+- Handle encrypted inputs from users with FHE.fromExternal()
+- Understand ZK proof validation
+- Implement client-side encryption flow
+
 ## Introduction
 
 In previous modules, we used `FHE.asEuint32(plaintext)` to create encrypted values. While this encrypts the value on-chain, the **plaintext is visible in the transaction calldata**. Anyone monitoring the mempool or reading the blockchain can see the original value.

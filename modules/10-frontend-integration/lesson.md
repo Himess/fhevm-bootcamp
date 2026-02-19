@@ -1,5 +1,12 @@
 # Module 10: Frontend Integration -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 09
+**Learning Objectives:**
+- Integrate fhEVM with React using Relayer SDK
+- Encrypt inputs client-side and submit transactions
+- Decrypt and display user-specific data
+
 ## Introduction
 
 So far we have written and tested FHEVM contracts using Hardhat. In a real application, users interact through a web frontend. This module covers everything needed to connect a React + ethers.js dApp to FHEVM contracts using the **Relayer SDK (`@zama-fhe/relayer-sdk`)**.

@@ -1,5 +1,12 @@
 # Module 07: Decryption Patterns — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 06
+**Learning Objectives:**
+- Implement public decryption with makePubliclyDecryptable()
+- Implement user-specific decryption with Relayer SDK
+- Understand when and why to decrypt
+
 ## Introduction
 
 Encrypted data is only useful if you can eventually act on the plaintext. FHEVM provides two primary decryption approaches:
@@ -44,6 +51,8 @@ contract VoteRevealer is ZamaEthereumConfig {
     }
 }
 ```
+
+> **Warning:** `FHE.makePubliclyDecryptable()` is **irreversible**. Once a value is marked for public decryption, it cannot be made private again. Only use this for aggregate values (vote totals, auction results) — never for individual user data (balances, personal information). See Module 16 for security implications.
 
 ### When to Use
 - Vote results that should become public

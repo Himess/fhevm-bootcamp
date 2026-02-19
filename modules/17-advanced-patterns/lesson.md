@@ -1,5 +1,12 @@
 # Module 17: Advanced FHE Design Patterns -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 16
+**Learning Objectives:**
+- Implement encrypted state machines and registries
+- Master cross-contract FHE composability
+- Build advanced data structures with encrypted values
+
 ## Introduction: Beyond Basic FHE
 
 By now you know how to declare encrypted types, perform FHE operations, manage ACL permissions, handle encrypted inputs, request decryptions, and use conditional logic with `FHE.select()`. Those are the building blocks. This module teaches you how to combine them into **design patterns** that solve real problems in production confidential applications.

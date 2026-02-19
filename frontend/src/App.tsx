@@ -102,7 +102,7 @@ const FEATURES = [
   { icon: "📝", title: "215 Quiz Questions", desc: "Interactive browser-based assessment" },
   { icon: "💻", title: "35 Contracts", desc: "All deployed on Ethereum Sepolia testnet" },
   { icon: "🧪", title: "328 Tests", desc: "Full Hardhat test suite, all passing" },
-  { icon: "🏗️", title: "18 Exercises", desc: "Hands-on coding with solution files" },
+  { icon: "🏗️", title: "20 Exercises", desc: "Hands-on coding with solution files" },
   { icon: "📚", title: "Instructor Guide", desc: "943-line teaching companion" },
   { icon: "🐳", title: "Docker Support", desc: "One-command reproducible environment" },
 ];

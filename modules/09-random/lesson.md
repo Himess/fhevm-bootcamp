@@ -1,5 +1,12 @@
 # Module 09: On-Chain Encrypted Randomness — Lesson
 
+**Duration:** 2 hours
+**Prerequisites:** Module 08
+**Learning Objectives:**
+- Generate on-chain encrypted randomness with FHE.randEuintXX()
+- Implement bounded random ranges
+- Build fair lottery and gaming mechanics
+
 ## Introduction
 
 Randomness is a fundamental building block for many blockchain applications: lotteries, games, NFT minting, random selection, shuffling, and more. However, generating truly unpredictable and manipulation-resistant randomness on a public, deterministic blockchain is one of the hardest unsolved problems in smart contract development.

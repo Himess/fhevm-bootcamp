@@ -1,5 +1,12 @@
 # Module 15: Gas Optimization for FHE -- Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 14
+**Learning Objectives:**
+- Optimize FHE gas costs through type selection and plaintext operands
+- Implement batch processing patterns
+- Profile and benchmark encrypted operations
+
 ## Introduction: Why Gas Matters Even More with FHE
 
 Every Solidity developer knows that gas optimization matters. But when you work with Fully Homomorphic Encryption on fhEVM, gas optimization is not a "nice to have" -- it is a survival skill.

@@ -1,5 +1,12 @@
 # Module 01 - Lesson: Introduction to Fully Homomorphic Encryption
 
+**Duration:** 2 hours
+**Prerequisites:** Module 00
+**Learning Objectives:**
+- Understand FHE concepts and types (PHE/SHE/FHE)
+- Learn TFHE scheme basics
+- Explore fhEVM architecture and use cases
+
 ---
 
 ## Table of Contents

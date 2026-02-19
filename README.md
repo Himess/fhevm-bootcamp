@@ -111,10 +111,10 @@ This bootcamp consists of **20 modules** organized into a 4-week progressive pro
 
 | Week | Theme | Modules | Hours | Milestone |
 |------|-------|---------|-------|-----------|
-| **Week 1** | Foundation & Operations | 00-04 | ~12h | Environment ready, encrypted types mastered, all FHE operations understood |
-| **Week 2** | Core Patterns | 05-09 | ~14h | ACL, encrypted inputs, decryption, conditional logic, randomness |
-| **Week 3** | Applications & Testing | 10-14 | ~18h | Frontend integration, ERC-20, voting, auction built and tested |
-| **Week 4** | Mastery & Capstone | 15-19 | ~19h | Gas optimization, security audit, DeFi patterns, Confidential DAO |
+| **Week 1** | Foundation & Operations | 00-04 | ~12h | Quiz 1 ≥ 70% + Encrypted Calculator homework submitted |
+| **Week 2** | Core Patterns | 05-09 | ~14h | Quiz 2 ≥ 70% + Encrypted Vault homework submitted |
+| **Week 3** | Applications & Testing | 10-14 | ~18h | Quiz 3 ≥ 70% + Token + Voting homework submitted |
+| **Week 4** | Mastery & Capstone | 15-19 | ~19h | Quiz 4 ≥ 70% + Capstone DAO submitted and reviewed |
 
 **Total Duration: ~63 hours (~16h/week)**
 

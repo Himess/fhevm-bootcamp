@@ -1,5 +1,12 @@
 # Module 12: Confidential Voting -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Module 11
+**Learning Objectives:**
+- Build encrypted voting with homomorphic tallying
+- Prevent double voting without revealing voter identity
+- Implement result reveal mechanism
+
 ## Introduction
 
 Voting is one of the most compelling use cases for FHE on blockchain. In traditional on-chain voting (e.g., governance DAOs), every vote is publicly visible. This creates problems:

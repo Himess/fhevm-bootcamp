@@ -1,5 +1,12 @@
 # Module 04: Operations on Encrypted Data — Lesson
 
+**Duration:** 3 hours
+**Prerequisites:** Module 03
+**Learning Objectives:**
+- Perform arithmetic operations on encrypted values
+- Use bitwise and comparison operations
+- Understand gas costs of FHE operations
+
 ## Introduction
 
 The power of FHE lies in performing computations directly on encrypted data. FHEVM exposes a comprehensive set of operations through the `FHE` library. This module covers every operation category: arithmetic, bitwise, and comparison.

@@ -1,5 +1,12 @@
 # Module 11: Confidential ERC-20 -- Lesson
 
+**Duration:** 4 hours
+**Prerequisites:** Modules 00-10
+**Learning Objectives:**
+- Build a confidential ERC-20 token with encrypted balances
+- Implement no-revert transfer pattern
+- Understand ERC-7984 standard
+
 ## Introduction
 
 A standard ERC-20 token exposes all balances and transfer amounts publicly on-chain. Anyone can see how much every address holds and every transfer that occurs. With FHEVM, we can build an ERC-20 where **balances are encrypted** and **transfer amounts are hidden**, while still preserving the core ERC-20 functionality.
