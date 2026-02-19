@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint32, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedMinMax - Module 08: Find min/max using select
 contract EncryptedMinMax is ZamaEthereumConfig {
     euint32 private _resultA;
     euint32 private _resultB;
 
-    function getResultA() external view returns (euint32) { return _resultA; }
-    function getResultB() external view returns (euint32) { return _resultB; }
+    function getResultA() external view returns (euint32) {
+        return _resultA;
+    }
+    function getResultB() external view returns (euint32) {
+        return _resultB;
+    }
 
     /// @notice Find min of two encrypted values
     function findMin(uint32 a, uint32 b) external {

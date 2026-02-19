@@ -29,9 +29,7 @@ describe("SimpleStorage", function () {
   it("should emit ValueChanged event on set", async function () {
     const tx = await simpleStorage.set(100);
     const receipt = await tx.wait();
-    const event = receipt.logs.find(
-      (log: any) => log.fragment?.name === "ValueChanged"
-    );
+    const event = receipt.logs.find((log: any) => log.fragment?.name === "ValueChanged");
     expect(event).to.not.be.undefined;
     expect(event.args[0]).to.equal(100n);
   });

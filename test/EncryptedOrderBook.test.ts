@@ -22,13 +22,12 @@ describe("EncryptedOrderBook", function () {
     const enc = await fhevm
       .createEncryptedInput(orderBookAddress, alice.address)
       .add64(100) // price
-      .add64(50)  // amount
+      .add64(50) // amount
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        enc.handles[0], enc.inputProof,
-        enc.handles[1], enc.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(enc.handles[0], enc.inputProof, enc.handles[1], enc.inputProof)
     ).wait();
 
     expect(await orderBook.orderCount()).to.equal(1n);
@@ -42,13 +41,12 @@ describe("EncryptedOrderBook", function () {
     const enc = await fhevm
       .createEncryptedInput(orderBookAddress, bob.address)
       .add64(200) // price
-      .add64(30)  // amount
+      .add64(30) // amount
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        enc.handles[0], enc.inputProof,
-        enc.handles[1], enc.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(enc.handles[0], enc.inputProof, enc.handles[1], enc.inputProof)
     ).wait();
 
     expect(await orderBook.orderCount()).to.equal(1n);
@@ -61,26 +59,29 @@ describe("EncryptedOrderBook", function () {
     const encBuy = await fhevm
       .createEncryptedInput(orderBookAddress, alice.address)
       .add64(150) // price
-      .add64(40)  // amount
+      .add64(40) // amount
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        encBuy.handles[0], encBuy.inputProof,
-        encBuy.handles[1], encBuy.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(encBuy.handles[0], encBuy.inputProof, encBuy.handles[1], encBuy.inputProof)
     ).wait();
 
     // Bob submits sell at price 100, amount 40
     const encSell = await fhevm
       .createEncryptedInput(orderBookAddress, bob.address)
       .add64(100) // price
-      .add64(40)  // amount
+      .add64(40) // amount
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        encSell.handles[0], encSell.inputProof,
-        encSell.handles[1], encSell.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(
+          encSell.handles[0],
+          encSell.inputProof,
+          encSell.handles[1],
+          encSell.inputProof,
+        )
     ).wait();
 
     // Owner matches orders
@@ -88,11 +89,21 @@ describe("EncryptedOrderBook", function () {
 
     // Both orders should have 0 remaining amount (fully filled)
     const buyAmountHandle = await orderBook.getOrderAmount(0);
-    const buyAmount = await fhevm.userDecryptEuint(FhevmType.euint64, buyAmountHandle, orderBookAddress, alice);
+    const buyAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      buyAmountHandle,
+      orderBookAddress,
+      alice,
+    );
     expect(buyAmount).to.equal(0n);
 
     const sellAmountHandle = await orderBook.getOrderAmount(1);
-    const sellAmount = await fhevm.userDecryptEuint(FhevmType.euint64, sellAmountHandle, orderBookAddress, bob);
+    const sellAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      sellAmountHandle,
+      orderBookAddress,
+      bob,
+    );
     expect(sellAmount).to.equal(0n);
   });
 
@@ -100,27 +111,30 @@ describe("EncryptedOrderBook", function () {
     // Alice submits buy at price 50, amount 40
     const encBuy = await fhevm
       .createEncryptedInput(orderBookAddress, alice.address)
-      .add64(50)  // price
-      .add64(40)  // amount
+      .add64(50) // price
+      .add64(40) // amount
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        encBuy.handles[0], encBuy.inputProof,
-        encBuy.handles[1], encBuy.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(encBuy.handles[0], encBuy.inputProof, encBuy.handles[1], encBuy.inputProof)
     ).wait();
 
     // Bob submits sell at price 100, amount 40
     const encSell = await fhevm
       .createEncryptedInput(orderBookAddress, bob.address)
       .add64(100) // price
-      .add64(40)  // amount
+      .add64(40) // amount
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        encSell.handles[0], encSell.inputProof,
-        encSell.handles[1], encSell.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(
+          encSell.handles[0],
+          encSell.inputProof,
+          encSell.handles[1],
+          encSell.inputProof,
+        )
     ).wait();
 
     // Owner tries to match — prices incompatible, amounts unchanged
@@ -128,11 +142,21 @@ describe("EncryptedOrderBook", function () {
 
     // Both orders should still have 40 remaining (no fill)
     const buyAmountHandle = await orderBook.getOrderAmount(0);
-    const buyAmount = await fhevm.userDecryptEuint(FhevmType.euint64, buyAmountHandle, orderBookAddress, alice);
+    const buyAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      buyAmountHandle,
+      orderBookAddress,
+      alice,
+    );
     expect(buyAmount).to.equal(40n);
 
     const sellAmountHandle = await orderBook.getOrderAmount(1);
-    const sellAmount = await fhevm.userDecryptEuint(FhevmType.euint64, sellAmountHandle, orderBookAddress, bob);
+    const sellAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      sellAmountHandle,
+      orderBookAddress,
+      bob,
+    );
     expect(sellAmount).to.equal(40n);
   });
 
@@ -143,10 +167,9 @@ describe("EncryptedOrderBook", function () {
       .add64(50)
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        enc.handles[0], enc.inputProof,
-        enc.handles[1], enc.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(enc.handles[0], enc.inputProof, enc.handles[1], enc.inputProof)
     ).wait();
 
     expect(await orderBook.activeOrderCount()).to.equal(1n);
@@ -165,10 +188,14 @@ describe("EncryptedOrderBook", function () {
       .add64(25)
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        encAlice.handles[0], encAlice.inputProof,
-        encAlice.handles[1], encAlice.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(
+          encAlice.handles[0],
+          encAlice.inputProof,
+          encAlice.handles[1],
+          encAlice.inputProof,
+        )
     ).wait();
 
     // Bob sells
@@ -178,10 +205,9 @@ describe("EncryptedOrderBook", function () {
       .add64(30)
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        encBob.handles[0], encBob.inputProof,
-        encBob.handles[1], encBob.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(encBob.handles[0], encBob.inputProof, encBob.handles[1], encBob.inputProof)
     ).wait();
 
     // Charlie buys
@@ -191,10 +217,14 @@ describe("EncryptedOrderBook", function () {
       .add64(10)
       .encrypt();
     await (
-      await orderBook.connect(charlie).submitBuyOrder(
-        encCharlie.handles[0], encCharlie.inputProof,
-        encCharlie.handles[1], encCharlie.inputProof
-      )
+      await orderBook
+        .connect(charlie)
+        .submitBuyOrder(
+          encCharlie.handles[0],
+          encCharlie.inputProof,
+          encCharlie.handles[1],
+          encCharlie.inputProof,
+        )
     ).wait();
 
     expect(await orderBook.orderCount()).to.equal(3n);
@@ -212,10 +242,9 @@ describe("EncryptedOrderBook", function () {
       .add64(10)
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        encBuy.handles[0], encBuy.inputProof,
-        encBuy.handles[1], encBuy.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(encBuy.handles[0], encBuy.inputProof, encBuy.handles[1], encBuy.inputProof)
     ).wait();
 
     const encSell = await fhevm
@@ -224,10 +253,14 @@ describe("EncryptedOrderBook", function () {
       .add64(10)
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        encSell.handles[0], encSell.inputProof,
-        encSell.handles[1], encSell.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(
+          encSell.handles[0],
+          encSell.inputProof,
+          encSell.handles[1],
+          encSell.inputProof,
+        )
     ).wait();
 
     try {
@@ -246,10 +279,9 @@ describe("EncryptedOrderBook", function () {
       .add64(100)
       .encrypt();
     await (
-      await orderBook.connect(alice).submitBuyOrder(
-        encBuy.handles[0], encBuy.inputProof,
-        encBuy.handles[1], encBuy.inputProof
-      )
+      await orderBook
+        .connect(alice)
+        .submitBuyOrder(encBuy.handles[0], encBuy.inputProof, encBuy.handles[1], encBuy.inputProof)
     ).wait();
 
     // Bob sell order: price 150, amount 60
@@ -259,10 +291,14 @@ describe("EncryptedOrderBook", function () {
       .add64(60)
       .encrypt();
     await (
-      await orderBook.connect(bob).submitSellOrder(
-        encSell.handles[0], encSell.inputProof,
-        encSell.handles[1], encSell.inputProof
-      )
+      await orderBook
+        .connect(bob)
+        .submitSellOrder(
+          encSell.handles[0],
+          encSell.inputProof,
+          encSell.handles[1],
+          encSell.inputProof,
+        )
     ).wait();
 
     // Match: fill = min(100, 60) = 60
@@ -270,12 +306,22 @@ describe("EncryptedOrderBook", function () {
 
     // Buy order remaining: 100 - 60 = 40
     const buyAmountHandle = await orderBook.getOrderAmount(0);
-    const buyAmount = await fhevm.userDecryptEuint(FhevmType.euint64, buyAmountHandle, orderBookAddress, alice);
+    const buyAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      buyAmountHandle,
+      orderBookAddress,
+      alice,
+    );
     expect(buyAmount).to.equal(40n);
 
     // Sell order remaining: 60 - 60 = 0
     const sellAmountHandle = await orderBook.getOrderAmount(1);
-    const sellAmount = await fhevm.userDecryptEuint(FhevmType.euint64, sellAmountHandle, orderBookAddress, bob);
+    const sellAmount = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      sellAmountHandle,
+      orderBookAddress,
+      bob,
+    );
     expect(sellAmount).to.equal(0n);
   });
 });

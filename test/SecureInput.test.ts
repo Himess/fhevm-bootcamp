@@ -38,7 +38,12 @@ describe("SecureInput", function () {
     await (await contract.storeUint32(enc.handles[0], enc.inputProof)).wait();
 
     const handle = await contract.getStoredUint32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(100000n);
   });
 
@@ -50,7 +55,12 @@ describe("SecureInput", function () {
     await (await contract.storeUint64(enc.handles[0], enc.inputProof)).wait();
 
     const handle = await contract.getStoredUint64();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(9999999n);
   });
 
@@ -86,19 +96,25 @@ describe("SecureInput", function () {
       .encrypt();
 
     await (
-      await contract.storeMultiple(
-        encrypted.handles[0],
-        encrypted.handles[1],
-        encrypted.inputProof
-      )
+      await contract.storeMultiple(encrypted.handles[0], encrypted.handles[1], encrypted.inputProof)
     ).wait();
 
     const handle32 = await contract.getStoredUint32();
-    const clear32 = await fhevm.userDecryptEuint(FhevmType.euint32, handle32, contractAddress, deployer);
+    const clear32 = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle32,
+      contractAddress,
+      deployer,
+    );
     expect(clear32).to.equal(42n);
 
     const handle64 = await contract.getStoredUint64();
-    const clear64 = await fhevm.userDecryptEuint(FhevmType.euint64, handle64, contractAddress, deployer);
+    const clear64 = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle64,
+      contractAddress,
+      deployer,
+    );
     expect(clear64).to.equal(999n);
   });
 

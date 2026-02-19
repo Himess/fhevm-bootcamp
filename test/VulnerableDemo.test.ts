@@ -30,12 +30,7 @@ describe("VulnerableDemo", function () {
     const handle = await contract.getBalance(alice.address);
 
     try {
-      await fhevm.userDecryptEuint(
-        FhevmType.euint64,
-        handle,
-        contractAddress,
-        alice
-      );
+      await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, alice);
       // If we reach here, the test environment may not enforce ACL strictly.
       // In production, this would fail with "not authorized to decrypt."
     } catch (error: any) {
@@ -46,12 +41,7 @@ describe("VulnerableDemo", function () {
     // Compare with the SECURE setupMint
     await (await contract.setupMint(bob.address, 500)).wait();
     const bobHandle = await contract.getBalance(bob.address);
-    const bobBal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      bobHandle,
-      contractAddress,
-      bob
-    );
+    const bobBal = await fhevm.userDecryptEuint(FhevmType.euint64, bobHandle, contractAddress, bob);
     expect(bobBal).to.equal(500n); // Bob CAN decrypt (proper ACL)
   });
 
@@ -68,9 +58,7 @@ describe("VulnerableDemo", function () {
     // depending on whether the branch is taken or not.
     // Here we verify the function executes and the transfer counter increments,
     // demonstrating that the branch was taken (information leaked).
-    await (
-      await contract.connect(alice).vulnerableTransfer(bob.address, 100)
-    ).wait();
+    await (await contract.connect(alice).vulnerableTransfer(bob.address, 100)).wait();
 
     // The transfer counter reveals that the if-branch was taken
     // (i.e., alice had sufficient balance). This is the information leak.
@@ -101,7 +89,7 @@ describe("VulnerableDemo", function () {
       FhevmType.euint64,
       handle,
       contractAddress,
-      signers[1]
+      signers[1],
     );
     expect(bal).to.equal(50n);
   });
@@ -131,31 +119,17 @@ describe("VulnerableDemo", function () {
 
   it("VULN-7: vulnerableOpenMint -- anyone can mint tokens", async function () {
     // Alice (non-owner) can mint tokens to herself
-    await (
-      await contract.connect(alice).vulnerableOpenMint(alice.address, 999999)
-    ).wait();
+    await (await contract.connect(alice).vulnerableOpenMint(alice.address, 999999)).wait();
 
     const handle = await contract.getBalance(alice.address);
-    const bal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      handle,
-      contractAddress,
-      alice
-    );
+    const bal = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, alice);
     expect(bal).to.equal(999999n);
 
     // Bob can also mint to himself
-    await (
-      await contract.connect(bob).vulnerableOpenMint(bob.address, 888888)
-    ).wait();
+    await (await contract.connect(bob).vulnerableOpenMint(bob.address, 888888)).wait();
 
     const bobHandle = await contract.getBalance(bob.address);
-    const bobBal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      bobHandle,
-      contractAddress,
-      bob
-    );
+    const bobBal = await fhevm.userDecryptEuint(FhevmType.euint64, bobHandle, contractAddress, bob);
     expect(bobBal).to.equal(888888n);
 
     // In a secure contract, only the owner should be able to mint.

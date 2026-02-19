@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint32 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedLottery - Module 09: On-chain lottery with encrypted randomness
 /// @notice Players buy tickets, a random winner is selected using FHE randomness.
@@ -79,7 +79,7 @@ contract EncryptedLottery is ZamaEthereumConfig {
         // CEI pattern: clear winner before external call to prevent reentrancy
         winner = address(0);
 
-        (bool sent,) = msg.sender.call{value: prize}("");
+        (bool sent, ) = msg.sender.call{ value: prize }("");
         require(sent, "Transfer failed");
         emit PrizeClaimed(msg.sender, prize);
     }

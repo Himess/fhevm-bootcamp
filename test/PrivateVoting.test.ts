@@ -29,9 +29,7 @@ describe("PrivateVoting", function () {
       .add8(1)
       .encrypt();
 
-    const tx = await contract
-      .connect(alice)
-      .vote(encrypted.handles[0], encrypted.inputProof);
+    const tx = await contract.connect(alice).vote(encrypted.handles[0], encrypted.inputProof);
     await tx.wait();
 
     expect(await contract.hasVoted(alice.address)).to.equal(true);
@@ -39,19 +37,11 @@ describe("PrivateVoting", function () {
 
   it("should prevent double voting", async function () {
     // First vote
-    const enc1 = await fhevm
-      .createEncryptedInput(contractAddress, alice.address)
-      .add8(0)
-      .encrypt();
-    await (
-      await contract.connect(alice).vote(enc1.handles[0], enc1.inputProof)
-    ).wait();
+    const enc1 = await fhevm.createEncryptedInput(contractAddress, alice.address).add8(0).encrypt();
+    await (await contract.connect(alice).vote(enc1.handles[0], enc1.inputProof)).wait();
 
     // Second vote should fail
-    const enc2 = await fhevm
-      .createEncryptedInput(contractAddress, alice.address)
-      .add8(1)
-      .encrypt();
+    const enc2 = await fhevm.createEncryptedInput(contractAddress, alice.address).add8(1).encrypt();
     try {
       await contract.connect(alice).vote(enc2.handles[0], enc2.inputProof);
       expect.fail("Should have reverted");
@@ -62,22 +52,12 @@ describe("PrivateVoting", function () {
 
   it("should tally votes correctly after closing", async function () {
     // Alice votes for candidate 0
-    const enc1 = await fhevm
-      .createEncryptedInput(contractAddress, alice.address)
-      .add8(0)
-      .encrypt();
-    await (
-      await contract.connect(alice).vote(enc1.handles[0], enc1.inputProof)
-    ).wait();
+    const enc1 = await fhevm.createEncryptedInput(contractAddress, alice.address).add8(0).encrypt();
+    await (await contract.connect(alice).vote(enc1.handles[0], enc1.inputProof)).wait();
 
     // Bob votes for candidate 0
-    const enc2 = await fhevm
-      .createEncryptedInput(contractAddress, bob.address)
-      .add8(0)
-      .encrypt();
-    await (
-      await contract.connect(bob).vote(enc2.handles[0], enc2.inputProof)
-    ).wait();
+    const enc2 = await fhevm.createEncryptedInput(contractAddress, bob.address).add8(0).encrypt();
+    await (await contract.connect(bob).vote(enc2.handles[0], enc2.inputProof)).wait();
 
     // Close voting
     await (await contract.closeVoting()).wait();
@@ -87,22 +67,12 @@ describe("PrivateVoting", function () {
 
     // Check tally for candidate 0 (should be 2)
     const handle0 = await contract.getTally(0);
-    const tally0 = await fhevm.userDecryptEuint(
-      FhevmType.euint32,
-      handle0,
-      contractAddress,
-      owner
-    );
+    const tally0 = await fhevm.userDecryptEuint(FhevmType.euint32, handle0, contractAddress, owner);
     expect(tally0).to.equal(2n);
 
     // Check tally for candidate 1 (should be 0)
     const handle1 = await contract.getTally(1);
-    const tally1 = await fhevm.userDecryptEuint(
-      FhevmType.euint32,
-      handle1,
-      contractAddress,
-      owner
-    );
+    const tally1 = await fhevm.userDecryptEuint(FhevmType.euint32, handle1, contractAddress, owner);
     expect(tally1).to.equal(0n);
   });
 

@@ -77,7 +77,12 @@ describe("RevealableAuction", function () {
 
     // Decrypt the revealed highest bid
     const handle = await contract.getHighestBid();
-    const value = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const value = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(value).to.equal(1000n);
   });
 

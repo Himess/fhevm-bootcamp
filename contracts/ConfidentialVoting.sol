@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint32, euint8, externalEuint8, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title ConfidentialVoting - Module 12: Private on-chain voting
 /// @notice Vote tallies are encrypted until reveal. No one can see individual votes.
@@ -62,14 +62,8 @@ contract ConfidentialVoting is ZamaEthereumConfig {
         euint32 oneVote = FHE.asEuint32(1);
         euint32 zeroVote = FHE.asEuint32(0);
 
-        proposals[proposalId].yesVotes = FHE.add(
-            proposals[proposalId].yesVotes,
-            FHE.select(isYes, oneVote, zeroVote)
-        );
-        proposals[proposalId].noVotes = FHE.add(
-            proposals[proposalId].noVotes,
-            FHE.select(isYes, zeroVote, oneVote)
-        );
+        proposals[proposalId].yesVotes = FHE.add(proposals[proposalId].yesVotes, FHE.select(isYes, oneVote, zeroVote));
+        proposals[proposalId].noVotes = FHE.add(proposals[proposalId].noVotes, FHE.select(isYes, zeroVote, oneVote));
 
         FHE.allowThis(proposals[proposalId].yesVotes);
         FHE.allowThis(proposals[proposalId].noVotes);

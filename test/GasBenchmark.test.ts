@@ -36,7 +36,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "add32 (enc+enc)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultAdd32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(300n);
   });
 
@@ -46,7 +51,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "add32 (enc+plain)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultAddPlaintext();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(300n);
   });
 
@@ -56,7 +66,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "sub32 (enc-enc)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultSub32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(300n);
   });
 
@@ -66,7 +81,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "mul32 (enc*enc)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultMul32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(84n);
   });
 
@@ -76,7 +96,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "mul32 (enc*plain)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultMulPlaintext();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(84n);
   });
 
@@ -86,7 +111,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "div32 (enc/plain)", gas: receipt.gasUsed });
 
     const handle = await contract.getResultDiv32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(25n);
   });
 
@@ -124,7 +154,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "select32", gas: receipt.gasUsed });
 
     const handle = await contract.getResultSelect();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(10n); // condition=true selects first
   });
 
@@ -148,7 +183,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "min32", gas: receipt.gasUsed });
 
     const handle = await contract.getResultMin();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(30n);
   });
 
@@ -158,7 +198,12 @@ describe("GasBenchmark", function () {
     gasResults.push({ operation: "max32", gas: receipt.gasUsed });
 
     const handle = await contract.getResultMax();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(70n);
   });
 });

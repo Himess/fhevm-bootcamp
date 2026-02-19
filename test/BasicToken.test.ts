@@ -29,9 +29,7 @@ describe("BasicToken", function () {
   it("should emit Transfer event on mint", async function () {
     const tx = await token.mint(alice.address, 500);
     const receipt = await tx.wait();
-    const event = receipt.logs.find(
-      (log: any) => log.fragment?.name === "Transfer"
-    );
+    const event = receipt.logs.find((log: any) => log.fragment?.name === "Transfer");
     expect(event).to.not.be.undefined;
     expect(event.args[0]).to.equal(ethers.ZeroAddress);
     expect(event.args[1]).to.equal(alice.address);
@@ -63,9 +61,7 @@ describe("BasicToken", function () {
   it("should emit Approval event", async function () {
     const tx = await token.connect(alice).approve(bob.address, 500);
     const receipt = await tx.wait();
-    const event = receipt.logs.find(
-      (log: any) => log.fragment?.name === "Approval"
-    );
+    const event = receipt.logs.find((log: any) => log.fragment?.name === "Approval");
     expect(event).to.not.be.undefined;
     expect(event.args[0]).to.equal(alice.address);
     expect(event.args[1]).to.equal(bob.address);

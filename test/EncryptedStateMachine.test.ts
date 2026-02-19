@@ -24,10 +24,7 @@ describe("EncryptedStateMachine", function () {
   });
 
   it("should allow owner to set encrypted threshold", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(5)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(5).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
 
     expect(await machine.thresholdSet()).to.equal(true);
@@ -35,10 +32,7 @@ describe("EncryptedStateMachine", function () {
 
   it("should transition from IDLE to ACTIVE", async function () {
     // Set threshold first
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(3)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(3).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
 
     // Activate
@@ -48,10 +42,7 @@ describe("EncryptedStateMachine", function () {
 
   it("should allow users to perform actions and increment counter", async function () {
     // Setup: set threshold and activate
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(5)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(5).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
     await (await machine.activate()).wait();
 
@@ -64,10 +55,7 @@ describe("EncryptedStateMachine", function () {
   });
 
   it("should support batch actions", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(10)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(10).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
     await (await machine.activate()).wait();
 
@@ -77,10 +65,7 @@ describe("EncryptedStateMachine", function () {
 
   it("should handle full lifecycle: set threshold, activate, perform actions, check transition, complete", async function () {
     // Set threshold to 3
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(3)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(3).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
 
     // Activate
@@ -105,10 +90,7 @@ describe("EncryptedStateMachine", function () {
 
   it("should not transition when counter has not reached threshold", async function () {
     // Set threshold to 10
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(10)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(10).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
 
     // Activate
@@ -130,10 +112,7 @@ describe("EncryptedStateMachine", function () {
   });
 
   it("should support pause and resume", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(machineAddress, owner.address)
-      .add32(5)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(machineAddress, owner.address).add32(5).encrypt();
     await (await machine.setThreshold(enc.handles[0], enc.inputProof)).wait();
     await (await machine.activate()).wait();
 

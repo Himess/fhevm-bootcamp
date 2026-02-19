@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedOrderBook - Module 18: Privacy-preserving order book
 /// @notice Users submit encrypted limit orders (buy/sell) with encrypted prices and amounts.

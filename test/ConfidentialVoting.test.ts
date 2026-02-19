@@ -50,16 +50,10 @@ describe("ConfidentialVoting", function () {
   it("should prevent double voting", async function () {
     await (await voting.createProposal("Double Vote Test", 3600)).wait();
 
-    const enc1 = await fhevm
-      .createEncryptedInput(votingAddress, alice.address)
-      .add8(1)
-      .encrypt();
+    const enc1 = await fhevm.createEncryptedInput(votingAddress, alice.address).add8(1).encrypt();
     await (await voting.connect(alice).vote(0, enc1.handles[0], enc1.inputProof)).wait();
 
-    const enc2 = await fhevm
-      .createEncryptedInput(votingAddress, alice.address)
-      .add8(0)
-      .encrypt();
+    const enc2 = await fhevm.createEncryptedInput(votingAddress, alice.address).add8(0).encrypt();
     try {
       await voting.connect(alice).vote(0, enc2.handles[0], enc2.inputProof);
       expect.fail("Should have reverted");
@@ -72,17 +66,11 @@ describe("ConfidentialVoting", function () {
     await (await voting.createProposal("Tally Test", 100)).wait();
 
     // Alice votes yes
-    const encYes = await fhevm
-      .createEncryptedInput(votingAddress, alice.address)
-      .add8(1)
-      .encrypt();
+    const encYes = await fhevm.createEncryptedInput(votingAddress, alice.address).add8(1).encrypt();
     await (await voting.connect(alice).vote(0, encYes.handles[0], encYes.inputProof)).wait();
 
     // Bob votes no
-    const encNo = await fhevm
-      .createEncryptedInput(votingAddress, bob.address)
-      .add8(0)
-      .encrypt();
+    const encNo = await fhevm.createEncryptedInput(votingAddress, bob.address).add8(0).encrypt();
     await (await voting.connect(bob).vote(0, encNo.handles[0], encNo.inputProof)).wait();
 
     // Charlie votes yes
@@ -116,10 +104,7 @@ describe("ConfidentialVoting", function () {
 
   it("should reject vote on invalid proposal", async function () {
     try {
-      const enc = await fhevm
-        .createEncryptedInput(votingAddress, alice.address)
-        .add8(1)
-        .encrypt();
+      const enc = await fhevm.createEncryptedInput(votingAddress, alice.address).add8(1).encrypt();
       await voting.connect(alice).vote(999, enc.handles[0], enc.inputProof);
       expect.fail("Should have reverted");
     } catch (error: any) {
@@ -140,17 +125,11 @@ describe("ConfidentialVoting", function () {
     await (await voting.createProposal("Results Test", 100)).wait();
 
     // Alice votes yes
-    const encYes = await fhevm
-      .createEncryptedInput(votingAddress, alice.address)
-      .add8(1)
-      .encrypt();
+    const encYes = await fhevm.createEncryptedInput(votingAddress, alice.address).add8(1).encrypt();
     await (await voting.connect(alice).vote(0, encYes.handles[0], encYes.inputProof)).wait();
 
     // Bob votes no
-    const encNo = await fhevm
-      .createEncryptedInput(votingAddress, bob.address)
-      .add8(0)
-      .encrypt();
+    const encNo = await fhevm.createEncryptedInput(votingAddress, bob.address).add8(0).encrypt();
     await (await voting.connect(bob).vote(0, encNo.handles[0], encNo.inputProof)).wait();
 
     // Advance time past deadline

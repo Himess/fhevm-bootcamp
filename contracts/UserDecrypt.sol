@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint32, externalEuint32 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title UserDecrypt - Module 05/07: Per-user secret storage with access sharing
 /// @notice Demonstrates ACL-gated user decryption patterns

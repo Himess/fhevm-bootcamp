@@ -26,14 +26,17 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(10000)
       .encrypt();
-    await (
-      await lending.connect(alice).deposit(enc.handles[0], enc.inputProof)
-    ).wait();
+    await (await lending.connect(alice).deposit(enc.handles[0], enc.inputProof)).wait();
 
     expect(await lending.isUserInitialized(alice.address)).to.equal(true);
 
     const handle = await lending.connect(alice).getCollateral();
-    const collateral = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const collateral = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(collateral).to.equal(10000n);
   });
 
@@ -52,12 +55,15 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(5000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     const handle = await lending.connect(alice).getBorrowBalance();
-    const borrowBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const borrowBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(borrowBalance).to.equal(5000n);
   });
 
@@ -76,13 +82,16 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(6000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Borrow balance should remain 0 (borrow silently failed)
     const handle = await lending.connect(alice).getBorrowBalance();
-    const borrowBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const borrowBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(borrowBalance).to.equal(0n);
   });
 
@@ -100,21 +109,22 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(4000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Repay 1500
     const encRepay = await fhevm
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(1500)
       .encrypt();
-    await (
-      await lending.connect(alice).repay(encRepay.handles[0], encRepay.inputProof)
-    ).wait();
+    await (await lending.connect(alice).repay(encRepay.handles[0], encRepay.inputProof)).wait();
 
     const handle = await lending.connect(alice).getBorrowBalance();
-    const borrowBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const borrowBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(borrowBalance).to.equal(2500n);
   });
 
@@ -132,21 +142,22 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(3000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Repay 9999 (more than owed — should cap at 3000)
     const encRepay = await fhevm
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(9999)
       .encrypt();
-    await (
-      await lending.connect(alice).repay(encRepay.handles[0], encRepay.inputProof)
-    ).wait();
+    await (await lending.connect(alice).repay(encRepay.handles[0], encRepay.inputProof)).wait();
 
     const handle = await lending.connect(alice).getBorrowBalance();
-    const borrowBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const borrowBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(borrowBalance).to.equal(0n);
   });
 
@@ -164,15 +175,18 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(5000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Accrue interest once: 5000 + 5000/10 = 5000 + 500 = 5500
     await (await lending.accrueInterest(alice.address)).wait();
 
     const handle = await lending.connect(alice).getBorrowBalance();
-    const borrowBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const borrowBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(borrowBalance).to.equal(5500n);
   });
 
@@ -190,9 +204,7 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(2000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Withdraw 5000 (remaining 5000 >= 2 * 2000 = 4000, so it is safe)
     const encWithdraw = await fhevm
@@ -204,7 +216,12 @@ describe("ConfidentialLending", function () {
     ).wait();
 
     const handle = await lending.connect(alice).getCollateral();
-    const collateral = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const collateral = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(collateral).to.equal(5000n);
   });
 
@@ -222,9 +239,7 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(4000)
       .encrypt();
-    await (
-      await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)
-    ).wait();
+    await (await lending.connect(alice).borrow(encBorrow.handles[0], encBorrow.inputProof)).wait();
 
     // Try to withdraw 5000 (remaining 5000 < 2 * 4000 = 8000, fails silently)
     const encWithdraw = await fhevm
@@ -237,7 +252,12 @@ describe("ConfidentialLending", function () {
 
     // Collateral should remain 10000
     const handle = await lending.connect(alice).getCollateral();
-    const collateral = await fhevm.userDecryptEuint(FhevmType.euint64, handle, lendingAddress, alice);
+    const collateral = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      lendingAddress,
+      alice,
+    );
     expect(collateral).to.equal(10000n);
   });
 
@@ -247,27 +267,33 @@ describe("ConfidentialLending", function () {
       .createEncryptedInput(lendingAddress, alice.address)
       .add64(10000)
       .encrypt();
-    await (
-      await lending.connect(alice).deposit(encAlice.handles[0], encAlice.inputProof)
-    ).wait();
+    await (await lending.connect(alice).deposit(encAlice.handles[0], encAlice.inputProof)).wait();
 
     // Bob deposits 5000
     const encBob = await fhevm
       .createEncryptedInput(lendingAddress, bob.address)
       .add64(5000)
       .encrypt();
-    await (
-      await lending.connect(bob).deposit(encBob.handles[0], encBob.inputProof)
-    ).wait();
+    await (await lending.connect(bob).deposit(encBob.handles[0], encBob.inputProof)).wait();
 
     // Check Alice's collateral is 10000
     const aliceHandle = await lending.connect(alice).getCollateral();
-    const aliceCollateral = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, lendingAddress, alice);
+    const aliceCollateral = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      lendingAddress,
+      alice,
+    );
     expect(aliceCollateral).to.equal(10000n);
 
     // Check Bob's collateral is 5000
     const bobHandle = await lending.connect(bob).getCollateral();
-    const bobCollateral = await fhevm.userDecryptEuint(FhevmType.euint64, bobHandle, lendingAddress, bob);
+    const bobCollateral = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      bobHandle,
+      lendingAddress,
+      bob,
+    );
     expect(bobCollateral).to.equal(5000n);
   });
 

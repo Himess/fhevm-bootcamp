@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, externalEuint64, ebool, eaddress} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint64, externalEuint64, ebool, eaddress } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title SealedBidAuction - Module 13: Encrypted sealed-bid auction
 /// @notice Bids are encrypted using FHE. The highest bid is tracked with encrypted comparison.
@@ -48,11 +48,7 @@ contract SealedBidAuction is ZamaEthereumConfig {
     }
 
     /// @notice Create a new auction with a reserve price
-    function createAuction(
-        string calldata item,
-        uint256 duration,
-        uint64 reservePrice
-    ) external onlyOwner {
+    function createAuction(string calldata item, uint256 duration, uint64 reservePrice) external onlyOwner {
         uint256 id = auctionCount++;
         auctions[id].item = item;
         auctions[id].deadline = block.timestamp + duration;
@@ -93,11 +89,7 @@ contract SealedBidAuction is ZamaEthereumConfig {
         FHE.allowThis(_highestBid[auctionId]);
 
         // Update highest bidder using eaddress select
-        _highestBidder[auctionId] = FHE.select(
-            isHigher,
-            FHE.asEaddress(msg.sender),
-            _highestBidder[auctionId]
-        );
+        _highestBidder[auctionId] = FHE.select(isHigher, FHE.asEaddress(msg.sender), _highestBidder[auctionId]);
         FHE.allowThis(_highestBidder[auctionId]);
 
         hasBid[auctionId][msg.sender] = true;
@@ -146,7 +138,7 @@ contract SealedBidAuction is ZamaEthereumConfig {
         require(amount > 0, "No deposit");
 
         deposits[auctionId][msg.sender] = 0;
-        (bool sent,) = payable(msg.sender).call{value: amount}("");
+        (bool sent, ) = payable(msg.sender).call{ value: amount }("");
         require(sent, "Transfer failed");
         emit DepositWithdrawn(auctionId, msg.sender, amount);
     }

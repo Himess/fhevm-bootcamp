@@ -27,28 +27,48 @@ describe("EncryptedTypes", function () {
   it("should set and get encrypted uint16", async function () {
     await (await contract.setUint16(1000)).wait();
     const handle = await contract.getUint16();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint16, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint16,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(1000n);
   });
 
   it("should set and get encrypted uint32", async function () {
     await (await contract.setUint32(123456)).wait();
     const handle = await contract.getUint32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(123456n);
   });
 
   it("should set and get encrypted uint64", async function () {
     await (await contract.setUint64(9999999)).wait();
     const handle = await contract.getUint64();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(9999999n);
   });
 
   it("should handle zero values", async function () {
     await (await contract.setUint32(0)).wait();
     const handle = await contract.getUint32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(0n);
   });
 
@@ -88,7 +108,12 @@ describe("EncryptedTypes", function () {
     await (await contract.setUint128(12345)).wait();
     const handle = await contract.getUint128();
     expect(handle).to.not.equal(ethers.ZeroHash);
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint128, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint128,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(12345n);
   });
 
@@ -96,7 +121,12 @@ describe("EncryptedTypes", function () {
     await (await contract.setUint256(99999)).wait();
     const handle = await contract.getUint256();
     expect(handle).to.not.equal(ethers.ZeroHash);
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint256, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint256,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(99999n);
   });
 });

@@ -122,7 +122,12 @@ describe("EncryptedMarketplace", function () {
 
     // Seller (deployer) balance should be 500
     const handle = await contract.getBalance();
-    const sellerBalance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const sellerBalance = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(sellerBalance).to.equal(500n);
   });
 

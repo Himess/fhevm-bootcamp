@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint32, euint64, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title GasOptimized - Module 15: Gas optimization patterns for FHE operations
 /// @notice Demonstrates before/after optimization patterns for FHE gas reduction.
@@ -13,12 +13,12 @@ contract GasOptimized is ZamaEthereumConfig {
     // Storage — results stored per-pattern so tests can verify correctness
     // -----------------------------------------------------------------------
     euint32 private _result32;
-    euint8  private _result8;
+    euint8 private _result8;
     euint64 private _result64;
 
     // Cached values for the caching pattern
     euint32 private _cachedTaxRate;
-    bool    private _taxCached;
+    bool private _taxCached;
 
     // Batch storage
     euint32 private _valueA;
@@ -28,7 +28,7 @@ contract GasOptimized is ZamaEthereumConfig {
     // Lazy evaluation storage
     euint32 private _lazyPending;
     euint32 private _lazyBase;
-    bool    private _hasPending;
+    bool private _hasPending;
 
     // -----------------------------------------------------------------------
     // Events — track which version was called
@@ -85,9 +85,9 @@ contract GasOptimized is ZamaEthereumConfig {
     /// @notice INEFFICIENT: Uses euint64 for a value that fits in 8 bits (e.g., age 0-255).
     function inefficient_typeSize(uint64 age, uint64 bonus) external {
         emit InefficientTypeCalled("typeSize");
-        euint64 encAge   = FHE.asEuint64(age);
+        euint64 encAge = FHE.asEuint64(age);
         euint64 encBonus = FHE.asEuint64(bonus);
-        euint64 result   = FHE.add(encAge, encBonus);
+        euint64 result = FHE.add(encAge, encBonus);
         _result64 = result;
         FHE.allowThis(_result64);
         FHE.allow(_result64, msg.sender);
@@ -96,9 +96,9 @@ contract GasOptimized is ZamaEthereumConfig {
     /// @notice OPTIMIZED: Uses euint8 — same logic, significantly cheaper.
     function optimized_typeSize(uint8 age, uint8 bonus) external {
         emit OptimizedTypeCalled("typeSize");
-        euint8 encAge   = FHE.asEuint8(age);
+        euint8 encAge = FHE.asEuint8(age);
         euint8 encBonus = FHE.asEuint8(bonus);
-        euint8 result   = FHE.add(encAge, encBonus);
+        euint8 result = FHE.add(encAge, encBonus);
         _result8 = result;
         FHE.allowThis(_result8);
         FHE.allow(_result8, msg.sender);
@@ -111,7 +111,7 @@ contract GasOptimized is ZamaEthereumConfig {
     /// @notice INEFFICIENT: Wraps a known constant into an encrypted value before adding.
     function inefficient_plaintextOperand(uint32 value) external {
         emit InefficientPlaintextCalled("plaintextOperand");
-        euint32 enc      = FHE.asEuint32(value);
+        euint32 enc = FHE.asEuint32(value);
         euint32 encConst = FHE.asEuint32(10); // needlessly encrypted
         _result32 = FHE.add(enc, encConst);
         FHE.allowThis(_result32);
@@ -178,9 +178,9 @@ contract GasOptimized is ZamaEthereumConfig {
     function inefficient_caching(uint32 price) external {
         emit InefficientCacheCalled("caching");
         // Simulate: taxRate = 15, computed via encrypted arithmetic each time
-        euint32 baseTax   = FHE.asEuint32(10);
+        euint32 baseTax = FHE.asEuint32(10);
         euint32 surcharge = FHE.asEuint32(5);
-        euint32 taxRate   = FHE.add(baseTax, surcharge);  // recomputed every call!
+        euint32 taxRate = FHE.add(baseTax, surcharge); // recomputed every call!
 
         euint32 encPrice = FHE.asEuint32(price);
         _result32 = FHE.mul(encPrice, taxRate);
@@ -190,7 +190,7 @@ contract GasOptimized is ZamaEthereumConfig {
 
     /// @notice OPTIMIZED: Cache the tax rate once, reuse on subsequent calls.
     function optimized_caching_setup() external {
-        euint32 baseTax   = FHE.asEuint32(10);
+        euint32 baseTax = FHE.asEuint32(10);
         euint32 surcharge = FHE.asEuint32(5);
         _cachedTaxRate = FHE.add(baseTax, surcharge);
         FHE.allowThis(_cachedTaxRate);
@@ -201,7 +201,7 @@ contract GasOptimized is ZamaEthereumConfig {
         emit OptimizedCacheCalled("caching");
         require(_taxCached, "Call optimized_caching_setup first");
         euint32 encPrice = FHE.asEuint32(price);
-        _result32 = FHE.mul(encPrice, _cachedTaxRate);  // no recomputation!
+        _result32 = FHE.mul(encPrice, _cachedTaxRate); // no recomputation!
         FHE.allowThis(_result32);
         FHE.allow(_result32, msg.sender);
     }
@@ -214,8 +214,8 @@ contract GasOptimized is ZamaEthereumConfig {
     function inefficient_minimize(uint32 value) external {
         emit InefficientMinimizeCalled("minimize");
         euint32 enc = FHE.asEuint32(value);
-        euint32 lo  = FHE.asEuint32(10);
-        euint32 hi  = FHE.asEuint32(100);
+        euint32 lo = FHE.asEuint32(10);
+        euint32 hi = FHE.asEuint32(100);
 
         // Check lower bound
         ebool tooLow = FHE.lt(enc, lo);
@@ -258,8 +258,8 @@ contract GasOptimized is ZamaEthereumConfig {
     /// @notice OPTIMIZED: Stores the base value; defers the expensive computation.
     function optimized_lazy_store(uint32 value) external {
         emit OptimizedLazyCalled("lazy_store");
-        _lazyBase    = FHE.asEuint32(value);
-        _hasPending  = true;
+        _lazyBase = FHE.asEuint32(value);
+        _hasPending = true;
         FHE.allowThis(_lazyBase);
     }
 

@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title SecurityPatterns - Module 16: FHE Security Best Practices
 /// @notice Demonstrates all major security patterns for FHE smart contracts.
 /// @dev This contract is a reference implementation for secure FHE development.
 ///      Each function illustrates a specific security pattern with inline comments.
 contract SecurityPatterns is ZamaEthereumConfig {
-
     // =========================================================================
     // Custom Errors
     // =========================================================================
@@ -183,11 +182,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
         euint8 errorCode = FHE.select(
             canTransfer,
             FHE.asEuint8(ERR_NONE),
-            FHE.select(
-                hasBalance,
-                FHE.asEuint8(ERR_LIMIT_EXCEEDED),
-                FHE.asEuint8(ERR_INSUFFICIENT_BALANCE)
-            )
+            FHE.select(hasBalance, FHE.asEuint8(ERR_LIMIT_EXCEEDED), FHE.asEuint8(ERR_INSUFFICIENT_BALANCE))
         );
         _lastError[msg.sender] = errorCode;
         FHE.allowThis(_lastError[msg.sender]);
@@ -220,10 +215,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
     ///      will exceed the block gas limit.
     /// @param recipients Array of recipient addresses
     /// @param amount Plaintext mint amount per recipient
-    function batchMint(
-        address[] calldata recipients,
-        uint64 amount
-    ) external onlyOwner {
+    function batchMint(address[] calldata recipients, uint64 amount) external onlyOwner {
         // PATTERN: Enforce maximum batch size
         if (recipients.length > maxBatchSize) {
             revert BatchTooLarge(recipients.length, maxBatchSize);
@@ -232,10 +224,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
         for (uint256 i = 0; i < recipients.length; i++) {
             if (recipients[i] == address(0)) continue;
 
-            _balances[recipients[i]] = FHE.add(
-                _balances[recipients[i]],
-                FHE.asEuint64(amount)
-            );
+            _balances[recipients[i]] = FHE.add(_balances[recipients[i]], FHE.asEuint64(amount));
 
             // PATTERN: ACL after every update in the loop
             FHE.allowThis(_balances[recipients[i]]);
@@ -253,10 +242,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
     /// @dev Demonstrates encrypted admin parameters with proper ACL.
     /// @param encLimit New encrypted transfer limit
     /// @param inputProof Proof for the encrypted input
-    function setTransferLimit(
-        externalEuint64 encLimit,
-        bytes calldata inputProof
-    ) external onlyOwner {
+    function setTransferLimit(externalEuint64 encLimit, bytes calldata inputProof) external onlyOwner {
         euint64 limit = FHE.fromExternal(encLimit, inputProof);
         require(FHE.isInitialized(limit), "Invalid encrypted input");
 
@@ -318,10 +304,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
     /// @param userA First user
     /// @param userB Second user
     /// @return Encrypted boolean: true if A's balance >= B's balance
-    function compareBalances(
-        address userA,
-        address userB
-    ) external onlyOwner returns (ebool) {
+    function compareBalances(address userA, address userB) external onlyOwner returns (ebool) {
         // PATTERN: Validate both handles are initialized
         require(FHE.isInitialized(_balances[userA]), "User A has no balance");
         require(FHE.isInitialized(_balances[userB]), "User B has no balance");
@@ -343,10 +326,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
     /// @dev PATTERN: Always check isSenderAllowed before returning handles.
     /// @return The encrypted balance handle
     function getMyBalance() external view returns (euint64) {
-        require(
-            FHE.isSenderAllowed(_balances[msg.sender]),
-            "No ACL access to your balance"
-        );
+        require(FHE.isSenderAllowed(_balances[msg.sender]), "No ACL access to your balance");
         return _balances[msg.sender];
     }
 
@@ -379,10 +359,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
     ///      wrapping on overflow. FHE arithmetic wraps silently, so we must guard.
     /// @param encAmount Encrypted amount to add
     /// @param inputProof Proof for the encrypted input
-    function safeAdd(
-        externalEuint64 encAmount,
-        bytes calldata inputProof
-    ) external rateLimited {
+    function safeAdd(externalEuint64 encAmount, bytes calldata inputProof) external rateLimited {
         euint64 amount = FHE.fromExternal(encAmount, inputProof);
         require(FHE.isInitialized(amount), "Invalid encrypted input");
 
@@ -397,11 +374,7 @@ contract SecurityPatterns is ZamaEthereumConfig {
         FHE.allow(_balances[msg.sender], msg.sender);
 
         // Set error code
-        euint8 errorCode = FHE.select(
-            overflowed,
-            FHE.asEuint8(ERR_INVALID_AMOUNT),
-            FHE.asEuint8(ERR_NONE)
-        );
+        euint8 errorCode = FHE.select(overflowed, FHE.asEuint8(ERR_INVALID_AMOUNT), FHE.asEuint8(ERR_NONE));
         _lastError[msg.sender] = errorCode;
         FHE.allowThis(_lastError[msg.sender]);
         FHE.allow(_lastError[msg.sender], msg.sender);

@@ -37,7 +37,12 @@ describe("HelloFHEVM", function () {
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);
 
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, counter, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      counter,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(5n);
   });
 
@@ -59,7 +64,12 @@ describe("HelloFHEVM", function () {
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);
 
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, counter, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      counter,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(10n);
   });
 
@@ -70,10 +80,9 @@ describe("HelloFHEVM", function () {
       .add32(7)
       .encrypt();
 
-    await (await contract.connect(alice).increment(
-      encrypted.handles[0],
-      encrypted.inputProof
-    )).wait();
+    await (
+      await contract.connect(alice).increment(encrypted.handles[0], encrypted.inputProof)
+    ).wait();
 
     const counter = await contract.getCounter();
     expect(counter).to.not.equal(ethers.ZeroHash);

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title VulnerableDemo - Module 16: DELIBERATELY VULNERABLE for Educational Purposes
 /// @notice !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -13,7 +13,6 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 ///      Comments marked "VULNERABLE:" explain the flaw.
 ///      Comments marked "FIX:" explain the correct approach.
 contract VulnerableDemo is ZamaEthereumConfig {
-
     address public owner;
 
     mapping(address => euint64) private _balances;
@@ -123,10 +122,7 @@ contract VulnerableDemo is ZamaEthereumConfig {
     /// FIX: Always validate:
     ///   euint64 amount = FHE.fromExternal(encAmount, inputProof);
     ///   require(FHE.isInitialized(amount), "Invalid encrypted input");
-    function vulnerableDeposit(
-        externalEuint64 encAmount,
-        bytes calldata inputProof
-    ) external {
+    function vulnerableDeposit(externalEuint64 encAmount, bytes calldata inputProof) external {
         // VULNERABLE: No validation of the encrypted input
         euint64 amount = FHE.fromExternal(encAmount, inputProof);
         // VULNERABLE: Missing require(FHE.isInitialized(amount))
@@ -151,19 +147,13 @@ contract VulnerableDemo is ZamaEthereumConfig {
     ///
     /// FIX: Add a maximum batch size:
     ///   require(recipients.length <= MAX_BATCH, "Batch too large");
-    function vulnerableBatchAdd(
-        address[] calldata recipients,
-        uint64 amount
-    ) external onlyOwner {
+    function vulnerableBatchAdd(address[] calldata recipients, uint64 amount) external onlyOwner {
         // VULNERABLE: No cap on recipients.length
         // An attacker (or even a well-meaning admin) can pass hundreds
         // of addresses, exhausting the block gas limit.
         // FIX: require(recipients.length <= 10, "Batch too large");
         for (uint256 i = 0; i < recipients.length; i++) {
-            _balances[recipients[i]] = FHE.add(
-                _balances[recipients[i]],
-                FHE.asEuint64(amount)
-            );
+            _balances[recipients[i]] = FHE.add(_balances[recipients[i]], FHE.asEuint64(amount));
             FHE.allowThis(_balances[recipients[i]]);
             FHE.allow(_balances[recipients[i]], recipients[i]);
         }

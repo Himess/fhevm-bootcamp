@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, ebool, euint8, euint16, euint32, euint64, euint128, euint256, eaddress} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, ebool, euint8, euint16, euint32, euint64, euint128, euint256, eaddress } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedTypes - Module 03: Demonstrates all encrypted types
 contract EncryptedTypes is ZamaEthereumConfig {

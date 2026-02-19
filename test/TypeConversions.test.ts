@@ -18,14 +18,24 @@ describe("TypeConversions", function () {
   it("should upcast euint8 to euint32", async function () {
     await (await contract.upcast8to32(42)).wait();
     const handle = await contract.getResult32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(42n);
   });
 
   it("should upcast euint16 to euint64", async function () {
     await (await contract.upcast16to64(1000)).wait();
     const handle = await contract.getResult64();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(1000n);
   });
 
@@ -46,21 +56,36 @@ describe("TypeConversions", function () {
   it("should convert plaintext to encrypted", async function () {
     await (await contract.plaintextToEncrypted(999)).wait();
     const handle = await contract.getResult32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(999n);
   });
 
   it("should handle zero value upcast", async function () {
     await (await contract.upcast8to32(0)).wait();
     const handle = await contract.getResult32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(0n);
   });
 
   it("should handle max uint8 upcast", async function () {
     await (await contract.upcast8to32(255)).wait();
     const handle = await contract.getResult32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(255n);
   });
 });

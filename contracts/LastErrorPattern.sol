@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title LastErrorPattern - Module 17: Encrypted error feedback without reverts
 /// @notice Demonstrates the LastError pattern: instead of reverting on encrypted condition

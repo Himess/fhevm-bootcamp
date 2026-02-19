@@ -28,7 +28,7 @@ describe("GasOptimized", function () {
       FhevmType.euint64,
       handle64,
       contractAddress,
-      deployer
+      deployer,
     );
     expect(clear64).to.equal(55n);
 
@@ -40,13 +40,11 @@ describe("GasOptimized", function () {
       FhevmType.euint8,
       handle8,
       contractAddress,
-      deployer
+      deployer,
     );
     expect(clear8).to.equal(55n);
 
-    console.log(
-      `  Type Size — euint64 gas: ${receipt1.gasUsed}, euint8 gas: ${receipt2.gasUsed}`
-    );
+    console.log(`  Type Size — euint64 gas: ${receipt1.gasUsed}, euint8 gas: ${receipt2.gasUsed}`);
   });
 
   // =====================================================================
@@ -61,7 +59,7 @@ describe("GasOptimized", function () {
       FhevmType.euint32,
       handle1,
       contractAddress,
-      deployer
+      deployer,
     );
     expect(clear1).to.equal(52n); // 42 + 10
 
@@ -72,12 +70,12 @@ describe("GasOptimized", function () {
       FhevmType.euint32,
       handle2,
       contractAddress,
-      deployer
+      deployer,
     );
     expect(clear2).to.equal(52n);
 
     console.log(
-      `  Plaintext Operand — encrypted const gas: ${receipt1.gasUsed}, plaintext gas: ${receipt2.gasUsed}`
+      `  Plaintext Operand — encrypted const gas: ${receipt1.gasUsed}, plaintext gas: ${receipt2.gasUsed}`,
     );
   });
 
@@ -124,7 +122,7 @@ describe("GasOptimized", function () {
 
     const totalIndividual = receiptA.gasUsed + receiptB.gasUsed + receiptC.gasUsed;
     console.log(
-      `  Batch — 3 individual txs gas: ${totalIndividual}, 1 batch tx gas: ${receiptBatch.gasUsed}`
+      `  Batch — 3 individual txs gas: ${totalIndividual}, 1 batch tx gas: ${receiptBatch.gasUsed}`,
     );
   });
 
@@ -148,9 +146,7 @@ describe("GasOptimized", function () {
     const clear2 = await fhevm.userDecryptEuint(FhevmType.euint32, h2, contractAddress, deployer);
     expect(clear2).to.equal(1500n);
 
-    console.log(
-      `  Caching — recompute gas: ${receipt1.gasUsed}, cached gas: ${receipt2.gasUsed}`
-    );
+    console.log(`  Caching — recompute gas: ${receipt1.gasUsed}, cached gas: ${receipt2.gasUsed}`);
   });
 
   // =====================================================================
@@ -171,7 +167,7 @@ describe("GasOptimized", function () {
     expect(clear2).to.equal(10n);
 
     console.log(
-      `  Minimize (below) — select-based gas: ${receipt1.gasUsed}, min/max gas: ${receipt2.gasUsed}`
+      `  Minimize (below) — select-based gas: ${receipt1.gasUsed}, min/max gas: ${receipt2.gasUsed}`,
     );
   });
 
@@ -211,7 +207,7 @@ describe("GasOptimized", function () {
     expect(clear2).to.equal(50n);
 
     console.log(
-      `  Lazy Eval — immediate gas: ${receipt1.gasUsed}, store gas: ${receiptStore.gasUsed}, flush gas: ${receiptFlush.gasUsed}`
+      `  Lazy Eval — immediate gas: ${receipt1.gasUsed}, store gas: ${receiptStore.gasUsed}, flush gas: ${receiptFlush.gasUsed}`,
     );
   });
 
@@ -233,9 +229,7 @@ describe("GasOptimized", function () {
     const clear2 = await fhevm.userDecryptEuint(FhevmType.euint32, h2, contractAddress, deployer);
     expect(clear2).to.equal(70n);
 
-    console.log(
-      `  Select — gt+select gas: ${receipt1.gasUsed}, max gas: ${receipt2.gasUsed}`
-    );
+    console.log(`  Select — gt+select gas: ${receipt1.gasUsed}, max gas: ${receipt2.gasUsed}`);
   });
 
   it("should floor at 50 when both inputs are below 50", async function () {
@@ -271,7 +265,7 @@ describe("GasOptimized", function () {
     expect(clear2).to.equal(13n);
 
     console.log(
-      `  Convert — asEuint32(2) gas: ${receipt1.gasUsed}, plaintext 2 gas: ${receipt2.gasUsed}`
+      `  Convert — asEuint32(2) gas: ${receipt1.gasUsed}, plaintext 2 gas: ${receipt2.gasUsed}`,
     );
   });
 });

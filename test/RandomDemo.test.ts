@@ -33,7 +33,12 @@ describe("RandomDemo", function () {
     const handle = await contract.getRandom32();
     expect(handle).to.not.equal(ethers.ZeroHash);
 
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(typeof clear === "bigint" || typeof clear === "number").to.equal(true);
   });
 
@@ -42,14 +47,24 @@ describe("RandomDemo", function () {
     const handle = await contract.getRandom64();
     expect(handle).to.not.equal(ethers.ZeroHash);
 
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(typeof clear === "bigint" || typeof clear === "number").to.equal(true);
   });
 
   it("should generate random in range", async function () {
     await (await contract.randomInRange(100)).wait();
     const handle = await contract.getRandom32();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(Number(clear)).to.be.lessThan(100);
   });
 

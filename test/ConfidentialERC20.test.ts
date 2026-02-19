@@ -35,14 +35,16 @@ describe("ConfidentialERC20", function () {
   it("should transfer tokens", async function () {
     await (await token.mint(alice.address, 1000)).wait();
 
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(300)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(300).encrypt();
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(700n);
 
     const bobHandle = await token.balanceOf(bob.address);
@@ -53,15 +55,17 @@ describe("ConfidentialERC20", function () {
   it("should transfer 0 on insufficient balance (no revert)", async function () {
     await (await token.mint(alice.address, 100)).wait();
 
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(200)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(200).encrypt();
     // Should NOT revert - transfers 0 instead (privacy!)
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(100n); // unchanged
   });
 
@@ -73,17 +77,30 @@ describe("ConfidentialERC20", function () {
       .createEncryptedInput(tokenAddress, alice.address)
       .add64(500)
       .encrypt();
-    await (await token.connect(alice).approve(encApproval.handles[0], encApproval.inputProof, bob.address)).wait();
+    await (
+      await token
+        .connect(alice)
+        .approve(encApproval.handles[0], encApproval.inputProof, bob.address)
+    ).wait();
 
     // Bob transfers 300 from Alice to Bob
     const encTransfer = await fhevm
       .createEncryptedInput(tokenAddress, bob.address)
       .add64(300)
       .encrypt();
-    await (await token.connect(bob).transferFrom(alice.address, encTransfer.handles[0], encTransfer.inputProof, bob.address)).wait();
+    await (
+      await token
+        .connect(bob)
+        .transferFrom(alice.address, encTransfer.handles[0], encTransfer.inputProof, bob.address)
+    ).wait();
 
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(700n);
 
     const bobHandle = await token.balanceOf(bob.address);
@@ -98,11 +115,20 @@ describe("ConfidentialERC20", function () {
       .createEncryptedInput(tokenAddress, alice.address)
       .add64(500)
       .encrypt();
-    await (await token.connect(alice).approve(encApproval.handles[0], encApproval.inputProof, bob.address)).wait();
+    await (
+      await token
+        .connect(alice)
+        .approve(encApproval.handles[0], encApproval.inputProof, bob.address)
+    ).wait();
 
     // Alice can decrypt her allowance to Bob
     const allowanceHandle = await token.allowance(alice.address, bob.address);
-    const allowanceClear = await fhevm.userDecryptEuint(FhevmType.euint64, allowanceHandle, tokenAddress, alice);
+    const allowanceClear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      allowanceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(allowanceClear).to.equal(500n);
   });
 
@@ -114,18 +140,31 @@ describe("ConfidentialERC20", function () {
       .createEncryptedInput(tokenAddress, alice.address)
       .add64(100)
       .encrypt();
-    await (await token.connect(alice).approve(encApproval.handles[0], encApproval.inputProof, bob.address)).wait();
+    await (
+      await token
+        .connect(alice)
+        .approve(encApproval.handles[0], encApproval.inputProof, bob.address)
+    ).wait();
 
     // Bob tries to transferFrom 200 (exceeds allowance)
     const encTransfer = await fhevm
       .createEncryptedInput(tokenAddress, bob.address)
       .add64(200)
       .encrypt();
-    await (await token.connect(bob).transferFrom(alice.address, encTransfer.handles[0], encTransfer.inputProof, bob.address)).wait();
+    await (
+      await token
+        .connect(bob)
+        .transferFrom(alice.address, encTransfer.handles[0], encTransfer.inputProof, bob.address)
+    ).wait();
 
     // Alice balance should be unchanged (1000)
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(1000n);
 
     // Bob balance should be 0
@@ -146,11 +185,10 @@ describe("ConfidentialERC20", function () {
   it("should handle transfer to self", async function () {
     await (await token.mint(alice.address, 500)).wait();
 
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(100)
-      .encrypt();
-    await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, alice.address)).wait();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(100).encrypt();
+    await (
+      await token.connect(alice).transfer(enc.handles[0], enc.inputProof, alice.address)
+    ).wait();
 
     const handle = await token.balanceOf(alice.address);
     const bal = await fhevm.userDecryptEuint(FhevmType.euint64, handle, tokenAddress, alice);

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint32, euint64, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title RandomDemo - Module 09: On-chain encrypted randomness
 contract RandomDemo is ZamaEthereumConfig {
@@ -51,8 +51,16 @@ contract RandomDemo is ZamaEthereumConfig {
         emit RandomGenerated(msg.sender, "bool");
     }
 
-    function getRandomBool() external view returns (ebool) { return _randomBool; }
-    function getRandom8() external view returns (euint8) { return _random8; }
-    function getRandom32() external view returns (euint32) { return _random32; }
-    function getRandom64() external view returns (euint64) { return _random64; }
+    function getRandomBool() external view returns (ebool) {
+        return _randomBool;
+    }
+    function getRandom8() external view returns (euint8) {
+        return _random8;
+    }
+    function getRandom32() external view returns (euint32) {
+        return _random32;
+    }
+    function getRandom64() external view returns (euint64) {
+        return _random64;
+    }
 }

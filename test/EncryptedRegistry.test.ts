@@ -44,14 +44,18 @@ describe("EncryptedRegistry", function () {
       .createEncryptedInput(registryAddress, alice.address)
       .add64(100)
       .encrypt();
-    await (await registry.connect(alice).setValue("balance", enc1.handles[0], enc1.inputProof)).wait();
+    await (
+      await registry.connect(alice).setValue("balance", enc1.handles[0], enc1.inputProof)
+    ).wait();
 
     // Overwrite with new value
     const enc2 = await fhevm
       .createEncryptedInput(registryAddress, alice.address)
       .add64(999)
       .encrypt();
-    await (await registry.connect(alice).setValue("balance", enc2.handles[0], enc2.inputProof)).wait();
+    await (
+      await registry.connect(alice).setValue("balance", enc2.handles[0], enc2.inputProof)
+    ).wait();
 
     // Key count should still be 1
     expect(await registry.connect(alice).getKeyCount()).to.equal(1n);
@@ -109,22 +113,36 @@ describe("EncryptedRegistry", function () {
       .createEncryptedInput(registryAddress, alice.address)
       .add64(111)
       .encrypt();
-    await (await registry.connect(alice).setValue("data", encAlice.handles[0], encAlice.inputProof)).wait();
+    await (
+      await registry.connect(alice).setValue("data", encAlice.handles[0], encAlice.inputProof)
+    ).wait();
 
     // Bob stores a different value under the same key
     const encBob = await fhevm
       .createEncryptedInput(registryAddress, bob.address)
       .add64(222)
       .encrypt();
-    await (await registry.connect(bob).setValue("data", encBob.handles[0], encBob.inputProof)).wait();
+    await (
+      await registry.connect(bob).setValue("data", encBob.handles[0], encBob.inputProof)
+    ).wait();
 
     // Each user retrieves their own value
     const aliceHandle = await registry.connect(alice).getValue("data");
-    const aliceClear = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, registryAddress, alice);
+    const aliceClear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      registryAddress,
+      alice,
+    );
     expect(aliceClear).to.equal(111n);
 
     const bobHandle = await registry.connect(bob).getValue("data");
-    const bobClear = await fhevm.userDecryptEuint(FhevmType.euint64, bobHandle, registryAddress, bob);
+    const bobClear = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      bobHandle,
+      registryAddress,
+      bob,
+    );
     expect(bobClear).to.equal(222n);
   });
 
@@ -133,7 +151,9 @@ describe("EncryptedRegistry", function () {
       .createEncryptedInput(registryAddress, alice.address)
       .add64(10)
       .encrypt();
-    await (await registry.connect(alice).setValue("alpha", enc1.handles[0], enc1.inputProof)).wait();
+    await (
+      await registry.connect(alice).setValue("alpha", enc1.handles[0], enc1.inputProof)
+    ).wait();
 
     const enc2 = await fhevm
       .createEncryptedInput(registryAddress, alice.address)
@@ -147,10 +167,7 @@ describe("EncryptedRegistry", function () {
   });
 
   it("should reject empty key", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(registryAddress, alice.address)
-      .add64(1)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(registryAddress, alice.address).add64(1).encrypt();
 
     try {
       await registry.connect(alice).setValue("", enc.handles[0], enc.inputProof);

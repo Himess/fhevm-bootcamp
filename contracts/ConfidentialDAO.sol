@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint64, euint32, euint8, externalEuint8, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title ConfidentialDAO - Module 14 Capstone: DAO with encrypted voting + treasury
 /// @notice Combines encrypted governance tokens, private voting, and treasury management
@@ -112,14 +112,8 @@ contract ConfidentialDAO is ZamaEthereumConfig {
         euint32 one = FHE.asEuint32(1);
         euint32 zero = FHE.asEuint32(0);
 
-        proposals[proposalId].yesVotes = FHE.add(
-            proposals[proposalId].yesVotes,
-            FHE.select(isYes, one, zero)
-        );
-        proposals[proposalId].noVotes = FHE.add(
-            proposals[proposalId].noVotes,
-            FHE.select(isYes, zero, one)
-        );
+        proposals[proposalId].yesVotes = FHE.add(proposals[proposalId].yesVotes, FHE.select(isYes, one, zero));
+        proposals[proposalId].noVotes = FHE.add(proposals[proposalId].noVotes, FHE.select(isYes, zero, one));
 
         FHE.allowThis(proposals[proposalId].yesVotes);
         FHE.allowThis(proposals[proposalId].noVotes);
@@ -168,7 +162,7 @@ contract ConfidentialDAO is ZamaEthereumConfig {
 
         proposals[proposalId].executed = true;
 
-        (bool sent,) = proposals[proposalId].recipient.call{value: proposals[proposalId].amount}("");
+        (bool sent, ) = proposals[proposalId].recipient.call{ value: proposals[proposalId].amount }("");
         require(sent, "Transfer failed");
 
         emit ProposalExecuted(proposalId);

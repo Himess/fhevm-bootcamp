@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {
-    FHE, euint8, euint32, euint64, ebool,
-    externalEuint8, externalEuint32, externalEuint64, externalEbool
-} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint32, euint64, ebool, externalEuint8, externalEuint32, externalEuint64, externalEbool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title SecureInput - Module 06: Encrypted inputs & ZK proofs
 contract SecureInput is ZamaEthereumConfig {
@@ -49,11 +46,7 @@ contract SecureInput is ZamaEthereumConfig {
     }
 
     /// @notice Store multiple encrypted values in one transaction (shared proof)
-    function storeMultiple(
-        externalEuint32 encA,
-        externalEuint64 encB,
-        bytes calldata inputProof
-    ) external {
+    function storeMultiple(externalEuint32 encA, externalEuint64 encB, bytes calldata inputProof) external {
         _storedUint32 = FHE.fromExternal(encA, inputProof);
         _storedUint64 = FHE.fromExternal(encB, inputProof);
         FHE.allowThis(_storedUint32);
@@ -63,8 +56,16 @@ contract SecureInput is ZamaEthereumConfig {
         emit InputStored(msg.sender, "multiple");
     }
 
-    function getStoredUint8() external view returns (euint8) { return _storedUint8; }
-    function getStoredUint32() external view returns (euint32) { return _storedUint32; }
-    function getStoredUint64() external view returns (euint64) { return _storedUint64; }
-    function getStoredBool() external view returns (ebool) { return _storedBool; }
+    function getStoredUint8() external view returns (euint8) {
+        return _storedUint8;
+    }
+    function getStoredUint32() external view returns (euint32) {
+        return _storedUint32;
+    }
+    function getStoredUint64() external view returns (euint64) {
+        return _storedUint64;
+    }
+    function getStoredBool() external view returns (ebool) {
+        return _storedBool;
+    }
 }

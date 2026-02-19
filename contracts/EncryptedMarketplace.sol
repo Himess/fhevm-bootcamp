@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint32, euint64, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title EncryptedMarketplace - Module 08: Conditional logic with FHE.select()
 /// @notice Marketplace with encrypted prices, stock, balances, and tiered discounts
@@ -69,12 +69,9 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
         ebool valid = FHE.and(hasStock, hasFunds);
 
         // Conditional updates with FHE.select()
-        _balances[msg.sender] = FHE.select(valid,
-            FHE.sub(_balances[msg.sender], totalCost), _balances[msg.sender]);
-        _balances[seller] = FHE.select(valid,
-            FHE.add(_balances[seller], totalCost), _balances[seller]);
-        _items[itemId].stock = FHE.select(valid,
-            FHE.sub(_items[itemId].stock, qty), _items[itemId].stock);
+        _balances[msg.sender] = FHE.select(valid, FHE.sub(_balances[msg.sender], totalCost), _balances[msg.sender]);
+        _balances[seller] = FHE.select(valid, FHE.add(_balances[seller], totalCost), _balances[seller]);
+        _items[itemId].stock = FHE.select(valid, FHE.sub(_items[itemId].stock, qty), _items[itemId].stock);
 
         // ACL updates
         FHE.allowThis(_balances[msg.sender]);
@@ -108,8 +105,7 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
         _initBalance(msg.sender);
         euint64 encAmount = FHE.asEuint64(amount);
         ebool hasFunds = FHE.ge(_balances[msg.sender], encAmount);
-        _balances[msg.sender] = FHE.select(hasFunds,
-            FHE.sub(_balances[msg.sender], encAmount), _balances[msg.sender]);
+        _balances[msg.sender] = FHE.select(hasFunds, FHE.sub(_balances[msg.sender], encAmount), _balances[msg.sender]);
         FHE.allowThis(_balances[msg.sender]);
         FHE.allow(_balances[msg.sender], msg.sender);
     }

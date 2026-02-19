@@ -32,19 +32,10 @@ describe("SecurityPatterns", function () {
       .add64(500)
       .encrypt();
 
-    await (
-      await contract
-        .connect(alice)
-        .secureDeposit(enc.handles[0], enc.inputProof)
-    ).wait();
+    await (await contract.connect(alice).secureDeposit(enc.handles[0], enc.inputProof)).wait();
 
     const handle = await contract.connect(alice).getMyBalance();
-    const balance = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      handle,
-      contractAddress,
-      alice
-    );
+    const balance = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, alice);
     expect(balance).to.equal(500n);
   });
 
@@ -61,9 +52,7 @@ describe("SecurityPatterns", function () {
       .encrypt();
 
     await (
-      await contract
-        .connect(alice)
-        .secureTransfer(enc.handles[0], enc.inputProof, bob.address)
+      await contract.connect(alice).secureTransfer(enc.handles[0], enc.inputProof, bob.address)
     ).wait();
 
     // Check alice balance
@@ -72,19 +61,14 @@ describe("SecurityPatterns", function () {
       FhevmType.euint64,
       aliceHandle,
       contractAddress,
-      alice
+      alice,
     );
     expect(aliceBal).to.equal(950n);
 
     // Check bob balance
     await (await contract.mint(bob.address, 0)).wait(); // ensure bob can access
     const bobHandle = await contract.connect(bob).getBalance(bob.address);
-    const bobBal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      bobHandle,
-      contractAddress,
-      bob
-    );
+    const bobBal = await fhevm.userDecryptEuint(FhevmType.euint64, bobHandle, contractAddress, bob);
     expect(bobBal).to.equal(50n);
   });
 
@@ -99,9 +83,7 @@ describe("SecurityPatterns", function () {
 
     // Should NOT revert -- transfers 0 instead
     await (
-      await contract
-        .connect(alice)
-        .secureTransfer(enc.handles[0], enc.inputProof, bob.address)
+      await contract.connect(alice).secureTransfer(enc.handles[0], enc.inputProof, bob.address)
     ).wait();
 
     // Alice balance unchanged
@@ -110,7 +92,7 @@ describe("SecurityPatterns", function () {
       FhevmType.euint64,
       aliceHandle,
       contractAddress,
-      alice
+      alice,
     );
     expect(aliceBal).to.equal(50n);
   });
@@ -127,18 +109,14 @@ describe("SecurityPatterns", function () {
       .add64(100)
       .encrypt();
 
-    await (
-      await contract
-        .connect(alice)
-        .secureDeposit(enc.handles[0], enc.inputProof)
-    ).wait();
+    await (await contract.connect(alice).secureDeposit(enc.handles[0], enc.inputProof)).wait();
 
     const errorHandle = await contract.connect(alice).getLastError();
     const errorCode = await fhevm.userDecryptEuint(
       FhevmType.euint8,
       errorHandle,
       contractAddress,
-      alice
+      alice,
     );
     expect(errorCode).to.equal(0n); // ERR_NONE
   });
@@ -153,9 +131,7 @@ describe("SecurityPatterns", function () {
       .encrypt();
 
     await (
-      await contract
-        .connect(alice)
-        .secureTransfer(enc.handles[0], enc.inputProof, bob.address)
+      await contract.connect(alice).secureTransfer(enc.handles[0], enc.inputProof, bob.address)
     ).wait();
 
     const errorHandle = await contract.connect(alice).getLastError();
@@ -163,7 +139,7 @@ describe("SecurityPatterns", function () {
       FhevmType.euint8,
       errorHandle,
       contractAddress,
-      alice
+      alice,
     );
     expect(errorCode).to.equal(1n); // ERR_INSUFFICIENT_BALANCE
   });
@@ -179,12 +155,7 @@ describe("SecurityPatterns", function () {
 
     // Check alice received tokens
     const handle = await contract.getBalance(alice.address);
-    const bal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      handle,
-      contractAddress,
-      alice
-    );
+    const bal = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, alice);
     expect(bal).to.equal(100n);
   });
 
@@ -253,12 +224,7 @@ describe("SecurityPatterns", function () {
 
     // Bob can now read alice's balance
     const handle = await contract.connect(bob).getBalance(alice.address);
-    const bal = await fhevm.userDecryptEuint(
-      FhevmType.euint64,
-      handle,
-      contractAddress,
-      bob
-    );
+    const bal = await fhevm.userDecryptEuint(FhevmType.euint64, handle, contractAddress, bob);
     expect(bal).to.equal(777n);
   });
 });

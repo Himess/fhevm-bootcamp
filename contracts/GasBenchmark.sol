@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint32, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint8, euint16, euint32, euint64, ebool, externalEuint32, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title GasBenchmark - Module 15: Benchmark individual FHE operations
 /// @notice Each function performs a single FHE operation and stores the result,
@@ -15,8 +15,8 @@ contract GasBenchmark is ZamaEthereumConfig {
     euint32 private _resultMul32;
     euint32 private _resultDiv32;
     euint32 private _resultSelect;
-    ebool   private _resultEq;
-    ebool   private _resultGt;
+    ebool private _resultEq;
+    ebool private _resultGt;
     euint32 private _resultRand32;
     euint32 private _resultMin;
     euint32 private _resultMax;

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, ebool, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint64, ebool, externalEuint64 } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title ConfidentialLending - Module 18: Privacy-preserving lending protocol
 /// @notice Users deposit encrypted collateral and borrow against it.
@@ -93,11 +93,7 @@ contract ConfidentialLending is ZamaEthereumConfig {
         ebool withinLimit = FHE.le(newBorrowBalance, maxBorrow);
 
         // If within limit, apply the borrow; otherwise keep existing balance (borrow 0)
-        _borrowBalance[msg.sender] = FHE.select(
-            withinLimit,
-            newBorrowBalance,
-            _borrowBalance[msg.sender]
-        );
+        _borrowBalance[msg.sender] = FHE.select(withinLimit, newBorrowBalance, _borrowBalance[msg.sender]);
         FHE.allowThis(_borrowBalance[msg.sender]);
         FHE.allow(_borrowBalance[msg.sender], msg.sender);
 
@@ -153,11 +149,7 @@ contract ConfidentialLending is ZamaEthereumConfig {
         ebool hasEnough = FHE.ge(_collateral[msg.sender], withdrawAmount);
         ebool canWithdraw = FHE.and(isSafe, hasEnough);
 
-        _collateral[msg.sender] = FHE.select(
-            canWithdraw,
-            remaining,
-            _collateral[msg.sender]
-        );
+        _collateral[msg.sender] = FHE.select(canWithdraw, remaining, _collateral[msg.sender]);
         FHE.allowThis(_collateral[msg.sender]);
         FHE.allow(_collateral[msg.sender], msg.sender);
 

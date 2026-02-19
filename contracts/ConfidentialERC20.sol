@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
-import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import { FHE, euint64, externalEuint64, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
 /// @title ConfidentialERC20 - Module 11: ERC-20 with encrypted balances
 /// @notice Balances and allowances are encrypted. Transfer amounts are hidden.
@@ -60,12 +60,7 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
     }
 
     /// @notice TransferFrom with allowance check
-    function transferFrom(
-        address from,
-        externalEuint64 encAmount,
-        bytes calldata inputProof,
-        address to
-    ) external {
+    function transferFrom(address from, externalEuint64 encAmount, bytes calldata inputProof, address to) external {
         euint64 amount = FHE.fromExternal(encAmount, inputProof);
 
         // Check allowance

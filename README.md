@@ -1,3 +1,5 @@
+[![CI](https://github.com/Himess/fhevm-bootcamp/actions/workflows/test.yml/badge.svg)](https://github.com/Himess/fhevm-bootcamp/actions/workflows/test.yml)
+[![Slides](https://github.com/Himess/fhevm-bootcamp/actions/workflows/slides.yml/badge.svg)](https://github.com/Himess/fhevm-bootcamp/actions/workflows/slides.yml)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Solidity](https://img.shields.io/badge/Solidity-0.8.27-363636?logo=solidity)
 ![Tests](https://img.shields.io/badge/Tests-328%20passing-brightgreen)

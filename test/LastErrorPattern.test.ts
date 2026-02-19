@@ -36,15 +36,17 @@ describe("LastErrorPattern", function () {
   it("should transfer successfully and set error code 0 (SUCCESS)", async function () {
     await (await token.mint(alice.address, 1000)).wait();
 
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(300)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(300).encrypt();
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     // Check Alice's balance decreased
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(700n);
 
     // Check Bob received tokens
@@ -54,7 +56,12 @@ describe("LastErrorPattern", function () {
 
     // Check error code is 0 (SUCCESS)
     const errorHandle = await token.connect(alice).getLastError();
-    const errorCode = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle, tokenAddress, alice);
+    const errorCode = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode).to.equal(0n);
   });
 
@@ -62,15 +69,17 @@ describe("LastErrorPattern", function () {
     await (await token.mint(alice.address, 100)).wait();
 
     // Try to transfer more than balance
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(200)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(200).encrypt();
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     // Balance should be unchanged
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(100n);
 
     // Bob should have 0
@@ -80,7 +89,12 @@ describe("LastErrorPattern", function () {
 
     // Error code should be 1 (INSUFFICIENT_BALANCE)
     const errorHandle = await token.connect(alice).getLastError();
-    const errorCode = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle, tokenAddress, alice);
+    const errorCode = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode).to.equal(1n);
   });
 
@@ -97,12 +111,22 @@ describe("LastErrorPattern", function () {
 
     // Balance should be unchanged
     const aliceHandle = await token.balanceOf(alice.address);
-    const aliceBal = await fhevm.userDecryptEuint(FhevmType.euint64, aliceHandle, tokenAddress, alice);
+    const aliceBal = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceHandle,
+      tokenAddress,
+      alice,
+    );
     expect(aliceBal).to.equal(2_000_000n);
 
     // Error code should be 2 (AMOUNT_TOO_LARGE)
     const errorHandle = await token.connect(alice).getLastError();
-    const errorCode = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle, tokenAddress, alice);
+    const errorCode = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode).to.equal(2n);
   });
 
@@ -110,15 +134,19 @@ describe("LastErrorPattern", function () {
     await (await token.mint(alice.address, 500)).wait();
 
     // Transfer to self
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(100)
-      .encrypt();
-    await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, alice.address)).wait();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(100).encrypt();
+    await (
+      await token.connect(alice).transfer(enc.handles[0], enc.inputProof, alice.address)
+    ).wait();
 
     // Error code should be 3 (SELF_TRANSFER)
     const errorHandle = await token.connect(alice).getLastError();
-    const errorCode = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle, tokenAddress, alice);
+    const errorCode = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode).to.equal(3n);
   });
 
@@ -126,15 +154,17 @@ describe("LastErrorPattern", function () {
     await (await token.mint(alice.address, 100)).wait();
 
     // Create an error by trying insufficient transfer
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(200)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(200).encrypt();
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     // Verify error exists
     const errorHandle1 = await token.connect(alice).getLastError();
-    const errorCode1 = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle1, tokenAddress, alice);
+    const errorCode1 = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle1,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode1).to.equal(1n);
 
     // Clear the error
@@ -142,7 +172,12 @@ describe("LastErrorPattern", function () {
 
     // Verify error is now 0
     const errorHandle2 = await token.connect(alice).getLastError();
-    const errorCode2 = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle2, tokenAddress, alice);
+    const errorCode2 = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle2,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode2).to.equal(0n);
   });
 
@@ -153,10 +188,7 @@ describe("LastErrorPattern", function () {
     await (await token.mint(alice.address, 1000)).wait();
 
     // After a transfer, error is stored (even if success)
-    const enc = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(100)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(100).encrypt();
     await (await token.connect(alice).transfer(enc.handles[0], enc.inputProof, bob.address)).wait();
 
     expect(await token.hasError(alice.address)).to.equal(true);
@@ -170,21 +202,32 @@ describe("LastErrorPattern", function () {
       .createEncryptedInput(tokenAddress, alice.address)
       .add64(2000)
       .encrypt();
-    await (await token.connect(alice).transfer(enc1.handles[0], enc1.inputProof, bob.address)).wait();
+    await (
+      await token.connect(alice).transfer(enc1.handles[0], enc1.inputProof, bob.address)
+    ).wait();
 
     const errorHandle1 = await token.connect(alice).getLastError();
-    const errorCode1 = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle1, tokenAddress, alice);
+    const errorCode1 = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle1,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode1).to.equal(1n); // INSUFFICIENT_BALANCE
 
     // Second: successful transfer (send 100)
-    const enc2 = await fhevm
-      .createEncryptedInput(tokenAddress, alice.address)
-      .add64(100)
-      .encrypt();
-    await (await token.connect(alice).transfer(enc2.handles[0], enc2.inputProof, bob.address)).wait();
+    const enc2 = await fhevm.createEncryptedInput(tokenAddress, alice.address).add64(100).encrypt();
+    await (
+      await token.connect(alice).transfer(enc2.handles[0], enc2.inputProof, bob.address)
+    ).wait();
 
     const errorHandle2 = await token.connect(alice).getLastError();
-    const errorCode2 = await fhevm.userDecryptEuint(FhevmType.euint8, errorHandle2, tokenAddress, alice);
+    const errorCode2 = await fhevm.userDecryptEuint(
+      FhevmType.euint8,
+      errorHandle2,
+      tokenAddress,
+      alice,
+    );
     expect(errorCode2).to.equal(0n); // SUCCESS (previous error overwritten)
   });
 });

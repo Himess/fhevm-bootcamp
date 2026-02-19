@@ -17,10 +17,7 @@ describe("SimpleCounter", function () {
   });
 
   it("should increment counter with encrypted value", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(contractAddress, alice.address)
-      .add32(5)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(contractAddress, alice.address).add32(5).encrypt();
     await (await contract.connect(alice).increment(enc.handles[0], enc.inputProof)).wait();
 
     const handle = await contract.connect(alice).getMyCount();
@@ -51,7 +48,9 @@ describe("SimpleCounter", function () {
       .createEncryptedInput(contractAddress, alice.address)
       .add32(100)
       .encrypt();
-    await (await contract.connect(alice).increment(encAlice.handles[0], encAlice.inputProof)).wait();
+    await (
+      await contract.connect(alice).increment(encAlice.handles[0], encAlice.inputProof)
+    ).wait();
 
     const encBob = await fhevm
       .createEncryptedInput(contractAddress, bob.address)
@@ -60,19 +59,26 @@ describe("SimpleCounter", function () {
     await (await contract.connect(bob).increment(encBob.handles[0], encBob.inputProof)).wait();
 
     const handleAlice = await contract.connect(alice).getMyCount();
-    const clearAlice = await fhevm.userDecryptEuint(FhevmType.euint32, handleAlice, contractAddress, alice);
+    const clearAlice = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handleAlice,
+      contractAddress,
+      alice,
+    );
     expect(clearAlice).to.equal(100n);
 
     const handleBob = await contract.connect(bob).getMyCount();
-    const clearBob = await fhevm.userDecryptEuint(FhevmType.euint32, handleBob, contractAddress, bob);
+    const clearBob = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handleBob,
+      contractAddress,
+      bob,
+    );
     expect(clearBob).to.equal(200n);
   });
 
   it("should emit CountIncremented event", async function () {
-    const enc = await fhevm
-      .createEncryptedInput(contractAddress, alice.address)
-      .add32(1)
-      .encrypt();
+    const enc = await fhevm.createEncryptedInput(contractAddress, alice.address).add32(1).encrypt();
     const tx = await contract.connect(alice).increment(enc.handles[0], enc.inputProof);
     const receipt = await tx.wait();
     const event = receipt.logs.find((log: any) => log.fragment?.name === "CountIncremented");

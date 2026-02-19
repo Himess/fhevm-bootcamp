@@ -31,7 +31,9 @@ describe("SealedBidAuction", function () {
       .add64(1000)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     expect(await auction.hasBid(0, alice.address)).to.equal(true);
@@ -62,7 +64,9 @@ describe("SealedBidAuction", function () {
       .add64(500)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     const enc2 = await fhevm
@@ -70,7 +74,9 @@ describe("SealedBidAuction", function () {
       .add64(1000)
       .encrypt();
     await (
-      await auction.connect(bob).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.2") })
+      await auction
+        .connect(bob)
+        .bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.2") })
     ).wait();
 
     const enc3 = await fhevm
@@ -78,7 +84,9 @@ describe("SealedBidAuction", function () {
       .add64(750)
       .encrypt();
     await (
-      await auction.connect(charlie).bid(0, enc3.handles[0], enc3.inputProof, { value: ethers.parseEther("0.15") })
+      await auction
+        .connect(charlie)
+        .bid(0, enc3.handles[0], enc3.inputProof, { value: ethers.parseEther("0.15") })
     ).wait();
 
     expect(await auction.getBidderCount(0)).to.equal(3n);
@@ -92,7 +100,9 @@ describe("SealedBidAuction", function () {
       .add64(100)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     const enc2 = await fhevm
@@ -100,7 +110,9 @@ describe("SealedBidAuction", function () {
       .add64(500)
       .encrypt();
     try {
-      await auction.connect(alice).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.1") });
+      await auction
+        .connect(alice)
+        .bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.1") });
       expect.fail("Should have reverted");
     } catch (error: any) {
       expect(error.message).to.include("Already bid");
@@ -115,15 +127,16 @@ describe("SealedBidAuction", function () {
       .add64(100)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
-    const enc2 = await fhevm
-      .createEncryptedInput(auctionAddress, bob.address)
-      .add64(200)
-      .encrypt();
+    const enc2 = await fhevm.createEncryptedInput(auctionAddress, bob.address).add64(200).encrypt();
     await (
-      await auction.connect(bob).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(bob)
+        .bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     // Advance time past deadline
@@ -137,11 +150,21 @@ describe("SealedBidAuction", function () {
 
     // Verify individual bids via user decrypt (bidders have ACL access to their own bids)
     const aliceBidHandle = await auction.connect(alice).getMyBid(0);
-    const aliceBid = await fhevm.userDecryptEuint(FhevmType.euint64, aliceBidHandle, auctionAddress, alice);
+    const aliceBid = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      aliceBidHandle,
+      auctionAddress,
+      alice,
+    );
     expect(aliceBid).to.equal(100n);
 
     const bobBidHandle = await auction.connect(bob).getMyBid(0);
-    const bobBid = await fhevm.userDecryptEuint(FhevmType.euint64, bobBidHandle, auctionAddress, bob);
+    const bobBid = await fhevm.userDecryptEuint(
+      FhevmType.euint64,
+      bobBidHandle,
+      auctionAddress,
+      bob,
+    );
     expect(bobBid).to.equal(200n);
   });
 
@@ -153,7 +176,9 @@ describe("SealedBidAuction", function () {
       .add64(999)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     const bidderHandle = await auction.getHighestBidder(0);
@@ -166,7 +191,9 @@ describe("SealedBidAuction", function () {
       .add64(100)
       .encrypt();
     try {
-      await auction.connect(alice).bid(999, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") });
+      await auction
+        .connect(alice)
+        .bid(999, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") });
       expect.fail("Should have reverted");
     } catch (error: any) {
       expect(error.message).to.include("Invalid auction");
@@ -191,7 +218,9 @@ describe("SealedBidAuction", function () {
       .add64(500)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("1.0") })
+      await auction
+        .connect(alice)
+        .bid(0, enc1.handles[0], enc1.inputProof, { value: ethers.parseEther("1.0") })
     ).wait();
 
     // Bob bids 1000 (higher)
@@ -200,7 +229,9 @@ describe("SealedBidAuction", function () {
       .add64(1000)
       .encrypt();
     await (
-      await auction.connect(bob).bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("1.0") })
+      await auction
+        .connect(bob)
+        .bid(0, enc2.handles[0], enc2.inputProof, { value: ethers.parseEther("1.0") })
     ).wait();
 
     // Wait for deadline to pass
@@ -242,7 +273,9 @@ describe("SealedBidAuction", function () {
       .add64(100)
       .encrypt();
     await (
-      await auction.connect(alice).bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
+      await auction
+        .connect(alice)
+        .bid(0, enc.handles[0], enc.inputProof, { value: ethers.parseEther("0.1") })
     ).wait();
 
     try {

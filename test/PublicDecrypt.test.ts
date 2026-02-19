@@ -32,7 +32,12 @@ describe("PublicDecrypt", function () {
     expect(await contract.hasValue()).to.equal(true);
 
     const handle = await contract.getEncryptedValue();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(99n);
   });
 
@@ -45,7 +50,12 @@ describe("PublicDecrypt", function () {
   it("should decrypt stored value via userDecrypt", async function () {
     await (await contract.setValue(55)).wait();
     const handle = await contract.getEncryptedValue();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(55n);
   });
 
@@ -78,7 +88,12 @@ describe("PublicDecrypt", function () {
     await (await contract.makePublic()).wait();
 
     const handle = await contract.getEncryptedValue();
-    const clear = await fhevm.userDecryptEuint(FhevmType.euint32, handle, contractAddress, deployer);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      handle,
+      contractAddress,
+      deployer,
+    );
     expect(clear).to.equal(42n);
   });
 });
