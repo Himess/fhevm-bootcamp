@@ -224,6 +224,32 @@ Speaker notes: Give a brief overview of Zama as a company to build credibility. 
 
 ---
 
+# Zama on Ethereum Mainnet
+
+## Production Milestones (2025-2026)
+
+| Date | Milestone |
+|------|-----------|
+| Nov 2025 | **ERC-7984** standard published (Zama + OpenZeppelin) |
+| Nov 2025 | OpenZeppelin security audit completed for ERC-7984 |
+| Jan 2026 | **First encrypted ICO** on Ethereum — sealed-bid Dutch auction with FHE |
+| Jan 2026 | First **cUSDT transfer** on mainnet — confidential USDT |
+| Feb 2026 | **$121M+ encrypted volume** processed on Ethereum mainnet |
+
+## Zaiffer Protocol
+
+**Zama + PyratzLabs** joint venture (€2M backing) building confidential token infrastructure:
+- **cTokens** — Encrypted ERC-20 wrappers (cUSDT, cUSDC, cETH) via ERC-7984
+- **ZaifferPay** — Confidential payments | **ZaifferSwaps** — MEV-protected trading | **ZaifferYields** — Confidential yield vaults
+
+The patterns you learn in this bootcamp are **the same patterns running on Ethereum mainnet today**.
+
+<!--
+Speaker notes: This is the credibility slide. FHE is not theoretical -- it is live on Ethereum mainnet processing over $121M in encrypted volume. The ERC-7984 standard was co-developed with OpenZeppelin and audited. Zaiffer Protocol uses the exact confidential ERC-20 pattern that students will build in Module 11. Emphasize that this bootcamp teaches production-ready patterns.
+-->
+
+---
+
 # What is fhEVM?
 
 Zama's framework that brings FHE to the Ethereum Virtual Machine.

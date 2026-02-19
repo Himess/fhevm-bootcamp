@@ -318,6 +318,33 @@ Speaker notes: The frontend transfer code shows the complete flow: create Relaye
 
 ---
 
+# Industry Standard: ERC-7984
+
+The confidential ERC-20 pattern you just learned is formalized as **ERC-7984**.
+
+| | |
+|---|---|
+| **Standard** | ERC-7984 — Confidential Fungible Token |
+| **Authors** | Zama + OpenZeppelin |
+| **Audit** | OpenZeppelin security audit completed (November 2025) |
+| **Core idea** | Replace `uint256` balances with `euint64` ciphertext handles |
+
+## In Production
+
+**Zaiffer Protocol** (Zama + PyratzLabs, €2M backing) uses ERC-7984 to convert standard ERC-20 tokens into **confidential cTokens**:
+
+- **cUSDT** — First confidential USDT transfer on Ethereum mainnet (January 2026)
+- **cUSDC, cETH** — Confidential wrapped tokens with encrypted balances
+- **$121M+** in encrypted volume processed on mainnet
+
+The `_transfer()` function you wrote in this module is the **same pattern** powering cUSDT on Ethereum.
+
+<!--
+Speaker notes: This is the industry validation slide. ERC-7984 is not a toy standard -- it was developed by Zama with OpenZeppelin and audited. Zaiffer is already using it in production for confidential USDT. The patterns students just learned (encrypted mappings, no-revert transfers, FHE.select) are the exact same patterns running on mainnet. This should be a motivating moment -- students are learning production-grade techniques.
+-->
+
+---
+
 # Summary
 
 - Store balances as `euint64` in encrypted mappings
@@ -326,9 +353,10 @@ Speaker notes: The frontend transfer code shows the complete flow: create Relaye
 - `balanceOf(address)` returns an encrypted handle -- only the owner can decrypt
 - Allowances are encrypted too; `transferFrom` checks both with `FHE.and()`
 - ACL grants for contract + owner after every update
+- **ERC-7984**: the industry standard formalizing this pattern (Zama + OpenZeppelin)
 
 <!--
-Speaker notes: Summarize the key design patterns: encrypted mappings, no-revert transfers with FHE.select, no amounts in events, encrypted allowances with double checks. These patterns form the template for any privacy-preserving token implementation on FHEVM.
+Speaker notes: Summarize the key design patterns: encrypted mappings, no-revert transfers with FHE.select, no amounts in events, encrypted allowances with double checks. Mention that ERC-7984 formalizes these patterns as an industry standard. These patterns form the template for any privacy-preserving token implementation on FHEVM.
 -->
 
 ---

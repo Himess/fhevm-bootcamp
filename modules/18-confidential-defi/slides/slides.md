@@ -417,6 +417,32 @@ This parallels traditional finance: your bank knows your balance, the public kno
 
 ---
 
+# Real-World: Zaiffer & ERC-7984
+
+## Confidential DeFi is live on Ethereum Mainnet
+
+**Zaiffer Protocol** (Zama + PyratzLabs, €2M) — first production confidential DeFi platform:
+
+| Product | What it does | FHE Pattern Used |
+|---------|-------------|-----------------|
+| **ZaifferPay** | Confidential payments | Encrypted ERC-20 transfers (Module 11) |
+| **ZaifferSwaps** | MEV-protected trading | Encrypted order matching (this module) |
+| **ZaifferYields** | Confidential yield vaults | Encrypted deposit/withdraw (Module 05) |
+
+## ERC-7984: The Standard
+
+- Co-developed by **Zama + OpenZeppelin** — audited November 2025
+- Defines confidential token interface: `euint64` balances, encrypted transfers, ACL-based access
+- **cTokens**: cUSDT, cUSDC, cETH — all follow ERC-7984 for interoperability
+- First **cUSDT transfer** on Ethereum mainnet: January 2026
+- **$121M+** encrypted volume processed — the patterns you learned today are production-ready
+
+<!--
+Speaker notes: Connect the module content to real-world production. Zaiffer is using the exact patterns students just learned: encrypted order books for MEV-protected swaps, encrypted balances for confidential payments, and the same lending patterns for yield vaults. ERC-7984 is the glue that makes these composable. This validates that what students learned is not academic -- it is powering real DeFi on Ethereum mainnet.
+-->
+
+---
+
 # Compliance and Auditability
 
 FHE-based DeFi can support regulatory compliance:
@@ -570,12 +596,12 @@ expect(value).to.equal(10000n);
 4. **Privacy Boundary** -- Amounts and prices are private; addresses and timing are not
 5. **Gas Overhead** -- ~15x cost for privacy; optimize with smaller types and batching
 6. **Liquidation** -- Hardest open problem; needs keeper-based or threshold designs
-7. **Compliance** -- ACL grants enable privacy with selective auditability
+7. **ERC-7984 + Zaiffer** -- Production standard powering $121M+ encrypted volume on mainnet
 8. **Composability** -- `FHE.allow(handle, otherContract)` enables encrypted DeFi Legos
 
 FHE makes private finance possible on public blockchains.
 
-<!-- Speaker notes: Wrap up by reinforcing the key takeaways. FHE-based DeFi is not theoretical -- these contracts work today. The gas overhead is the cost of privacy. The biggest open problems are liquidation and cross-protocol composability. Students should be excited that they can build real DeFi protocols with the patterns they have learned. -->
+<!-- Speaker notes: Wrap up by reinforcing the key takeaways. FHE-based DeFi is not theoretical -- Zaiffer and ERC-7984 are live on Ethereum mainnet with $121M+ in encrypted volume. The gas overhead is the cost of privacy. The biggest open problems are liquidation and cross-protocol composability. Students should be excited that they can build real DeFi protocols with the patterns they have learned. -->
 
 ---
 
