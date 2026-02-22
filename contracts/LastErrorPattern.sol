@@ -117,6 +117,7 @@ contract LastErrorPattern is ZamaEthereumConfig {
     ///      Only the user themselves has ACL permission to decrypt.
     /// @return The encrypted error code (euint8)
     function getLastError() external view returns (euint8) {
+        require(FHE.isSenderAllowed(_lastError[msg.sender]), "No access");
         return _lastError[msg.sender];
     }
 

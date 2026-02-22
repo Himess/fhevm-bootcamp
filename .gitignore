@@ -18,3 +18,5 @@ hardhat.config.ts.bak
 zama_docs/
 plan*.md
 TODO_REPORT.md
+
+.vercel

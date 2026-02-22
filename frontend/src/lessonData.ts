@@ -1844,15 +1844,7 @@ ebool isSame = FHE.eq(_secretRecipient, FHE.asEaddress(msg.sender));
 
 ### Encrypted Bytes Types
 
-fhEVM also provides encrypted byte string types for handling fixed-size binary data:
-
-| Type | Size | Use Case |
-|------|------|----------|
-| \`ebytes64\` | 64 bytes | Short encrypted messages, compact data |
-| \`ebytes128\` | 128 bytes | Medium encrypted payloads |
-| \`ebytes256\` | 256 bytes | Large encrypted data, hash-sized values |
-
-These types support equality comparison (\`FHE.eq\`) and bitwise operations but not arithmetic. They are useful when you need to store and compare encrypted data that doesn't represent a number.
+The fhEVM type system also includes \`ebytesN\` definitions (e.g. \`ebytes1\` through \`ebytes32\`) in the EncryptedTypes library. However, as of \`@fhevm/solidity@0.10\`, the \`FHE\` library does not expose operations (arithmetic, comparison, or bitwise) for these types. They are reserved for future use and should not be used in production contracts today. For storing fixed-size encrypted data, use \`euint256\` (32 bytes) or multiple \`euint\` fields instead.
 
 ---
 
