@@ -102,6 +102,30 @@ body {
   padding-bottom: 0.5rem; border-bottom: 2px solid var(--yellow-200);
 }
 
+/* ===== Learning Paths ===== */
+.paths-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.path-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px;
+  text-decoration: none; color: var(--text-primary);
+  transition: all var(--transition); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.path-card:hover { border-color: var(--yellow-400); box-shadow: var(--shadow-md); }
+.path-card-header { display: flex; align-items: center; gap: 8px; }
+.path-card-name { font-size: 0.9375rem; font-weight: 600; }
+.path-card-badge {
+  font-size: 0.6875rem; font-weight: 600;
+  background: var(--yellow-400); color: var(--text-primary);
+  padding: 2px 8px; border-radius: 999px;
+}
+.path-card-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8125rem; color: var(--yellow-700); font-weight: 500;
+}
+.path-card-dot { color: var(--text-muted); }
+.path-card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
 /* ===== Quick Links Grid ===== */
 .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .link-card {
@@ -342,14 +366,64 @@ body {
 .lesson-markdown hr { border: none; border-top: 2px solid var(--border); margin: 2rem 0; }
 .lesson-markdown img { max-width: 100%; border-radius: var(--radius-sm); }
 
+/* ===== Embedded Slides ===== */
+.lesson-slides-container {
+  display: flex; flex-direction: column; height: 100%;
+}
+.lesson-slides-iframe {
+  flex: 1; width: 100%; border: none; border-radius: var(--radius-sm);
+  background: #1E293B; min-height: 0;
+}
+.lesson-slides-hint {
+  text-align: center; padding: 8px; font-size: 0.75rem; color: var(--text-muted);
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.lesson-slides-hint a { color: var(--yellow-600); text-decoration: none; }
+.lesson-slides-hint a:hover { text-decoration: underline; }
+
 /* Module button as real button (not link) */
 .module-btn-lesson {
   cursor: pointer; font-family: inherit;
 }
 
+/* ===== Header Right ===== */
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+/* ===== Progress Badge ===== */
+.progress-badge {
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--yellow-700); background: var(--yellow-50);
+  border: 1px solid var(--yellow-200);
+  padding: 4px 10px; border-radius: 999px;
+}
+
+/* ===== Progress Bar ===== */
+.progress-bar-container {
+  position: relative; width: 100%; max-width: 400px; margin: 1.25rem auto 0;
+  height: 24px; background: var(--border-light); border-radius: 999px;
+  border: 1px solid var(--border); overflow: hidden;
+}
+.progress-bar {
+  height: 100%; background: var(--yellow-400); border-radius: 999px;
+  transition: width 300ms ease;
+}
+.progress-text {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 600; color: var(--text-primary);
+}
+
+/* ===== Viewed Module ===== */
+.module-viewed .module-id {
+  background: #DCFCE7; border-color: #86EFAC; color: #166534;
+}
+.module-check {
+  font-size: 0.9rem; font-weight: 700;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  .paths-grid { grid-template-columns: repeat(2, 1fr); }
   .links-grid { grid-template-columns: repeat(2, 1fr); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .hero h1 { font-size: 1.75rem; }
@@ -362,10 +436,285 @@ body {
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .paths-grid { grid-template-columns: 1fr; }
   .links-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr 1fr; }
   .hero h1 { font-size: 1.5rem; }
   .contracts-header, .contract-row { font-size: 0.75rem; }
   .lesson-overlay { padding: 0; }
   .lesson-viewer { height: 100vh; border-radius: 0; }
+}
+
+/* ===== Interactive Demo Button ===== */
+.btn-primary {
+  background: var(--yellow-500);
+  color: var(--text-primary);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-primary:hover { background: var(--yellow-400); }
+.btn-demo {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+/* ===== Interactive Demo Modal ===== */
+.demo-viewer {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  width: 95%;
+  max-width: 1100px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+}
+.demo-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.demo-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Encryption Flow Tab */
+.demo-encryption {
+  display: flex;
+  height: 100%;
+}
+.demo-steps-sidebar {
+  width: 260px;
+  min-width: 260px;
+  border-right: 1px solid var(--border);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  background: var(--yellow-50);
+}
+.demo-steps-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.demo-step-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.demo-step-btn:hover {
+  background: var(--yellow-100);
+}
+.demo-step-active {
+  background: var(--bg-card);
+  border-color: var(--yellow-400);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+.demo-step-done .demo-step-num {
+  background: var(--yellow-500);
+  color: white;
+}
+.demo-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.demo-step-label {
+  flex: 1;
+  line-height: 1.3;
+}
+.demo-progress-text {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Step Content */
+.demo-step-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+.demo-step-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+.demo-step-desc {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+.demo-code-block, .demo-output-block {
+  margin-bottom: 1.25rem;
+}
+.demo-code-label, .demo-output-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.demo-code {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 1.25rem;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+.demo-output {
+  background: var(--yellow-50);
+  border: 1px solid var(--yellow-200);
+  color: var(--yellow-700);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.demo-step-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Contracts Tab */
+.demo-contracts {
+  padding: 1.5rem;
+}
+.demo-contract-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.demo-contract-tab {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.demo-contract-tab:hover {
+  border-color: var(--yellow-400);
+  background: var(--yellow-50);
+}
+.demo-contract-tab-active {
+  background: var(--yellow-100);
+  border-color: var(--yellow-500);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.demo-contract-content {
+  max-width: 800px;
+}
+.demo-flow-section {
+  margin-bottom: 1.5rem;
+}
+.demo-flow-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+.demo-flow-steps {
+  list-style: none;
+  counter-reset: flow;
+  padding: 0;
+}
+.demo-flow-step {
+  counter-increment: flow;
+  padding: 0.6rem 0 0.6rem 2.5rem;
+  position: relative;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-left: 2px solid var(--yellow-200);
+}
+.demo-flow-step::before {
+  content: counter(flow);
+  position: absolute;
+  left: -12px;
+  top: 0.55rem;
+  width: 24px;
+  height: 24px;
+  background: var(--yellow-500);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.demo-flow-step:last-child {
+  border-left-color: transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .demo-encryption { flex-direction: column; }
+  .demo-steps-sidebar { width: 100%; min-width: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; padding: 0.75rem; }
+  .demo-steps-title { width: 100%; }
+  .demo-step-btn { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+  .demo-step-label { display: none; }
+  .demo-progress-text { display: none; }
+  .demo-step-content { padding: 1rem; }
+  .demo-viewer { width: 100%; height: 100vh; border-radius: 0; }
 }

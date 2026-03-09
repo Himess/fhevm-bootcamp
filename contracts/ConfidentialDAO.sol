@@ -32,8 +32,11 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     mapping(uint256 => mapping(address => bool)) public hasVoted;
     uint256 public proposalCount;
 
-    // Minimum token balance to create proposal
+    // Minimum token balance to create proposal (cannot be enforced on-chain with FHE)
     uint64 public constant PROPOSAL_THRESHOLD = 100;
+
+    // Minimum ETH deposit required to create a proposal (spam prevention)
+    uint256 public constant PROPOSAL_DEPOSIT = 0.001 ether;
 
     event TokensMinted(address indexed to, uint64 amount);
     event ProposalCreated(uint256 indexed id, string description, address recipient, uint256 amount);
@@ -77,15 +80,23 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     }
 
     /// @notice Create a treasury spending proposal
-    /// @dev PROPOSAL_THRESHOLD cannot be enforced on-chain with encrypted balances
-    /// because ebool cannot be used in require(). In production, consider requiring
-    /// a governance NFT or a plaintext ETH deposit to gate proposal creation.
+    /// @dev PROPOSAL_THRESHOLD (minimum token balance) cannot be enforced on-chain with
+    /// encrypted balances because ebool cannot be used in require(). FHE.ge() returns an
+    /// ebool which cannot be branched on — this is a fundamental FHE limitation.
+    /// As a spam prevention measure, we require a small plaintext ETH deposit instead.
+    /// Alternative approaches: governance NFT gating, off-chain signature verification,
+    /// or an async decryption callback to verify the threshold before finalizing.
+    /// @param description Human-readable proposal description
+    /// @param recipient Address that will receive treasury funds if proposal passes
+    /// @param amount Amount of ETH to transfer from treasury
+    /// @param duration Voting period in seconds
     function createProposal(
         string calldata description,
         address payable recipient,
         uint256 amount,
         uint256 duration
-    ) external {
+    ) external payable {
+        require(msg.value >= PROPOSAL_DEPOSIT, "Insufficient proposal deposit");
         uint256 id = proposalCount++;
         proposals[id].description = description;
         proposals[id].recipient = recipient;

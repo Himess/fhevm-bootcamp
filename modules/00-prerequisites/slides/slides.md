@@ -6,7 +6,13 @@ header: "FHEVM Bootcamp - Module 00: Prerequisites"
 ---
 
 <style>
-section { font-size: 18px; overflow: hidden; color: #1E293B; }
+section { font-size: 18px; overflow: hidden; color: #1E293B; animation: fadeInSlide 0.4s ease-out; }
+@keyframes fadeInSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+h1, h2, h3 { transition: color 0.3s ease; }
+pre { transition: transform 0.3s ease; }
+pre:hover { transform: scale(1.01); }
+table { transition: box-shadow 0.3s ease; }
+table:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 h1 { font-size: 28px; margin-bottom: 8px; color: #1E40AF; border-bottom: 2px solid #DBEAFE; padding-bottom: 6px; }
 h2 { font-size: 22px; margin-bottom: 6px; color: #155E75; }
 h3 { font-size: 19px; color: #92400E; }

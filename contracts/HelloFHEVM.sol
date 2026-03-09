@@ -14,6 +14,9 @@ contract HelloFHEVM is ZamaEthereumConfig {
 
     constructor() {
         owner = msg.sender;
+        _counter = FHE.asEuint32(0);
+        FHE.allowThis(_counter);
+        FHE.allow(_counter, msg.sender);
     }
 
     /// @notice Increment the counter by an encrypted value

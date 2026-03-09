@@ -97,14 +97,13 @@ contract ConfidentialLending is ZamaEthereumConfig {
         FHE.allowThis(_borrowBalance[msg.sender]);
         FHE.allow(_borrowBalance[msg.sender], msg.sender);
 
-        // Update last error: set to INSUFFICIENT_COLLATERAL if check failed
-        // We cannot branch on ebool, but we use a plaintext error code set after the fact.
-        // Since we cannot know the result, we optimistically set NO_ERROR and
-        // rely on the user decrypting their borrow balance to detect failure.
-        // For the bootcamp, we use a helper: if the borrow amount was 0 after select,
-        // the user knows it failed. We store INSUFFICIENT_COLLATERAL as a hint.
-        // NOTE: In a real protocol you would track this differently.
-        // For testing purposes, we always set the error and let tests verify via balance.
+        // LastError pattern: since we cannot branch on ebool (FHE limitation),
+        // we set INSUFFICIENT_COLLATERAL as a hint that the borrow *may* have failed.
+        // The user must decrypt their borrow balance to confirm whether the borrow
+        // was actually applied. If the balance didn't change, the collateral check failed.
+        // In production, consider an off-chain decryption callback to set the exact error.
+        lastError[msg.sender] = ErrorCode.INSUFFICIENT_COLLATERAL;
+        emit ErrorChanged(msg.sender, ErrorCode.INSUFFICIENT_COLLATERAL);
         emit Borrowed(msg.sender);
     }
 
@@ -153,6 +152,10 @@ contract ConfidentialLending is ZamaEthereumConfig {
         FHE.allowThis(_collateral[msg.sender]);
         FHE.allow(_collateral[msg.sender], msg.sender);
 
+        // LastError pattern: set hint that withdrawal may have been rejected.
+        // User must decrypt collateral balance to confirm actual outcome.
+        lastError[msg.sender] = ErrorCode.INSUFFICIENT_COLLATERAL_FOR_WITHDRAWAL;
+        emit ErrorChanged(msg.sender, ErrorCode.INSUFFICIENT_COLLATERAL_FOR_WITHDRAWAL);
         emit Withdrawn(msg.sender);
     }
 

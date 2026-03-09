@@ -347,7 +347,40 @@ contract ProductionDecrypt is ZamaEthereumConfig, GatewayConfig {
 
 ---
 
-## 10. Common Mistakes
+## 10. Verifying Decryption Results: `FHE.checkSignatures()`
+
+When decrypted values are submitted back to a contract (e.g., in a callback or as a parameter), the contract needs to verify that the decryption was performed correctly by the KMS. `FHE.checkSignatures()` provides this guarantee:
+
+```solidity
+function processDecryptedResult(
+    bytes32[] memory handlesList,
+    bytes memory abiEncodedCleartexts,
+    bytes memory decryptionProof
+) external {
+    // Verify that the KMS actually decrypted these handles to these values
+    FHE.checkSignatures(handlesList, abiEncodedCleartexts, decryptionProof);
+
+    // Now safe to use the decrypted values
+    uint64 value = abi.decode(abiEncodedCleartexts, (uint64));
+    // ... use value ...
+}
+```
+
+**Parameters:**
+- `handlesList` — Array of `bytes32` ciphertext handles that were decrypted
+- `abiEncodedCleartexts` — ABI-encoded plaintext values returned by the KMS
+- `decryptionProof` — Cryptographic proof from the KMS that the decryption is correct
+
+**When to use:**
+- Verifying decryption results submitted by relayers or off-chain services
+- Callback patterns where decrypted values are returned to a contract
+- Any scenario where a contract receives plaintext values that claim to be decryptions of on-chain ciphertexts
+
+> **Note:** In development with the Hardhat plugin, `userDecryptEuint()` and `userDecryptEbool()` handle verification automatically. `checkSignatures()` is primarily relevant for production deployments where the KMS provides cryptographic proofs.
+
+---
+
+## 11. Common Mistakes
 
 ### Mistake 1: Forgetting ACL Before Decryption
 ```solidity

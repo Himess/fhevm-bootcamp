@@ -998,7 +998,7 @@ This is the familiar EVM execution environment. Smart contracts are written in S
 - The EVM itself does not perform the FHE computations -- it delegates them.
 - Encrypted values are stored on-chain as ciphertext handles (references to ciphertexts managed by the coprocessor).
 
-### 8.3 Coprocessor
+### 8.3 Coprocessor (FHEVMExecutor)
 
 The coprocessor is the computational engine that performs the actual FHE operations. When a smart contract calls \`FHE.add(a, b)\`, the EVM delegates the heavy cryptographic computation to the coprocessor.
 
@@ -1007,6 +1007,56 @@ The coprocessor is the computational engine that performs the actual FHE operati
 - Handles bootstrapping to refresh ciphertexts and maintain correctness.
 - Runs off-chain but produces results that are verifiable on-chain.
 - This is where the computational overhead of FHE is absorbed.
+
+#### How the Coprocessor Works
+
+The coprocessor architecture separates the **logic layer** (EVM) from the **computation layer** (FHE engine):
+
+\`\`\`
+Smart Contract (EVM)              FHE Coprocessor
+┌──────────────────────┐         ┌──────────────────────┐
+│ FHE.add(handleA,     │ ──────► │ 1. Look up ciphertexts│
+│         handleB)     │         │    for handleA, B     │
+│                      │         │ 2. Perform TFHE add   │
+│ Returns: handleC     │ ◄────── │ 3. Store result as    │
+│ (new ciphertext ref) │         │    handleC            │
+└──────────────────────┘         └──────────────────────┘
+\`\`\`
+
+1. **Handle-based indirection:** The EVM never touches actual ciphertexts. It works with \`uint256\` handles — references to ciphertexts stored in the coprocessor. When you see \`euint64\`, the EVM stores a 256-bit handle, not the encrypted value itself.
+
+2. **Precompile delegation:** FHE operations are implemented as EVM precompiles. When the EVM encounters \`FHE.add(a, b)\`, it calls a precompile that routes the operation to the coprocessor with the two handles.
+
+3. **Result registration:** The coprocessor performs the TFHE operation on the actual ciphertexts, stores the result as a new ciphertext, and returns a new handle to the EVM.
+
+4. **Verifiable computation:** The coprocessor's results can be verified on-chain through the KMS and ACL system. The coprocessor itself cannot decrypt data — it only computes on ciphertexts.
+
+#### On-Chain System Contracts
+
+The coprocessor infrastructure consists of several on-chain contracts that \`ZamaEthereumConfig\` configures automatically:
+
+| Contract | Role |
+|----------|------|
+| **FHEVMExecutor** | Routes FHE operation requests to the coprocessor |
+| **ACL** | Manages per-ciphertext access control lists |
+| **KMSVerifier** | Verifies decryption proofs from the Key Management Service |
+| **InputVerifier** | Validates encrypted inputs from clients (ZK proof verification) |
+
+Developers never interact with these contracts directly — the \`FHE\` library handles all routing. But understanding their existence explains why every FHEVM contract must inherit \`ZamaEthereumConfig\`: it provides the addresses of these system contracts.
+
+#### Performance Characteristics
+
+FHE operations are significantly more expensive than plaintext operations. The coprocessor absorbs the computational cost, but gas costs reflect this:
+
+| Operation | Approximate Gas | Notes |
+|-----------|----------------|-------|
+| \`FHE.add(euint64, euint64)\` | ~200K | Encrypted + encrypted |
+| \`FHE.add(euint64, plaintext)\` | ~130K | Plaintext operand is cheaper |
+| \`FHE.mul(euint64, euint64)\` | ~300K | Most expensive arithmetic |
+| \`FHE.select(ebool, euint64, euint64)\` | ~250K | Branchless conditional |
+| \`FHE.fromExternal()\` | ~300K | Input validation + proof verification |
+
+These costs are covered in detail in Module 15 (Gas Optimization). The key insight: always use **plaintext operands** when one value is known at compile time (e.g., \`FHE.add(enc, 10)\` instead of \`FHE.add(enc, FHE.asEuint64(10))\`).
 
 ### 8.4 Gateway
 
@@ -1027,6 +1077,26 @@ The KMS is a distributed threshold decryption service that holds the global FHE 
 - No single party can decrypt data on their own.
 - Decryption requires a threshold number of parties to cooperate.
 - The KMS only decrypts values when authorized by the Gateway (which checks on-chain permissions).
+
+#### The DKG Ceremony (Decentralized Key Generation)
+
+The KMS keys are established through a **DKG (Decentralized Key Generation) ceremony** — a multi-party cryptographic protocol where participants collectively generate the global FHE key without any single party ever seeing the full key.
+
+Zama conducted the first production DKG ceremony for fhEVM in **November 2025** (November 25-28), involving **13 independent parties** over approximately **55 hours**. The protocol uses **threshold MPC (Multi-Party Computation) over Galois rings**, a novel approach that enables efficient distributed key generation for FHE schemes.
+
+**How DKG works:**
+1. Each participant generates a random key share locally.
+2. Participants run a multi-round MPC protocol to combine their shares.
+3. The output is: (a) a **public encryption key** available to everyone, and (b) **private key shares** distributed across participants.
+4. Decryption requires a **threshold** number of participants (e.g., 7 of 13) to cooperate — no single party can decrypt alone.
+5. The public key is published on-chain and used by clients to encrypt inputs via the Relayer SDK.
+
+**Why DKG matters for security:**
+- **No trusted setup entity** — Unlike a single key generated by one party, DKG ensures no single organization controls the decryption key.
+- **Threshold resilience** — Even if some participants are compromised or go offline, the system remains secure and functional as long as the threshold is met.
+- **Auditability** — The ceremony is publicly verifiable; anyone can confirm the protocol was executed correctly.
+
+This is a critical infrastructure component: every encrypted value on fhEVM is encrypted under the public key produced by the DKG ceremony, and every decryption goes through the threshold KMS that holds the distributed shares.
 
 ### 8.6 Data Flow Example: Encrypted Token Transfer
 
@@ -1446,12 +1516,31 @@ contract MyContract is ZamaEthereumConfig {
 \`\`\`
 
 **What \`ZamaEthereumConfig\` does:**
-- Configures the FHE co-processor address
-- Sets up the ACL (Access Control List) contract address
-- Initializes the KMS (Key Management Service) verifier
-- Provides the decryption oracle address for public decryption operations
+- Configures the **FHEVMExecutor** address — the coprocessor contract that performs actual FHE operations
+- Sets up the **ACL** (Access Control List) contract address — manages per-ciphertext permissions
+- Initializes the **KMSVerifier** — verifies decryption proofs from the Key Management Service
+- Configures the **InputVerifier** — validates encrypted inputs submitted by users via \`FHE.fromExternal()\`
 
-> **Important:** You do NOT need to manually configure these addresses. \`ZamaEthereumConfig\` handles everything.
+**Why inheritance is required:**
+The FHE library functions (\`FHE.add()\`, \`FHE.allow()\`, etc.) need to know the addresses of the system contracts (ACL, Executor, KMS, InputVerifier) to route operations correctly. \`ZamaEthereumConfig\` sets these addresses in the contract's constructor through Solidity's inheritance mechanism.
+
+Without \`ZamaEthereumConfig\`, FHE operations would fail because the library would not know where to send the computation requests or how to verify proofs.
+
+\`\`\`solidity
+// This will NOT work — FHE operations have no system contract addresses
+contract BrokenContract {
+    euint32 value = FHE.asEuint32(0); // FAILS: no coprocessor configured
+}
+
+// This WORKS — ZamaEthereumConfig provides all necessary addresses
+contract WorkingContract is ZamaEthereumConfig {
+    euint32 value = FHE.asEuint32(0); // OK: coprocessor address is set
+}
+\`\`\`
+
+> **Important:** You do NOT need to manually configure these addresses. \`ZamaEthereumConfig\` handles everything. Every contract that uses any FHE operation — even factory contracts or helper contracts — must inherit from \`ZamaEthereumConfig\`.
+
+> **Network-specific configs:** Zama provides different config contracts for different networks. \`ZamaEthereumConfig\` is for Ethereum (including Sepolia testnet). Other networks may have their own config contracts in the \`@fhevm/solidity/config/\` directory.
 
 ---
 
@@ -2824,6 +2913,71 @@ function processValue(euint64 value) internal {
 
 ---
 
+## 10. Additional ACL Functions
+
+### \`FHE.isAllowed(handle, address)\` — Check Any Address
+
+While \`FHE.isSenderAllowed(handle)\` checks if \`msg.sender\` has access, \`FHE.isAllowed(handle, address)\` checks if **any** specific address has access to a ciphertext:
+
+\`\`\`solidity
+function canUserAccess(address user) public view returns (bool) {
+    return FHE.isAllowed(_balances[user], user);
+}
+
+function canContractAccess(address contractAddr) public view returns (bool) {
+    return FHE.isAllowed(_sharedData, contractAddr);
+}
+\`\`\`
+
+**When to use \`isAllowed\` vs \`isSenderAllowed\`:**
+
+| Function | Checks | Use Case |
+|----------|--------|----------|
+| \`FHE.isSenderAllowed(handle)\` | \`msg.sender\` has access | Guard view functions returning encrypted handles |
+| \`FHE.isAllowed(handle, addr)\` | Any address has access | Verify cross-contract ACL grants, admin checks |
+
+### \`FHE.isPubliclyDecryptable(handle)\` — Check Public Visibility
+
+Returns \`true\` if a ciphertext has been marked for public decryption via \`makePubliclyDecryptable()\`:
+
+\`\`\`solidity
+function isResultVisible() public view returns (bool) {
+    return FHE.isPubliclyDecryptable(_voteResult);
+}
+
+// Guard pattern: only reveal if publicly decryptable
+function getResult() external view returns (euint32) {
+    require(FHE.isPubliclyDecryptable(_voteResult), "Result not yet revealed");
+    return _voteResult;
+}
+\`\`\`
+
+This is useful for contracts that need to check whether a value has already been revealed before taking actions. For example, an auction contract might check \`isPubliclyDecryptable(_winningBid)\` before allowing the winner to claim their prize.
+
+### \`FHE.cleanTransientStorage()\` — Reset Transient ACL State
+
+Clears all transient ACL entries that were created during the current transaction via \`FHE.allowTransient()\`. This function is called automatically at the end of each transaction, but you can call it explicitly if you need to reset transient permissions mid-transaction:
+
+\`\`\`solidity
+function processMultipleBatches(address[] calldata processors) external {
+    for (uint256 i = 0; i < processors.length; i++) {
+        // Grant transient access for this batch
+        FHE.allowTransient(_data, processors[i]);
+        IProcessor(processors[i]).process(_data);
+
+        // Clean up transient storage before next batch
+        FHE.cleanTransientStorage();
+    }
+}
+\`\`\`
+
+**When to use:**
+- Mid-transaction cleanup when processing multiple independent batches
+- Preventing unintended transient ACL leaks between operations within a single transaction
+- Generally not needed — transient storage is auto-cleaned at transaction end
+
+---
+
 ## Summary
 
 | Function | Purpose | Duration |
@@ -2833,14 +2987,19 @@ function processValue(euint64 value) internal {
 | \`FHE.allowTransient(handle, addr)\` | Grant temporary access | Transaction only |
 | \`FHE.makePubliclyDecryptable(handle)\` | Reveal to everyone | Persistent (irreversible) |
 | \`FHE.isSenderAllowed(handle)\` | Check if msg.sender has access | N/A (view) |
+| \`FHE.isAllowed(handle, addr)\` | Check if any address has access | N/A (view) |
+| \`FHE.isPubliclyDecryptable(handle)\` | Check if value is publicly visible | N/A (view) |
+| \`FHE.cleanTransientStorage()\` | Clear all transient ACL entries | N/A |
 
-**Key rules (5 ACL functions):**
+**Key rules (8 ACL functions):**
 1. Every new ciphertext has an empty ACL
 2. Always \`FHE.allowThis()\` after every state update
 3. Use \`FHE.allow()\` for users who need to decrypt
 4. Use \`FHE.allowTransient()\` for inter-contract calls within one transaction
 5. Use \`FHE.makePubliclyDecryptable()\` to reveal values to everyone (irreversible)
-6. No direct revocation — rotate data instead
+6. Use \`FHE.isAllowed()\` / \`FHE.isSenderAllowed()\` to check permissions
+7. Use \`FHE.isPubliclyDecryptable()\` to check if a value has been publicly revealed
+8. No direct revocation — rotate data instead
 `,
   "06-encrypted-inputs": `# Module 06: Encrypted Inputs & ZK Proofs — Lesson
 
@@ -3623,7 +3782,40 @@ contract ProductionDecrypt is ZamaEthereumConfig, GatewayConfig {
 
 ---
 
-## 10. Common Mistakes
+## 10. Verifying Decryption Results: \`FHE.checkSignatures()\`
+
+When decrypted values are submitted back to a contract (e.g., in a callback or as a parameter), the contract needs to verify that the decryption was performed correctly by the KMS. \`FHE.checkSignatures()\` provides this guarantee:
+
+\`\`\`solidity
+function processDecryptedResult(
+    bytes32[] memory handlesList,
+    bytes memory abiEncodedCleartexts,
+    bytes memory decryptionProof
+) external {
+    // Verify that the KMS actually decrypted these handles to these values
+    FHE.checkSignatures(handlesList, abiEncodedCleartexts, decryptionProof);
+
+    // Now safe to use the decrypted values
+    uint64 value = abi.decode(abiEncodedCleartexts, (uint64));
+    // ... use value ...
+}
+\`\`\`
+
+**Parameters:**
+- \`handlesList\` — Array of \`bytes32\` ciphertext handles that were decrypted
+- \`abiEncodedCleartexts\` — ABI-encoded plaintext values returned by the KMS
+- \`decryptionProof\` — Cryptographic proof from the KMS that the decryption is correct
+
+**When to use:**
+- Verifying decryption results submitted by relayers or off-chain services
+- Callback patterns where decrypted values are returned to a contract
+- Any scenario where a contract receives plaintext values that claim to be decryptions of on-chain ciphertexts
+
+> **Note:** In development with the Hardhat plugin, \`userDecryptEuint()\` and \`userDecryptEbool()\` handle verification automatically. \`checkSignatures()\` is primarily relevant for production deployments where the KMS provides cryptographic proofs.
+
+---
+
+## 11. Common Mistakes
 
 ### Mistake 1: Forgetting ACL Before Decryption
 \`\`\`solidity
@@ -9242,6 +9434,35 @@ Phase 3 (Reveal): Anyone calls reveal() after lockTime
 \`\`\`
 
 This is simpler than traditional commit-reveal because users do not need to separately reveal their commitments -- the FHE system handles it.
+
+---
+
+## Utility: \`FHE.toBytes32()\` — Handle Serialization
+
+Every encrypted value in fhEVM is internally represented as a \`bytes32\` handle (a reference to the ciphertext stored by the coprocessor). \`FHE.toBytes32()\` converts any encrypted type to its raw \`bytes32\` handle:
+
+\`\`\`solidity
+euint64 encBalance = FHE.asEuint64(1000);
+bytes32 handle = FHE.toBytes32(encBalance);
+\`\`\`
+
+**Supported types:** Works with all encrypted types — \`ebool\`, \`euint8\`, \`euint16\`, \`euint32\`, \`euint64\`, \`euint128\`, \`euint256\`, \`eaddress\`, \`ebytes64\`, \`ebytes128\`, \`ebytes256\`.
+
+**Use cases:**
+- **Off-chain indexing:** Emit handles as events for off-chain systems to track
+- **Handle storage:** Store handles in generic \`bytes32\` mappings for flexible data structures
+- **Cross-system integration:** Pass handles to external systems that work with raw bytes32
+
+\`\`\`solidity
+// Example: Generic encrypted value storage
+mapping(bytes32 => bytes32) private _genericStore;
+
+function storeGeneric(bytes32 key, euint64 value) external {
+    _genericStore[key] = FHE.toBytes32(value);
+}
+\`\`\`
+
+> **Important:** \`toBytes32()\` returns the handle reference, NOT the plaintext value. The ciphertext remains encrypted and ACL-protected. This is safe to emit in events or store in public mappings — it reveals nothing about the encrypted value.
 
 ---
 

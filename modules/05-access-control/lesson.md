@@ -345,6 +345,71 @@ function processValue(euint64 value) internal {
 
 ---
 
+## 10. Additional ACL Functions
+
+### `FHE.isAllowed(handle, address)` — Check Any Address
+
+While `FHE.isSenderAllowed(handle)` checks if `msg.sender` has access, `FHE.isAllowed(handle, address)` checks if **any** specific address has access to a ciphertext:
+
+```solidity
+function canUserAccess(address user) public view returns (bool) {
+    return FHE.isAllowed(_balances[user], user);
+}
+
+function canContractAccess(address contractAddr) public view returns (bool) {
+    return FHE.isAllowed(_sharedData, contractAddr);
+}
+```
+
+**When to use `isAllowed` vs `isSenderAllowed`:**
+
+| Function | Checks | Use Case |
+|----------|--------|----------|
+| `FHE.isSenderAllowed(handle)` | `msg.sender` has access | Guard view functions returning encrypted handles |
+| `FHE.isAllowed(handle, addr)` | Any address has access | Verify cross-contract ACL grants, admin checks |
+
+### `FHE.isPubliclyDecryptable(handle)` — Check Public Visibility
+
+Returns `true` if a ciphertext has been marked for public decryption via `makePubliclyDecryptable()`:
+
+```solidity
+function isResultVisible() public view returns (bool) {
+    return FHE.isPubliclyDecryptable(_voteResult);
+}
+
+// Guard pattern: only reveal if publicly decryptable
+function getResult() external view returns (euint32) {
+    require(FHE.isPubliclyDecryptable(_voteResult), "Result not yet revealed");
+    return _voteResult;
+}
+```
+
+This is useful for contracts that need to check whether a value has already been revealed before taking actions. For example, an auction contract might check `isPubliclyDecryptable(_winningBid)` before allowing the winner to claim their prize.
+
+### `FHE.cleanTransientStorage()` — Reset Transient ACL State
+
+Clears all transient ACL entries that were created during the current transaction via `FHE.allowTransient()`. This function is called automatically at the end of each transaction, but you can call it explicitly if you need to reset transient permissions mid-transaction:
+
+```solidity
+function processMultipleBatches(address[] calldata processors) external {
+    for (uint256 i = 0; i < processors.length; i++) {
+        // Grant transient access for this batch
+        FHE.allowTransient(_data, processors[i]);
+        IProcessor(processors[i]).process(_data);
+
+        // Clean up transient storage before next batch
+        FHE.cleanTransientStorage();
+    }
+}
+```
+
+**When to use:**
+- Mid-transaction cleanup when processing multiple independent batches
+- Preventing unintended transient ACL leaks between operations within a single transaction
+- Generally not needed — transient storage is auto-cleaned at transaction end
+
+---
+
 ## Summary
 
 | Function | Purpose | Duration |
@@ -354,11 +419,16 @@ function processValue(euint64 value) internal {
 | `FHE.allowTransient(handle, addr)` | Grant temporary access | Transaction only |
 | `FHE.makePubliclyDecryptable(handle)` | Reveal to everyone | Persistent (irreversible) |
 | `FHE.isSenderAllowed(handle)` | Check if msg.sender has access | N/A (view) |
+| `FHE.isAllowed(handle, addr)` | Check if any address has access | N/A (view) |
+| `FHE.isPubliclyDecryptable(handle)` | Check if value is publicly visible | N/A (view) |
+| `FHE.cleanTransientStorage()` | Clear all transient ACL entries | N/A |
 
-**Key rules (5 ACL functions):**
+**Key rules (8 ACL functions):**
 1. Every new ciphertext has an empty ACL
 2. Always `FHE.allowThis()` after every state update
 3. Use `FHE.allow()` for users who need to decrypt
 4. Use `FHE.allowTransient()` for inter-contract calls within one transaction
 5. Use `FHE.makePubliclyDecryptable()` to reveal values to everyone (irreversible)
-6. No direct revocation — rotate data instead
+6. Use `FHE.isAllowed()` / `FHE.isSenderAllowed()` to check permissions
+7. Use `FHE.isPubliclyDecryptable()` to check if a value has been publicly revealed
+8. No direct revocation — rotate data instead

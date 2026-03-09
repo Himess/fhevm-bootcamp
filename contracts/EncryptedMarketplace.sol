@@ -83,7 +83,10 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
         emit OrderPlaced(itemId, msg.sender, quantity);
     }
 
-    /// @dev Compute discounted total cost for an order
+    /// @dev Compute discounted total cost for an order.
+    /// NOTE: This function is intentionally NOT marked `view` because FHE operations
+    /// (FHE.select, FHE.ge, FHE.mul, FHE.div) modify the FHE state under the hood
+    /// even though no visible storage is written. This is a common FHE gotcha.
     function _computeCost(uint256 itemId, uint32 quantity) internal returns (euint64) {
         euint32 qty = FHE.asEuint32(quantity);
 

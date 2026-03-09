@@ -16,9 +16,17 @@ describe("HelloFHEVM", function () {
     contractAddress = await contract.getAddress();
   });
 
-  it("should deploy with counter as zero handle", async function () {
+  it("should deploy with counter initialized to zero", async function () {
     const counter = await contract.getCounter();
-    expect(counter).to.equal(ethers.ZeroHash);
+    // Counter is now properly initialized in the constructor (not a zero handle)
+    expect(counter).to.not.equal(ethers.ZeroHash);
+    const clear = await fhevm.userDecryptEuint(
+      FhevmType.euint32,
+      counter,
+      contractAddress,
+      deployer,
+    );
+    expect(clear).to.equal(0n);
   });
 
   it("should set deployer as owner", async function () {

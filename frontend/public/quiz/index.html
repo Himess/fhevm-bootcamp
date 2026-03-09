@@ -15,11 +15,13 @@
 
     <!-- Module Selector Screen -->
     <div id="selector-screen">
+      <div class="overall-progress" id="overall-progress"></div>
       <div class="module-selector">
         <label for="module-select">Choose a module:</label>
         <select id="module-select"></select>
-        <br>
+        <div class="best-score-display" id="best-score-display"></div>
         <button class="start-btn" id="start-btn">Start Quiz</button>
+        <button class="clear-btn" id="clear-btn" title="Clear all saved quiz results">Reset Progress</button>
       </div>
     </div>
 
@@ -66,10 +68,13 @@
     (function() {
       // State
       let currentModule = null;
+      let currentModuleKey = null;
       let currentQuestionIndex = 0;
       let score = 0;
       let answered = false;
       let wrongAnswers = [];
+
+      var STORAGE_KEY = 'fhevm-bootcamp-quiz-results';
 
       // DOM elements
       const selectorScreen = document.getElementById('selector-screen');
@@ -93,6 +98,71 @@
       const summaryBreakdown = document.getElementById('summary-breakdown');
       const retryBtn = document.getElementById('retry-btn');
       const backBtn = document.getElementById('back-btn');
+      const bestScoreDisplay = document.getElementById('best-score-display');
+      const overallProgress = document.getElementById('overall-progress');
+      const clearBtn = document.getElementById('clear-btn');
+
+      // localStorage helpers
+      function loadResults() {
+        try {
+          var data = localStorage.getItem(STORAGE_KEY);
+          return data ? JSON.parse(data) : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveResult(moduleKey, scoreVal, total) {
+        var results = loadResults();
+        var pct = Math.round((scoreVal / total) * 100);
+        var existing = results[moduleKey];
+        if (!existing || pct > existing.percentage) {
+          results[moduleKey] = { score: scoreVal, total: total, percentage: pct, date: new Date().toISOString() };
+        }
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+        } catch (e) { /* storage full or unavailable */ }
+      }
+
+      function clearResults() {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      }
+
+      function updateBestScoreDisplay() {
+        var key = moduleSelect.value;
+        var results = loadResults();
+        var r = results[key];
+        if (r) {
+          bestScoreDisplay.textContent = 'Best: ' + r.score + '/' + r.total + ' (' + r.percentage + '%)';
+          bestScoreDisplay.style.display = 'block';
+        } else {
+          bestScoreDisplay.textContent = '';
+          bestScoreDisplay.style.display = 'none';
+        }
+      }
+
+      function updateOverallProgress() {
+        var results = loadResults();
+        var totalModules = Object.keys(quizData).length;
+        var completed = 0;
+        var passed = 0;
+        Object.keys(results).forEach(function(k) {
+          if (quizData[k]) {
+            completed++;
+            if (results[k].percentage >= 70) passed++;
+          }
+        });
+        if (completed === 0) {
+          overallProgress.innerHTML = '';
+          return;
+        }
+        var bar = '<div class="overall-stats">' +
+          '<span>' + completed + '/' + totalModules + ' modules attempted</span>' +
+          '<span>' + passed + '/' + totalModules + ' passed (70%+)</span>' +
+          '</div>' +
+          '<div class="overall-bar"><div class="overall-fill" style="width:' + Math.round((completed / totalModules) * 100) + '%"></div></div>';
+        overallProgress.innerHTML = bar;
+      }
 
       // Populate module dropdown
       function populateModules() {
@@ -121,6 +191,7 @@
       // Start quiz
       function startQuiz() {
         const key = moduleSelect.value;
+        currentModuleKey = key;
         currentModule = quizData[key];
         currentQuestionIndex = 0;
         score = 0;
@@ -231,6 +302,9 @@
         var total = currentModule.questions.length;
         var pct = Math.round((score / total) * 100);
 
+        // Save result to localStorage
+        saveResult(currentModuleKey, score, total);
+
         showScreen(summaryScreen);
 
         summaryTitle.textContent = currentModule.title;
@@ -290,6 +364,20 @@
 
       backBtn.addEventListener('click', function() {
         showScreen(selectorScreen);
+        updateBestScoreDisplay();
+        updateOverallProgress();
+      });
+
+      moduleSelect.addEventListener('change', function() {
+        updateBestScoreDisplay();
+      });
+
+      clearBtn.addEventListener('click', function() {
+        if (confirm('Clear all quiz results? This cannot be undone.')) {
+          clearResults();
+          updateBestScoreDisplay();
+          updateOverallProgress();
+        }
       });
 
       // Keyboard support
@@ -325,6 +413,8 @@
 
       // Initialize
       populateModules();
+      updateBestScoreDisplay();
+      updateOverallProgress();
     })();
   </script>
 </body>

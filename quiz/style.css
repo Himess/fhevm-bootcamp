@@ -425,6 +425,76 @@ header p {
   background: #f5f3ff;
 }
 
+/* Best Score Display */
+.best-score-display {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #166534;
+  display: none;
+}
+
+/* Overall Progress */
+.overall-progress {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 16px;
+}
+
+.overall-progress:empty {
+  display: none;
+}
+
+.overall-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.overall-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.overall-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Clear Button */
+.clear-btn {
+  display: inline-block;
+  margin-top: 8px;
+  margin-left: 8px;
+  padding: 8px 16px;
+  background: #fff;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-btn:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
 /* Hidden utility */
 .hidden {
   display: none !important;

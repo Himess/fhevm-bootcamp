@@ -3,6 +3,7 @@ import { ethers, fhevm } from "hardhat";
 import { FhevmType } from "@fhevm/hardhat-plugin";
 
 describe("ConfidentialDAO", function () {
+  const DEPOSIT = ethers.parseEther("0.001");
   let dao: any;
   let daoAddress: string;
   let admin: any;
@@ -44,13 +45,17 @@ describe("ConfidentialDAO", function () {
   });
 
   it("should create a proposal", async function () {
-    await (await dao.createProposal("Fund dev", bob.address, 1000, 3600)).wait();
+    await (
+      await dao.createProposal("Fund dev", bob.address, 1000, 3600, { value: DEPOSIT })
+    ).wait();
     expect(await dao.proposalCount()).to.equal(1n);
   });
 
   it("should cast an encrypted vote", async function () {
     await (await dao.mintTokens(alice.address, 500)).wait();
-    await (await dao.createProposal("Proposal 1", bob.address, 100, 3600)).wait();
+    await (
+      await dao.createProposal("Proposal 1", bob.address, 100, 3600, { value: DEPOSIT })
+    ).wait();
 
     const enc = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
     await (await dao.connect(alice).vote(0, enc.handles[0], enc.inputProof)).wait();
@@ -60,7 +65,9 @@ describe("ConfidentialDAO", function () {
 
   it("should prevent double voting", async function () {
     await (await dao.mintTokens(alice.address, 500)).wait();
-    await (await dao.createProposal("Proposal 2", bob.address, 100, 3600)).wait();
+    await (
+      await dao.createProposal("Proposal 2", bob.address, 100, 3600, { value: DEPOSIT })
+    ).wait();
 
     const enc1 = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
     await (await dao.connect(alice).vote(0, enc1.handles[0], enc1.inputProof)).wait();
@@ -77,7 +84,9 @@ describe("ConfidentialDAO", function () {
   it("should track encrypted yes/no votes", async function () {
     await (await dao.mintTokens(alice.address, 500)).wait();
     await (await dao.mintTokens(bob.address, 500)).wait();
-    await (await dao.createProposal("Vote Test", admin.address, 50, 100)).wait();
+    await (
+      await dao.createProposal("Vote Test", admin.address, 50, 100, { value: DEPOSIT })
+    ).wait();
 
     // Alice votes yes (1)
     const encAlice = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
@@ -110,7 +119,7 @@ describe("ConfidentialDAO", function () {
   it("should finalize proposal after deadline", async function () {
     await (await dao.mintTokens(alice.address, 500)).wait();
     // Create proposal with 1 second duration
-    await (await dao.createProposal("Finalize Test", bob.address, 0, 1)).wait();
+    await (await dao.createProposal("Finalize Test", bob.address, 0, 1, { value: DEPOSIT })).wait();
 
     // Alice votes yes
     const enc = await fhevm.createEncryptedInput(daoAddress, alice.address).add8(1).encrypt();
@@ -134,7 +143,9 @@ describe("ConfidentialDAO", function () {
   });
 
   it("should reject finalize before deadline", async function () {
-    await (await dao.createProposal("Early Finalize", bob.address, 0, 3600)).wait();
+    await (
+      await dao.createProposal("Early Finalize", bob.address, 0, 3600, { value: DEPOSIT })
+    ).wait();
     try {
       await dao.finalizeProposal(0);
       expect.fail("Should have reverted");
@@ -154,7 +165,9 @@ describe("ConfidentialDAO", function () {
 
     // Create proposal to send 0.5 ETH to bob
     await (
-      await dao.createProposal("Send to Bob", bob.address, ethers.parseEther("0.5"), 100)
+      await dao.createProposal("Send to Bob", bob.address, ethers.parseEther("0.5"), 100, {
+        value: DEPOSIT,
+      })
     ).wait();
 
     // Alice votes yes
@@ -174,6 +187,7 @@ describe("ConfidentialDAO", function () {
     const bobBalAfter = await ethers.provider.getBalance(bob.address);
 
     expect(bobBalAfter - bobBalBefore).to.equal(ethers.parseEther("0.5"));
-    expect(await dao.treasuryBalance()).to.equal(ethers.parseEther("0.5"));
+    // Treasury = 1.0 ETH funded + 0.001 ETH proposal deposit - 0.5 ETH transferred
+    expect(await dao.treasuryBalance()).to.equal(ethers.parseEther("0.501"));
   });
 });

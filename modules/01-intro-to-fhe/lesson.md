@@ -467,7 +467,7 @@ This is the familiar EVM execution environment. Smart contracts are written in S
 - The EVM itself does not perform the FHE computations -- it delegates them.
 - Encrypted values are stored on-chain as ciphertext handles (references to ciphertexts managed by the coprocessor).
 
-### 8.3 Coprocessor
+### 8.3 Coprocessor (FHEVMExecutor)
 
 The coprocessor is the computational engine that performs the actual FHE operations. When a smart contract calls `FHE.add(a, b)`, the EVM delegates the heavy cryptographic computation to the coprocessor.
 
@@ -476,6 +476,56 @@ The coprocessor is the computational engine that performs the actual FHE operati
 - Handles bootstrapping to refresh ciphertexts and maintain correctness.
 - Runs off-chain but produces results that are verifiable on-chain.
 - This is where the computational overhead of FHE is absorbed.
+
+#### How the Coprocessor Works
+
+The coprocessor architecture separates the **logic layer** (EVM) from the **computation layer** (FHE engine):
+
+```
+Smart Contract (EVM)              FHE Coprocessor
+┌──────────────────────┐         ┌──────────────────────┐
+│ FHE.add(handleA,     │ ──────► │ 1. Look up ciphertexts│
+│         handleB)     │         │    for handleA, B     │
+│                      │         │ 2. Perform TFHE add   │
+│ Returns: handleC     │ ◄────── │ 3. Store result as    │
+│ (new ciphertext ref) │         │    handleC            │
+└──────────────────────┘         └──────────────────────┘
+```
+
+1. **Handle-based indirection:** The EVM never touches actual ciphertexts. It works with `uint256` handles — references to ciphertexts stored in the coprocessor. When you see `euint64`, the EVM stores a 256-bit handle, not the encrypted value itself.
+
+2. **Precompile delegation:** FHE operations are implemented as EVM precompiles. When the EVM encounters `FHE.add(a, b)`, it calls a precompile that routes the operation to the coprocessor with the two handles.
+
+3. **Result registration:** The coprocessor performs the TFHE operation on the actual ciphertexts, stores the result as a new ciphertext, and returns a new handle to the EVM.
+
+4. **Verifiable computation:** The coprocessor's results can be verified on-chain through the KMS and ACL system. The coprocessor itself cannot decrypt data — it only computes on ciphertexts.
+
+#### On-Chain System Contracts
+
+The coprocessor infrastructure consists of several on-chain contracts that `ZamaEthereumConfig` configures automatically:
+
+| Contract | Role |
+|----------|------|
+| **FHEVMExecutor** | Routes FHE operation requests to the coprocessor |
+| **ACL** | Manages per-ciphertext access control lists |
+| **KMSVerifier** | Verifies decryption proofs from the Key Management Service |
+| **InputVerifier** | Validates encrypted inputs from clients (ZK proof verification) |
+
+Developers never interact with these contracts directly — the `FHE` library handles all routing. But understanding their existence explains why every FHEVM contract must inherit `ZamaEthereumConfig`: it provides the addresses of these system contracts.
+
+#### Performance Characteristics
+
+FHE operations are significantly more expensive than plaintext operations. The coprocessor absorbs the computational cost, but gas costs reflect this:
+
+| Operation | Approximate Gas | Notes |
+|-----------|----------------|-------|
+| `FHE.add(euint64, euint64)` | ~200K | Encrypted + encrypted |
+| `FHE.add(euint64, plaintext)` | ~130K | Plaintext operand is cheaper |
+| `FHE.mul(euint64, euint64)` | ~300K | Most expensive arithmetic |
+| `FHE.select(ebool, euint64, euint64)` | ~250K | Branchless conditional |
+| `FHE.fromExternal()` | ~300K | Input validation + proof verification |
+
+These costs are covered in detail in Module 15 (Gas Optimization). The key insight: always use **plaintext operands** when one value is known at compile time (e.g., `FHE.add(enc, 10)` instead of `FHE.add(enc, FHE.asEuint64(10))`).
 
 ### 8.4 Gateway
 
@@ -496,6 +546,26 @@ The KMS is a distributed threshold decryption service that holds the global FHE 
 - No single party can decrypt data on their own.
 - Decryption requires a threshold number of parties to cooperate.
 - The KMS only decrypts values when authorized by the Gateway (which checks on-chain permissions).
+
+#### The DKG Ceremony (Decentralized Key Generation)
+
+The KMS keys are established through a **DKG (Decentralized Key Generation) ceremony** — a multi-party cryptographic protocol where participants collectively generate the global FHE key without any single party ever seeing the full key.
+
+Zama conducted the first production DKG ceremony for fhEVM in **November 2025** (November 25-28), involving **13 independent parties** over approximately **55 hours**. The protocol uses **threshold MPC (Multi-Party Computation) over Galois rings**, a novel approach that enables efficient distributed key generation for FHE schemes.
+
+**How DKG works:**
+1. Each participant generates a random key share locally.
+2. Participants run a multi-round MPC protocol to combine their shares.
+3. The output is: (a) a **public encryption key** available to everyone, and (b) **private key shares** distributed across participants.
+4. Decryption requires a **threshold** number of participants (e.g., 7 of 13) to cooperate — no single party can decrypt alone.
+5. The public key is published on-chain and used by clients to encrypt inputs via the Relayer SDK.
+
+**Why DKG matters for security:**
+- **No trusted setup entity** — Unlike a single key generated by one party, DKG ensures no single organization controls the decryption key.
+- **Threshold resilience** — Even if some participants are compromised or go offline, the system remains secure and functional as long as the threshold is met.
+- **Auditability** — The ceremony is publicly verifiable; anyone can confirm the protocol was executed correctly.
+
+This is a critical infrastructure component: every encrypted value on fhEVM is encrypted under the public key produced by the DKG ceremony, and every decryption goes through the threshold KMS that holds the distributed shares.
 
 ### 8.6 Data Flow Example: Encrypted Token Transfer
 

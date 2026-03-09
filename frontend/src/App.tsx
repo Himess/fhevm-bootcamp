@@ -1,12 +1,15 @@
 import React from "react";
 import LessonViewer from "./LessonViewer";
+import InteractiveDemo from "./InteractiveDemo";
+import ErrorBoundary from "./ErrorBoundary";
 
 const GITHUB_REPO = "https://github.com/Himess/fhevm-bootcamp";
+const PROGRESS_KEY = "fhevm-bootcamp-progress";
 
 const STATS = [
   { label: "Modules", value: "20" },
-  { label: "Contracts", value: "35" },
-  { label: "Tests", value: "328" },
+  { label: "Contracts", value: "38" },
+  { label: "Tests", value: "360" },
   { label: "Slides", value: "20" },
   { label: "Quiz Questions", value: "215" },
   { label: "Hours", value: "~63h" },
@@ -100,11 +103,46 @@ const FEATURES = [
   { icon: "📖", title: "20 Lessons", desc: "Progressive curriculum from basics to DeFi" },
   { icon: "🎯", title: "20 Slide Decks", desc: "Marp presentation slides for each module" },
   { icon: "📝", title: "215 Quiz Questions", desc: "Interactive browser-based assessment" },
-  { icon: "💻", title: "35 Contracts", desc: "All deployed on Ethereum Sepolia testnet" },
-  { icon: "🧪", title: "328 Tests", desc: "Full Hardhat test suite, all passing" },
+  { icon: "💻", title: "38 Contracts", desc: "All deployed on Ethereum Sepolia testnet" },
+  { icon: "🧪", title: "360 Tests", desc: "Full Hardhat test suite, all passing" },
   { icon: "🏗️", title: "20 Exercises", desc: "Hands-on coding with solution files" },
   { icon: "📚", title: "Instructor Guide", desc: "943-line teaching companion" },
   { icon: "🐳", title: "Docker Support", desc: "One-command reproducible environment" },
+];
+
+const LEARNING_PATHS = [
+  {
+    id: "standard",
+    name: "4-Week Bootcamp",
+    duration: "4 weeks",
+    hours: "~16h/week",
+    desc: "Standard cohort-based program with weekly homework and grading",
+    badge: "Recommended",
+  },
+  {
+    id: "intensive",
+    name: "Intensive",
+    duration: "7 days",
+    hours: "~9h/day",
+    desc: "Full-time bootcamp for dedicated learners with time off",
+    badge: null,
+  },
+  {
+    id: "parttime",
+    name: "Part-Time",
+    duration: "6 weeks",
+    hours: "~11h/week",
+    desc: "Evenings and weekends for working professionals",
+    badge: null,
+  },
+  {
+    id: "selfpaced",
+    name: "Self-Paced",
+    duration: "8-14 weeks",
+    hours: "Flexible",
+    desc: "Work through material at your own speed with milestones",
+    badge: null,
+  },
 ];
 
 const QUICK_LINKS = [
@@ -127,30 +165,86 @@ const MODULE_FOLDERS: Record<string, string> = {
   "18": "18-confidential-defi", "19": "19-capstone",
 };
 
+function getViewedModules(): Set<string> {
+  try {
+    const stored = localStorage.getItem(PROGRESS_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function markViewed(moduleId: string): Set<string> {
+  const viewed = getViewedModules();
+  viewed.add(moduleId);
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify([...viewed]));
+  return viewed;
+}
+
 export default function App() {
   const [showAllContracts, setShowAllContracts] = React.useState(false);
   const [selectedModule, setSelectedModule] = React.useState<string | null>(null);
+  const [viewedModules, setViewedModules] = React.useState<Set<string>>(getViewedModules);
+  const [showDemo, setShowDemo] = React.useState(false);
   const displayedContracts = showAllContracts ? CONTRACTS : CONTRACTS.slice(0, 10);
 
   const selectedIdx = selectedModule ? ALL_MODULES.findIndex((m) => m.id === selectedModule) : -1;
   const selectedMod = selectedIdx >= 0 ? ALL_MODULES[selectedIdx] : null;
 
+  // Deep linking: read hash on mount
+  React.useEffect(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#module-(\d{2})$/);
+    if (match) {
+      const id = match[1];
+      if (ALL_MODULES.some((m) => m.id === id)) {
+        openLesson(id);
+      }
+    }
+  }, []);
+
+  // Listen for hash changes
+  React.useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/^#module-(\d{2})$/);
+      if (match) {
+        const id = match[1];
+        if (ALL_MODULES.some((m) => m.id === id)) {
+          openLesson(id);
+        }
+      } else if (!hash) {
+        closeLesson();
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
   const openLesson = (moduleId: string) => {
     setSelectedModule(moduleId);
     document.body.style.overflow = "hidden";
+    window.location.hash = `module-${moduleId}`;
+    // Track progress
+    setViewedModules(markViewed(moduleId));
   };
 
   const closeLesson = () => {
     setSelectedModule(null);
     document.body.style.overflow = "";
+    if (window.location.hash) {
+      history.pushState(null, "", window.location.pathname);
+    }
   };
 
   const navigateLesson = (direction: "prev" | "next") => {
     const newIdx = direction === "prev" ? selectedIdx - 1 : selectedIdx + 1;
     if (newIdx >= 0 && newIdx < ALL_MODULES.length) {
-      setSelectedModule(ALL_MODULES[newIdx].id);
+      openLesson(ALL_MODULES[newIdx].id);
     }
   };
+
+  const viewedCount = viewedModules.size;
 
   return (
     <div className="app">
@@ -163,13 +257,20 @@ export default function App() {
               <div className="header-subtitle">Zama Developer Program</div>
             </div>
           </div>
-          <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
-            View on GitHub
-          </a>
+          <div className="header-right">
+            {viewedCount > 0 && (
+              <span className="progress-badge" aria-label={`${viewedCount} of 20 modules viewed`}>
+                {viewedCount}/20 viewed
+              </span>
+            )}
+            <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
+              View on GitHub
+            </a>
+          </div>
         </div>
       </header>
 
-      <main className="main">
+      <main>
         {/* Hero */}
         <div className="hero">
           <div className="hero-badge">Ethereum Sepolia Testnet</div>
@@ -178,6 +279,15 @@ export default function App() {
             A comprehensive 20-module curriculum for building confidential smart contracts
             with Zama's Fully Homomorphic Encryption Virtual Machine.
           </p>
+          <button className="btn btn-primary btn-demo" onClick={() => setShowDemo(true)}>
+            Try Interactive Demo
+          </button>
+          {viewedCount > 0 && (
+            <div className="progress-bar-container" aria-label="Module progress">
+              <div className="progress-bar" style={{ width: `${(viewedCount / 20) * 100}%` }} />
+              <span className="progress-text">{viewedCount}/20 modules viewed</span>
+            </div>
+          )}
         </div>
 
         {/* Stats */}
@@ -189,6 +299,33 @@ export default function App() {
             </div>
           ))}
         </div>
+
+        {/* Learning Paths */}
+        <section className="section">
+          <h2 className="section-title">Learning Paths</h2>
+          <div className="paths-grid">
+            {LEARNING_PATHS.map((p) => (
+              <a
+                key={p.id}
+                href={`${GITHUB_REPO}/blob/main/curriculum/LEARNING_PATHS.md`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="path-card"
+              >
+                <div className="path-card-header">
+                  <span className="path-card-name">{p.name}</span>
+                  {p.badge && <span className="path-card-badge">{p.badge}</span>}
+                </div>
+                <div className="path-card-meta">
+                  <span>{p.duration}</span>
+                  <span className="path-card-dot">&middot;</span>
+                  <span>{p.hours}</span>
+                </div>
+                <div className="path-card-desc">{p.desc}</div>
+              </a>
+            ))}
+          </div>
+        </section>
 
         {/* Quick Links */}
         <section className="section">
@@ -225,8 +362,11 @@ export default function App() {
               <h3 className="phase-title">{phase.title}</h3>
               <div className="modules-list">
                 {phase.modules.map((m) => (
-                  <div key={m.id} className="module-card">
-                    <div className="module-id">{m.id}</div>
+                  <div key={m.id} className={`module-card ${viewedModules.has(m.id) ? "module-viewed" : ""}`}>
+                    <div className="module-id">
+                      {viewedModules.has(m.id) && <span className="module-check" aria-hidden="true">&#10003;</span>}
+                      {!viewedModules.has(m.id) && m.id}
+                    </div>
                     <div className="module-info">
                       <div className="module-name">{m.name}</div>
                       <div className="module-desc">{m.desc}</div>
@@ -235,14 +375,14 @@ export default function App() {
                       <button
                         className="module-btn module-btn-lesson"
                         onClick={() => openLesson(m.id)}
-                        title="Open lesson"
+                        aria-label={`Open lesson for module ${m.id}: ${m.name}`}
                       >
                         Lesson
                       </button>
                       <button
                         className="module-btn module-btn-exercise"
-                        onClick={() => { setSelectedModule(m.id); document.body.style.overflow = "hidden"; }}
-                        title="Open exercise"
+                        onClick={() => openLesson(m.id)}
+                        aria-label={`Open exercise for module ${m.id}: ${m.name}`}
                       >
                         Exercise
                       </button>
@@ -251,7 +391,7 @@ export default function App() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="module-btn module-btn-slide"
-                        title="View slides"
+                        aria-label={`View slides for module ${m.id}: ${m.name}`}
                       >
                         Slides
                       </a>
@@ -320,17 +460,26 @@ export default function App() {
         </footer>
       </main>
 
+      {/* Interactive Demo Modal */}
+      {showDemo && (
+        <ErrorBoundary>
+          <InteractiveDemo onClose={() => setShowDemo(false)} />
+        </ErrorBoundary>
+      )}
+
       {/* Lesson Viewer Modal */}
       {selectedMod && (
-        <LessonViewer
-          moduleId={selectedMod.id}
-          moduleName={selectedMod.name}
-          moduleFolder={MODULE_FOLDERS[selectedMod.id]}
-          onClose={closeLesson}
-          onNavigate={navigateLesson}
-          hasPrev={selectedIdx > 0}
-          hasNext={selectedIdx < ALL_MODULES.length - 1}
-        />
+        <ErrorBoundary>
+          <LessonViewer
+            moduleId={selectedMod.id}
+            moduleName={selectedMod.name}
+            moduleFolder={MODULE_FOLDERS[selectedMod.id]}
+            onClose={closeLesson}
+            onNavigate={navigateLesson}
+            hasPrev={selectedIdx > 0}
+            hasNext={selectedIdx < ALL_MODULES.length - 1}
+          />
+        </ErrorBoundary>
       )}
     </div>
   );

@@ -111,12 +111,31 @@ contract MyContract is ZamaEthereumConfig {
 ```
 
 **What `ZamaEthereumConfig` does:**
-- Configures the FHE co-processor address
-- Sets up the ACL (Access Control List) contract address
-- Initializes the KMS (Key Management Service) verifier
-- Provides the decryption oracle address for public decryption operations
+- Configures the **FHEVMExecutor** address — the coprocessor contract that performs actual FHE operations
+- Sets up the **ACL** (Access Control List) contract address — manages per-ciphertext permissions
+- Initializes the **KMSVerifier** — verifies decryption proofs from the Key Management Service
+- Configures the **InputVerifier** — validates encrypted inputs submitted by users via `FHE.fromExternal()`
 
-> **Important:** You do NOT need to manually configure these addresses. `ZamaEthereumConfig` handles everything.
+**Why inheritance is required:**
+The FHE library functions (`FHE.add()`, `FHE.allow()`, etc.) need to know the addresses of the system contracts (ACL, Executor, KMS, InputVerifier) to route operations correctly. `ZamaEthereumConfig` sets these addresses in the contract's constructor through Solidity's inheritance mechanism.
+
+Without `ZamaEthereumConfig`, FHE operations would fail because the library would not know where to send the computation requests or how to verify proofs.
+
+```solidity
+// This will NOT work — FHE operations have no system contract addresses
+contract BrokenContract {
+    euint32 value = FHE.asEuint32(0); // FAILS: no coprocessor configured
+}
+
+// This WORKS — ZamaEthereumConfig provides all necessary addresses
+contract WorkingContract is ZamaEthereumConfig {
+    euint32 value = FHE.asEuint32(0); // OK: coprocessor address is set
+}
+```
+
+> **Important:** You do NOT need to manually configure these addresses. `ZamaEthereumConfig` handles everything. Every contract that uses any FHE operation — even factory contracts or helper contracts — must inherit from `ZamaEthereumConfig`.
+
+> **Network-specific configs:** Zama provides different config contracts for different networks. `ZamaEthereumConfig` is for Ethereum (including Sepolia testnet). Other networks may have their own config contracts in the `@fhevm/solidity/config/` directory.
 
 ---
 

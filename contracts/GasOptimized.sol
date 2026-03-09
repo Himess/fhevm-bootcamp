@@ -314,14 +314,15 @@ contract GasOptimized is ZamaEthereumConfig {
     //  PATTERN 8: Unnecessary Type Conversion — double cast vs direct use
     // =====================================================================
 
-    /// @notice INEFFICIENT: Converts a plaintext to euint32, then immediately uses it.
+    /// @notice INEFFICIENT: Encrypts a known constant before multiplying (wasteful encryption).
     function inefficient_convert(uint32 a, uint32 b) external {
         emit InefficientConvertCalled("convert");
         euint32 encA = FHE.asEuint32(a);
         euint32 encB = FHE.asEuint32(b);
 
-        // multiply by constant 2: first encrypts 2, then multiplies
-        euint32 doubled = FHE.mul(encA, 2);
+        // multiply by constant 2: needlessly encrypts 2 first, then does encrypted * encrypted
+        euint32 encTwo = FHE.asEuint32(2);
+        euint32 doubled = FHE.mul(encA, encTwo);
         _result32 = FHE.add(doubled, encB);
 
         FHE.allowThis(_result32);

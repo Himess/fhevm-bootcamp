@@ -16,6 +16,7 @@ contract SecureInput is ZamaEthereumConfig {
     /// @notice Store an encrypted uint8 from external input
     function storeUint8(externalEuint8 encValue, bytes calldata inputProof) external {
         _storedUint8 = FHE.fromExternal(encValue, inputProof);
+        require(FHE.isInitialized(_storedUint8), "Invalid encrypted input");
         FHE.allowThis(_storedUint8);
         FHE.allow(_storedUint8, msg.sender);
         emit InputStored(msg.sender, "uint8");
@@ -24,6 +25,7 @@ contract SecureInput is ZamaEthereumConfig {
     /// @notice Store an encrypted uint32 from external input
     function storeUint32(externalEuint32 encValue, bytes calldata inputProof) external {
         _storedUint32 = FHE.fromExternal(encValue, inputProof);
+        require(FHE.isInitialized(_storedUint32), "Invalid encrypted input");
         FHE.allowThis(_storedUint32);
         FHE.allow(_storedUint32, msg.sender);
         emit InputStored(msg.sender, "uint32");
@@ -32,6 +34,7 @@ contract SecureInput is ZamaEthereumConfig {
     /// @notice Store an encrypted uint64 from external input
     function storeUint64(externalEuint64 encValue, bytes calldata inputProof) external {
         _storedUint64 = FHE.fromExternal(encValue, inputProof);
+        require(FHE.isInitialized(_storedUint64), "Invalid encrypted input");
         FHE.allowThis(_storedUint64);
         FHE.allow(_storedUint64, msg.sender);
         emit InputStored(msg.sender, "uint64");
@@ -40,6 +43,7 @@ contract SecureInput is ZamaEthereumConfig {
     /// @notice Store an encrypted bool from external input
     function storeBool(externalEbool encValue, bytes calldata inputProof) external {
         _storedBool = FHE.fromExternal(encValue, inputProof);
+        require(FHE.isInitialized(_storedBool), "Invalid encrypted input");
         FHE.allowThis(_storedBool);
         FHE.allow(_storedBool, msg.sender);
         emit InputStored(msg.sender, "bool");
@@ -49,6 +53,8 @@ contract SecureInput is ZamaEthereumConfig {
     function storeMultiple(externalEuint32 encA, externalEuint64 encB, bytes calldata inputProof) external {
         _storedUint32 = FHE.fromExternal(encA, inputProof);
         _storedUint64 = FHE.fromExternal(encB, inputProof);
+        require(FHE.isInitialized(_storedUint32), "Invalid encrypted input");
+        require(FHE.isInitialized(_storedUint64), "Invalid encrypted input");
         FHE.allowThis(_storedUint32);
         FHE.allow(_storedUint32, msg.sender);
         FHE.allowThis(_storedUint64);

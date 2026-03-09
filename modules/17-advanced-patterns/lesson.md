@@ -566,6 +566,35 @@ This is simpler than traditional commit-reveal because users do not need to sepa
 
 ---
 
+## Utility: `FHE.toBytes32()` — Handle Serialization
+
+Every encrypted value in fhEVM is internally represented as a `bytes32` handle (a reference to the ciphertext stored by the coprocessor). `FHE.toBytes32()` converts any encrypted type to its raw `bytes32` handle:
+
+```solidity
+euint64 encBalance = FHE.asEuint64(1000);
+bytes32 handle = FHE.toBytes32(encBalance);
+```
+
+**Supported types:** Works with all encrypted types — `ebool`, `euint8`, `euint16`, `euint32`, `euint64`, `euint128`, `euint256`, `eaddress`, `ebytes64`, `ebytes128`, `ebytes256`.
+
+**Use cases:**
+- **Off-chain indexing:** Emit handles as events for off-chain systems to track
+- **Handle storage:** Store handles in generic `bytes32` mappings for flexible data structures
+- **Cross-system integration:** Pass handles to external systems that work with raw bytes32
+
+```solidity
+// Example: Generic encrypted value storage
+mapping(bytes32 => bytes32) private _genericStore;
+
+function storeGeneric(bytes32 key, euint64 value) external {
+    _genericStore[key] = FHE.toBytes32(value);
+}
+```
+
+> **Important:** `toBytes32()` returns the handle reference, NOT the plaintext value. The ciphertext remains encrypted and ACL-protected. This is safe to emit in events or store in public mappings — it reveals nothing about the encrypted value.
+
+---
+
 ## Putting It All Together
 
 ### How Patterns Combine
