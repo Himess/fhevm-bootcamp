@@ -134,10 +134,10 @@ SYLLABUS.md'de 20 modul icin detayli konu listesi, aktiviteler, sure tahminleri.
 
 | Oge | Sayi | Aciklama |
 |-----|------|----------|
-| Kontratlar | 35 | Tum moduller icin calisan referans uygulamalar |
+| Kontratlar | 38 | Tum moduller icin calisan referans uygulamalar |
 | Egzersiz sablonlari | 20 | `exercises/` — TODO yerleri ile bos sablonlar |
 | Cozum dosyalari | 20 | `solutions/` — tamamlanmis cozumler |
-| Testler | 328 | Her kontrat icin kapsamli test dosyasi |
+| Testler | 360 | Her kontrat icin kapsamli test dosyasi |
 | .env.example | 1 | Ortam degiskeni sablonu |
 | Dockerfile | 1 | Tek komut ortam kurulumu |
 | setup.sh | 1 | Otomatik kurulum scripti |
@@ -255,15 +255,15 @@ Bu ZORUNLU bir gereksinim. Video olmadan submission eksik sayilir.
 
 Mevcut durum:
 - `demo-video/SCRIPT.md` var — script yazilmis ama video cekilmemis
-- Script GUNCEL DEGIL: "15 modulu" ve "146 test" referans veriyor (gercekte 20 modul, 328 test)
+- Script GUNCEL DEGIL: "15 modulu" ve "146 test" referans veriyor (gercekte 20 modul, 360 test)
 
 **YAPILMASI GEREKENLER:**
 
-1. SCRIPT.md'yi guncelle (20 modul, 35 kontrat, 328 test, 215 quiz sorusu)
+1. SCRIPT.md'yi guncelle (20 modul, 38 kontrat, 360 test, 215 quiz sorusu)
 2. 5 dakikalik ekran kaydi cek:
    - **Sahne 1 (30s):** Proje tanitimi, temel istatistikler
    - **Sahne 2 (1dk):** Vercel sitesini goster — modul yapisi, quiz, slaytlar
-   - **Sahne 3 (30s):** Terminal'de `npx hardhat compile` + `npx hardhat test` (328 passing)
+   - **Sahne 3 (30s):** Terminal'de `npx hardhat compile` + `npx hardhat test` (360 passing)
    - **Sahne 4 (2dk):** Modul 08 (Conditional Logic) walkthrough — lesson.md, slides, exercise, quiz
    - **Sahne 5 (1dk):** Odev tasarim felsefesi — HOMEWORK.md goster, haftalik ilerleme, rubrik acikla
 
@@ -276,8 +276,8 @@ Mevcut durum:
 
 Mevcut script referanslari:
 - "15-module bootcamp" → gercek: **20 modul**
-- "22 contracts" → gercek: **35 kontrat**
-- "146+ tests" → gercek: **328 test**
+- "22 contracts" → gercek: **38 kontrat**
+- "146+ tests" → gercek: **360 test**
 - Scene 5 "ConfidentialERC20 Deep Dive" → daha iyi bir secim: Module 08 (Conditional Logic) veya Module 11 (ERC-20)
 - Scene 6 "Key Features" listesi eksik
 
@@ -296,7 +296,7 @@ Mevcut script referanslari:
 ### 4.2 "Completeness of FHEVM coverage" — 9.0/10
 
 - Neredeyse tum FHE API fonksiyonlari kapsaniyor
-- 35 farkli kontrat ile pratik ornekler
+- 38 farkli kontrat ile pratik ornekler
 - Guvenlik, gas optimizasyonu, advanced patterns
 - Kucuk eksik: cross-contract FHE demo, coprocessor detayi, FHE.checkSignatures()
 
@@ -328,7 +328,7 @@ Mevcut script referanslari:
 ### 4.6 "How production-ready the bootcamp is for immediate deployment" — 9.0/10
 
 - Vercel'de canli
-- 328 test geciyor
+- 360 test geciyor
 - 35 kontrat Sepolia'da deploy + verify
 - Docker hazir
 - GitHub Actions CI/CD
@@ -343,7 +343,7 @@ Rakiplerin yapabilecegi seyler:
 | Diferansiyator | Bizde Var mi? | Oncelik |
 |----------------|---------------|---------|
 | Demo video | YOK | KRITIK |
-| 328 test (kapsamli) | EVET | Guclu yan |
+| 360 test (kapsamli) | EVET | Guclu yan |
 | 35 canli kontrat (Sepolia) | EVET | Cok guclu |
 | 215 quiz sorusu | EVET | Guclu |
 | 20 slayt destesi | EVET | Guclu |
@@ -371,7 +371,7 @@ Rakiplerin yapabilecegi seyler:
 | # | Is | Tahmini Sure | Oncelik |
 |---|---|-------------|---------|
 | 1 | **Demo video cek** (5 dk, ekran kaydi + ses) | 2-3 saat | KRITIK |
-| 2 | **SCRIPT.md guncelle** (20 modul, 35 kontrat, 328 test) | 15 dk | YUKSEK |
+| 2 | **SCRIPT.md guncelle** (20 modul, 38 kontrat, 360 test) | 15 dk | YUKSEK |
 
 ### ONERILIR (Kaliteyi arttirir)
 
@@ -396,7 +396,7 @@ Rakiplerin yapabilecegi seyler:
 
 ### Guclu Yanlar (Neden Kazanmali)
 1. **En kapsamli mufredat**: 20 modul, ~63 saat — rakiplerin cogu 10-15 modul yapar
-2. **Gercek calisan kod**: 35 kontrat, 328 test, hepsi Sepolia'da canli
+2. **Gercek calisan kod**: 38 kontrat, 360 test, hepsi Sepolia'da canli
 3. **Profesyonel egitim materyali**: Instructor Guide, 4 ogrenme yolu, detayli rubrikler
 4. **Production-ready**: Docker, CI/CD, Vercel deploy, quiz sistemi, slaytlar
 5. **Guvenlik odakli**: VulnerableDemo, SecurityPatterns, audit raporu, SECURITY_CHECKLIST
@@ -424,7 +424,7 @@ Demo videoyu en kisa surede cek. Geri kalan her sey cok guclu durumda. Video cek
 [x] Slaytlar (20 Marp deck)
 [x] Detayli ders planlari + sure tahmini (20 lesson.md)
 [x] Egitmen notlari (INSTRUCTOR_GUIDE.md)
-[x] Kod sablonlari (20 exercise, 20 solution, 35 contract)
+[x] Kod sablonlari (20 exercise, 20 solution, 38 contract)
 [ ] Demo video (ZORUNLU — 5 dk maks)
 ```
 

@@ -1,8 +1,8 @@
 # FHEVM Bootcamp - Project Status Report
 
 ## Summary
-- **35 Solidity contracts** - All compiling successfully, deployed to Ethereum Sepolia
-- **328 tests passing** - Full coverage across all modules
+- **38 Solidity contracts** - All compiling successfully, deployed to Ethereum Sepolia
+- **360 tests passing** - Full coverage across all modules
 - **20 learning modules** (00-19) - Each with README, lesson, slides, exercise, quiz
 - **18 exercise templates** + **18 solutions** - For hands-on learning
 - **6 architecture diagrams** - Mermaid format
@@ -54,7 +54,7 @@
 
 ## Test Results
 ```
-328 passing (12s)
+360 passing (12s)
 0 failing
 ```
 

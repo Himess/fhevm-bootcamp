@@ -138,7 +138,7 @@ Each contract was deployed and tested with real transactions on Sepolia.
 
 ```
 35 PASS / 0 FAIL / 0 ERROR — 35 deployed contracts, 35 on-chain scenarios
-328 local tests passing (Hardhat mock environment)
+360 local tests passing (Hardhat mock environment)
 ```
 
 ## FHE Operations Verified On-Chain

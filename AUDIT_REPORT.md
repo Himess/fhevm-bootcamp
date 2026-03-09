@@ -13,7 +13,7 @@
 |----------|------|---------|----------|
 | Mufredat & Pedagoji | 9.5/10 | %25 | Dunya sinifi egitim materyali |
 | Akilli Kontratlar | 8.8/10 | %25 | 1 kritik bug, birkac orta sorun |
-| Test Kapsamliligi | 9.0/10 | %15 | 328 test, %98+ gecme orani |
+| Test Kapsamliligi | 9.0/10 | %15 | 360 test, %98+ gecme orani |
 | Frontend & UX | 8.0/10 | %15 | Temiz UI, erisilebilirlik eksik |
 | Dokumantasyon | 9.5/10 | %10 | Profesyonel kalite |
 | Altyapi & CI/CD | 8.5/10 | %10 | Docker + GitHub Actions, eksik auto-deploy |
@@ -30,7 +30,7 @@
 - 4 ogrenme yolu: 4-Haftalik, Yogun (7 gun), Yari-Zamanli (6 hafta), Kendi-Hizinda (8-14 hafta)
 
 ### 1.2 Akilli Kontratlar
-- **35 kontrat**, hepsi Solidity 0.8.27, hepsi derlenebiliyor
+- **38 kontrat**, hepsi Solidity 0.8.27, hepsi derlenebiliyor
 - **%98+ API dogrulugu**: `FHE` (TFHE degil), `FHE.fromExternal()`, `FHE.randEuint32()`
 - **Tum 33 FHE kontratin `ZamaEthereumConfig` miras aliyor** (dogru)
 - **Sessiz Basarisizlik deseni** tutarli sekilde uygulanmis (ConfidentialERC20, Lending, OrderBook)
@@ -41,7 +41,7 @@
 - Sepolia'da 35/35 kontrat deploy + verify edilmis
 
 ### 1.3 Test Altyapisi
-- **328 test, hepsi geciyor** (12 saniyede)
+- **360 test, hepsi geciyor** (12 saniyede)
 - Modul basina dagilim dengeli (Operations ~50, Security ~40, Conditionals ~30, ...)
 - Happy path + edge case + erisim kontrolu + event dogrulama
 - `@fhevm/mock-utils` ile sifrelenmis degerler test edilebiliyor
@@ -186,7 +186,7 @@ require(FHE.isInitialized(amount), "Invalid encrypted input");
 |---------|----------|-------------|
 | Modul sayisi | 20 | 5-10 |
 | Toplam saat | 63 | 20-30 |
-| Test sayisi | 328 | 50-100 |
+| Test sayisi | 360 | 50-100 |
 | Kontrat sayisi | 35 (deploy + verify) | 10-15 |
 | Quiz sorulari | 215 (web tabanli) | PDF veya yok |
 | Slayt destekleri | 20 (Marp, speaker notes) | Nadir |
@@ -225,7 +225,7 @@ require(FHE.isInitialized(amount), "Invalid encrypted input");
 
 ## 7. SONUC
 
-Bu proje **birinci sirayi hakeden bir calisma**. 20 modulluk, 63 saatlik, 328 testli, 35 kontratli, canli frontend'li bir bootcamp mufredat — bu seviyede bir submission nadirdir.
+Bu proje **birinci sirayi hakeden bir calisma**. 20 modulluk, 63 saatlik, 360 testli, 38 kontratli, canli frontend'li bir bootcamp mufredat — bu seviyede bir submission nadirdir.
 
 **Tek kritik engel: Demo video.** Video olmadan submission kabul edilmeyecek. HelloFHEVM.sol bug'u da juri tarafindan fark edilebilecek belirgin bir hata — duzeltilmesi 2 dakika surer.
 

@@ -30,16 +30,16 @@ cd fhevm-bootcamp
 # Install dependencies
 npm install
 
-# Compile all 35 contracts
+# Compile all 38 contracts
 npx hardhat compile
 ```
 
 Expected output after compile:
 
 ```
-Generating typings for: 35 artifacts in dir: types for target: ethers-v6
-Successfully generated 70 typings!
-Compiled 35 Solidity files successfully
+Generating typings for: 38 artifacts in dir: types for target: ethers-v6
+Successfully generated 76 typings!
+Compiled 38 Solidity files successfully
 ```
 
 ---
@@ -58,10 +58,10 @@ Expected output:
     ✓ should emit ValueChanged event
   ...
 
-  328 passing (Xs)
+  360 passing (Xs)
 ```
 
-All 328 tests run locally in mock FHE mode -- no testnet connection needed.
+All 360 tests run locally in mock FHE mode -- no testnet connection needed.
 
 To run tests with gas reporting:
 
@@ -152,7 +152,7 @@ Matching contracts live in `contracts/`, tests in `test/`, exercises in `exercis
 
 | Command | Description |
 |---|---|
-| `npm test` | Run all 328 tests (mock FHE mode) |
+| `npm test` | Run all 360 tests (mock FHE mode) |
 | `npm run test:gas` | Run tests with gas usage report |
 | `npm run compile` | Compile all Solidity contracts |
 | `npm run clean` | Remove artifacts, cache, types |

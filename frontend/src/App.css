@@ -718,3 +718,203 @@ body {
   .demo-step-content { padding: 1rem; }
   .demo-viewer { width: 100%; height: 100vh; border-radius: 0; }
 }
+
+/* ===== Hero Buttons ===== */
+.hero-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.btn-secondary.btn-demo {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--yellow-400);
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-secondary.btn-demo:hover {
+  background: var(--yellow-50);
+  border-color: var(--yellow-500);
+}
+
+/* ===== Code Playground ===== */
+.playground-viewer {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  width: 96%;
+  max-width: 1300px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.playground-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.playground-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.pg-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.pg-btn:hover {
+  border-color: var(--yellow-400);
+  background: var(--yellow-50);
+}
+.pg-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pg-btn-active {
+  background: var(--yellow-100);
+  border-color: var(--yellow-500);
+  color: var(--text-primary);
+}
+.playground-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+.playground-sidebar {
+  width: 240px;
+  min-width: 240px;
+  border-right: 1px solid var(--border);
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--yellow-50);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.playground-ex-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.playground-ex-btn:hover {
+  background: var(--yellow-100);
+}
+.playground-ex-active {
+  background: var(--bg-card);
+  border-color: var(--yellow-400);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+.playground-ex-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.playground-ex-active .playground-ex-num {
+  background: var(--yellow-500);
+  color: white;
+}
+.playground-ex-label {
+  flex: 1;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.playground-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.playground-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: #1e1e2e;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.playground-info-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #cdd6f4;
+}
+.playground-info-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.playground-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #313244;
+  color: #a6adc8;
+}
+.playground-badge-solution {
+  background: #a6e3a1;
+  color: #1e1e2e;
+}
+.playground-badge-edited {
+  background: #f9e2af;
+  color: #1e1e2e;
+}
+.playground-monaco {
+  flex: 1;
+  overflow: hidden;
+}
+.playground-footer-hint {
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: var(--yellow-50);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+/* Playground responsive */
+@media (max-width: 768px) {
+  .playground-viewer { width: 100%; height: 100vh; border-radius: 0; }
+  .playground-sidebar { width: 100%; min-width: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; padding: 0.5rem; max-height: 120px; }
+  .playground-ex-label { display: none; }
+  .playground-ex-btn { padding: 0.3rem 0.5rem; }
+}

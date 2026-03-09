@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "prebuild": "node scripts/bundle-lessons.js",
-    "dev": "node scripts/bundle-lessons.js && vite",
-    "build": "node scripts/bundle-lessons.js && tsc && vite build",
+    "prebuild": "node scripts/bundle-lessons.js && node scripts/bundle-exercises.js",
+    "dev": "node scripts/bundle-lessons.js && node scripts/bundle-exercises.js && vite",
+    "build": "node scripts/bundle-lessons.js && node scripts/bundle-exercises.js && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@zama-fhe/relayer-sdk": "^0.4.1",
     "ethers": "^6.13.0",
     "react": "^18.3.0",

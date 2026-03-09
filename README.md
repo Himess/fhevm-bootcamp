@@ -2,9 +2,9 @@
 [![Slides](https://github.com/Himess/fhevm-bootcamp/actions/workflows/slides.yml/badge.svg)](https://github.com/Himess/fhevm-bootcamp/actions/workflows/slides.yml)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Solidity](https://img.shields.io/badge/Solidity-0.8.27-363636?logo=solidity)
-![Tests](https://img.shields.io/badge/Tests-328%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-360%20passing-brightgreen)
 ![Modules](https://img.shields.io/badge/Modules-20-blue)
-![Contracts](https://img.shields.io/badge/Contracts-35-orange)
+![Contracts](https://img.shields.io/badge/Contracts-38-orange)
 ![Network](https://img.shields.io/badge/Network-Ethereum%20Sepolia-purple)
 
 # FHEVM Bootcamp Curriculum
@@ -165,7 +165,7 @@ fhevm-bootcamp/
 ├── .github/workflows/                 # CI/CD pipelines
 │   ├── test.yml                       # Run tests on PR/push
 │   └── slides.yml                     # Build Marp slides
-├── contracts/                         # 35 Solidity contracts
+├── contracts/                         # 38 Solidity contracts
 │   ├── SimpleStorage.sol              # Module 00
 │   ├── HelloFHEVM.sol                 # Module 02
 │   ├── ConfidentialERC20.sol          # Module 11
@@ -175,7 +175,7 @@ fhevm-bootcamp/
 │   ├── ConfidentialLending.sol        # Module 18
 │   ├── ConfidentialDAO.sol            # Module 19 (capstone)
 │   └── ...
-├── test/                              # 35 test files (328 tests)
+├── test/                              # 37 test files (360 tests)
 ├── modules/                           # 20 learning modules
 │   ├── 00-prerequisites/
 │   │   ├── README.md                  # Module overview
@@ -280,7 +280,7 @@ euint32 rand = FHE.randEuint32();
 
 ## Deployed Contracts (Ethereum Sepolia)
 
-All 35 contracts deployed and verified on Ethereum Sepolia testnet. See [ONCHAIN_TESTS.md](ONCHAIN_TESTS.md) for full test results.
+All 38 contracts deployed and verified on Ethereum Sepolia testnet. See [ONCHAIN_TESTS.md](ONCHAIN_TESTS.md) for full test results.
 
 **Deployer:** `0xF505e2E71df58D7244189072008f25f6b6aaE5ae`
 

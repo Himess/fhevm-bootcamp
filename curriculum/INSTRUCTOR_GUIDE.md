@@ -20,7 +20,7 @@ This guide provides teaching notes, discussion prompts, time management tips, co
 
 ### Curriculum Summary
 
-The bootcamp consists of 20 modules (Modules 00-19) totaling approximately 63 hours of instruction. The curriculum includes 35 smart contracts and 328 tests across all exercises and projects.
+The bootcamp consists of 20 modules (Modules 00-19) totaling approximately 63 hours of instruction. The curriculum includes 38 smart contracts and 360 tests across all exercises and projects.
 
 | Module | Title | Duration |
 |---|---|---|

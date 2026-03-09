@@ -1,6 +1,7 @@
 import React from "react";
 import LessonViewer from "./LessonViewer";
 import InteractiveDemo from "./InteractiveDemo";
+import CodePlayground from "./CodePlayground";
 import ErrorBoundary from "./ErrorBoundary";
 
 const GITHUB_REPO = "https://github.com/Himess/fhevm-bootcamp";
@@ -186,6 +187,7 @@ export default function App() {
   const [selectedModule, setSelectedModule] = React.useState<string | null>(null);
   const [viewedModules, setViewedModules] = React.useState<Set<string>>(getViewedModules);
   const [showDemo, setShowDemo] = React.useState(false);
+  const [showPlayground, setShowPlayground] = React.useState(false);
   const displayedContracts = showAllContracts ? CONTRACTS : CONTRACTS.slice(0, 10);
 
   const selectedIdx = selectedModule ? ALL_MODULES.findIndex((m) => m.id === selectedModule) : -1;
@@ -279,9 +281,14 @@ export default function App() {
             A comprehensive 20-module curriculum for building confidential smart contracts
             with Zama's Fully Homomorphic Encryption Virtual Machine.
           </p>
-          <button className="btn btn-primary btn-demo" onClick={() => setShowDemo(true)}>
-            Try Interactive Demo
-          </button>
+          <div className="hero-buttons">
+            <button className="btn btn-primary btn-demo" onClick={() => setShowDemo(true)}>
+              Try Interactive Demo
+            </button>
+            <button className="btn btn-secondary btn-demo" onClick={() => setShowPlayground(true)}>
+              Code Playground
+            </button>
+          </div>
           {viewedCount > 0 && (
             <div className="progress-bar-container" aria-label="Module progress">
               <div className="progress-bar" style={{ width: `${(viewedCount / 20) * 100}%` }} />
@@ -464,6 +471,13 @@ export default function App() {
       {showDemo && (
         <ErrorBoundary>
           <InteractiveDemo onClose={() => setShowDemo(false)} />
+        </ErrorBoundary>
+      )}
+
+      {/* Code Playground Modal */}
+      {showPlayground && (
+        <ErrorBoundary>
+          <CodePlayground onClose={() => setShowPlayground(false)} />
         </ErrorBoundary>
       )}
 
