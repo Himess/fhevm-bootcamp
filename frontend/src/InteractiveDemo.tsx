@@ -1,8 +1,198 @@
 import React from "react";
 
-// This component demonstrates the fhevmjs encryption flow step-by-step
-// without requiring a real wallet connection — it's an educational walkthrough
-// showing how encrypted inputs are created and sent to fhEVM contracts.
+// ── Lightweight syntax highlighter for JS/TS and Solidity code blocks ──
+// Produces <span> elements with CSS classes for coloring.
+
+const JS_KEYWORDS = new Set([
+  "import",
+  "from",
+  "export",
+  "const",
+  "let",
+  "var",
+  "function",
+  "async",
+  "await",
+  "return",
+  "if",
+  "else",
+  "for",
+  "while",
+  "new",
+  "class",
+  "extends",
+  "this",
+  "try",
+  "catch",
+  "throw",
+  "typeof",
+  "instanceof",
+  "require",
+]);
+
+const SOL_KEYWORDS = new Set([
+  "pragma",
+  "solidity",
+  "import",
+  "contract",
+  "function",
+  "modifier",
+  "event",
+  "struct",
+  "mapping",
+  "public",
+  "private",
+  "internal",
+  "external",
+  "pure",
+  "view",
+  "payable",
+  "memory",
+  "storage",
+  "calldata",
+  "returns",
+  "return",
+  "if",
+  "else",
+  "for",
+  "while",
+  "require",
+  "emit",
+  "is",
+  "msg",
+  "block",
+]);
+
+const SOL_TYPES = new Set([
+  "address",
+  "bool",
+  "uint",
+  "uint8",
+  "uint16",
+  "uint32",
+  "uint64",
+  "uint128",
+  "uint256",
+  "int",
+  "int256",
+  "bytes",
+  "bytes32",
+  "string",
+  "euint8",
+  "euint16",
+  "euint32",
+  "euint64",
+  "euint128",
+  "euint256",
+  "ebool",
+  "eaddress",
+  "externalEuint64",
+  "externalEuint32",
+]);
+
+function tokenize(code: string, lang: "js" | "sol"): React.ReactNode[] {
+  const keywords = lang === "sol" ? SOL_KEYWORDS : JS_KEYWORDS;
+  const types = lang === "sol" ? SOL_TYPES : new Set<string>();
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  let key = 0;
+
+  while (i < code.length) {
+    // Comments: //
+    if (code[i] === "/" && code[i + 1] === "/") {
+      const end = code.indexOf("\n", i);
+      const text = end === -1 ? code.slice(i) : code.slice(i, end);
+      nodes.push(
+        <span key={key++} className="hl-comment">
+          {text}
+        </span>,
+      );
+      i += text.length;
+      continue;
+    }
+
+    // Strings: "..." or '...'
+    if (code[i] === '"' || code[i] === "'") {
+      const quote = code[i];
+      let j = i + 1;
+      while (j < code.length && code[j] !== quote) {
+        if (code[j] === "\\") j++;
+        j++;
+      }
+      j++; // include closing quote
+      nodes.push(
+        <span key={key++} className="hl-string">
+          {code.slice(i, j)}
+        </span>,
+      );
+      i = j;
+      continue;
+    }
+
+    // Numbers
+    if (/\d/.test(code[i]) && (i === 0 || !/\w/.test(code[i - 1]))) {
+      let j = i;
+      if (code[j] === "0" && (code[j + 1] === "x" || code[j + 1] === "X")) {
+        j += 2;
+        while (j < code.length && /[0-9a-fA-F]/.test(code[j])) j++;
+      } else {
+        while (j < code.length && /\d/.test(code[j])) j++;
+      }
+      nodes.push(
+        <span key={key++} className="hl-number">
+          {code.slice(i, j)}
+        </span>,
+      );
+      i = j;
+      continue;
+    }
+
+    // Identifiers and keywords
+    if (/[a-zA-Z_$]/.test(code[i])) {
+      let j = i;
+      while (j < code.length && /[\w$]/.test(code[j])) j++;
+      const word = code.slice(i, j);
+
+      // Special: FHE
+      if (word === "FHE") {
+        nodes.push(
+          <span key={key++} className="hl-fhe">
+            {word}
+          </span>,
+        );
+      } else if (types.has(word)) {
+        nodes.push(
+          <span key={key++} className="hl-type">
+            {word}
+          </span>,
+        );
+      } else if (keywords.has(word)) {
+        nodes.push(
+          <span key={key++} className="hl-keyword">
+            {word}
+          </span>,
+        );
+      } else {
+        nodes.push(<span key={key++}>{word}</span>);
+      }
+      i = j;
+      continue;
+    }
+
+    // Default: single char
+    nodes.push(code[i]);
+    i++;
+  }
+
+  return nodes;
+}
+
+function HighlightedCode({ code, lang }: { code: string; lang: "js" | "sol" }) {
+  const highlighted = React.useMemo(() => tokenize(code, lang), [code, lang]);
+  return <pre className="demo-code demo-code-hl">{highlighted}</pre>;
+}
+
+// ── Data ──
 
 interface Step {
   id: number;
@@ -18,7 +208,7 @@ const ENCRYPTION_STEPS: Step[] = [
     title: "1. Initialize fhevmjs",
     description:
       "The fhevmjs library loads a WASM module that performs client-side FHE encryption. " +
-      "This happens in the browser — no server needed. The WASM binary contains the FHE public key.",
+      "This happens in the browser \u2014 no server needed. The WASM binary contains the FHE public key.",
     code: `import { createInstance } from "fhevmjs/web";
 
 // Initialize the FHE instance with the network's public key
@@ -26,7 +216,7 @@ const instance = await createInstance({
   networkUrl: "https://rpc.sepolia.org",
   gatewayUrl: "https://gateway.sepolia.zama.ai",
 });`,
-    output: "FHE instance created with WASM encryption engine loaded",
+    output: "\u2705 FHE instance created with WASM encryption engine loaded",
   },
   {
     id: 2,
@@ -41,7 +231,7 @@ const input = instance.createEncryptedInput(
   contractAddress,
   userAddress
 );`,
-    output: "EncryptedInput builder created (bound to contract + user)",
+    output: "\u2705 EncryptedInput builder created (bound to contract + user)",
   },
   {
     id: 3,
@@ -56,7 +246,7 @@ input.addUint64(1000);
 // input.addBool(true);
 // input.addUint8(42);
 // input.addAddress("0x...");`,
-    output: "Value 1000 queued for encryption as euint64",
+    output: "\u2705 Value 1000 queued for encryption as euint64",
   },
   {
     id: 4,
@@ -67,12 +257,12 @@ input.addUint64(1000);
     code: `// Perform the actual FHE encryption (WASM computation)
 const encrypted = await input.encrypt();
 
-// encrypted.handles[0] → bytes32 handle for the first value
-// encrypted.inputProof → bytes proof for all values
+// encrypted.handles[0] \u2192 bytes32 handle for the first value
+// encrypted.inputProof \u2192 bytes proof for all values
 console.log("Handle:", encrypted.handles[0]);
 console.log("Proof length:", encrypted.inputProof.length);`,
     output:
-      "Handle: 0x3a7f...c9e2 (32 bytes)\nProof length: 2048 bytes (FHE ciphertext + ZK proof)",
+      "\u2705 Handle: 0x3a7f...c9e2 (32 bytes)\n\u2705 Proof length: 2048 bytes (FHE ciphertext + ZK proof)",
   },
   {
     id: 5,
@@ -90,7 +280,8 @@ await tx.wait();
 
 // On-chain, the contract does:
 // euint64 amount = FHE.fromExternal(encryptedAmount, inputProof);`,
-    output: "Transaction sent! Contract received encrypted value and verified proof on-chain.",
+    output:
+      "\u2705 Transaction sent! Contract received encrypted value and verified proof on-chain.",
   },
   {
     id: 6,
@@ -111,14 +302,15 @@ const balance = await instance.reencrypt(
 );
 
 console.log("Decrypted balance:", balance);`,
-    output: "Decrypted balance: 1000 (only the authorized user can see this)",
+    output: "\u2705 Decrypted balance: 1000 (only the authorized user can see this)",
   },
 ];
 
 const CONTRACT_DEMOS = [
   {
     name: "Confidential ERC-20 Transfer",
-    description: "Transfer tokens with encrypted amounts — observers see a transaction but not the value.",
+    description:
+      "Transfer tokens with encrypted amounts \u2014 observers see a transaction but not the value.",
     steps: [
       "Alice encrypts amount=500 using fhevmjs",
       "Alice calls token.transfer(bob, encryptedAmount, proof)",
@@ -139,7 +331,7 @@ const CONTRACT_DEMOS = [
   },
   {
     name: "Sealed-Bid Auction",
-    description: "Place encrypted bids — no one sees your bid until the auction ends.",
+    description: "Place encrypted bids \u2014 no one sees your bid until the auction ends.",
     steps: [
       "Bidder encrypts their bid amount using fhevmjs",
       "Bidder calls auction.placeBid(encryptedBid, proof) with ETH deposit",
@@ -159,19 +351,20 @@ const CONTRACT_DEMOS = [
   },
   {
     name: "Private Voting",
-    description: "Vote with encrypted ballots — votes are tallied without revealing individual choices.",
+    description:
+      "Vote with encrypted ballots \u2014 votes are tallied without revealing individual choices.",
     steps: [
       "Voter encrypts their choice (0 or 1) using fhevmjs",
       "Voter calls voting.castVote(encryptedVote, proof)",
       "Contract: FHE.fromExternal() + FHE.add() accumulates encrypted tally",
-      "No one can see individual votes — only encrypted sum exists",
+      "No one can see individual votes \u2014 only encrypted sum exists",
       "After deadline, FHE.makePubliclyDecryptable() reveals final count",
       "KMS threshold decryption reveals the result",
     ],
     solidity: `function castVote(externalEuint64 encVote, bytes calldata proof) external {
     require(!hasVoted[msg.sender], "Already voted");
     euint64 vote = FHE.fromExternal(encVote, proof);
-    // Encrypted accumulation — individual votes never revealed
+    // Encrypted accumulation \u2014 individual votes never revealed
     yesVotes = FHE.add(yesVotes, vote);
     hasVoted[msg.sender] = true;
     FHE.allowThis(yesVotes);
@@ -194,7 +387,6 @@ export default function InteractiveDemo({ onClose }: Props) {
     setActiveStep(idx);
     setCompletedSteps((prev) => {
       const next = new Set(prev);
-      // Mark all steps up to and including this one as completed
       for (let i = 0; i <= idx; i++) next.add(i);
       return next;
     });
@@ -213,7 +405,13 @@ export default function InteractiveDemo({ onClose }: Props) {
   const demo = CONTRACT_DEMOS[activeContract];
 
   return (
-    <div className="lesson-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Interactive FHE Demo">
+    <div
+      className="lesson-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Interactive FHE Demo"
+    >
       <div className="demo-viewer" onClick={(e) => e.stopPropagation()} ref={viewerRef}>
         <div className="demo-header">
           <div className="demo-header-left">
@@ -272,7 +470,7 @@ export default function InteractiveDemo({ onClose }: Props) {
                 <p className="demo-step-desc">{step.description}</p>
                 <div className="demo-code-block">
                   <div className="demo-code-label">Code</div>
-                  <pre className="demo-code">{step.code}</pre>
+                  <HighlightedCode code={step.code} lang="js" />
                 </div>
                 <div className="demo-output-block">
                   <div className="demo-output-label">Output</div>
@@ -283,6 +481,7 @@ export default function InteractiveDemo({ onClose }: Props) {
                     className="lesson-nav-btn"
                     disabled={activeStep === 0}
                     onClick={() => handleStepClick(activeStep - 1)}
+                    aria-label="Previous step"
                   >
                     &larr; Previous
                   </button>
@@ -290,6 +489,7 @@ export default function InteractiveDemo({ onClose }: Props) {
                     className="lesson-nav-btn"
                     disabled={activeStep === ENCRYPTION_STEPS.length - 1}
                     onClick={() => handleStepClick(activeStep + 1)}
+                    aria-label="Next step"
                   >
                     Next &rarr;
                   </button>
@@ -320,14 +520,16 @@ export default function InteractiveDemo({ onClose }: Props) {
                   <div className="demo-flow-label">Step-by-Step Flow</div>
                   <ol className="demo-flow-steps">
                     {demo.steps.map((s, idx) => (
-                      <li key={idx} className="demo-flow-step">{s}</li>
+                      <li key={idx} className="demo-flow-step">
+                        {s}
+                      </li>
                     ))}
                   </ol>
                 </div>
 
                 <div className="demo-code-block">
                   <div className="demo-code-label">Solidity (Key Function)</div>
-                  <pre className="demo-code">{demo.solidity}</pre>
+                  <HighlightedCode code={demo.solidity} lang="sol" />
                 </div>
               </div>
             </div>
@@ -335,7 +537,9 @@ export default function InteractiveDemo({ onClose }: Props) {
         </div>
 
         <div className="lesson-footer">
-          <span className="lesson-footer-hint">ESC to close | Explore each step to learn the FHE flow</span>
+          <span className="lesson-footer-hint">
+            ESC to close | Explore each step to learn the FHE flow
+          </span>
         </div>
       </div>
     </div>

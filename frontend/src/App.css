@@ -911,10 +911,159 @@ body {
   text-align: center;
 }
 
+/* Playground — progress badge in header */
+.pg-progress {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--yellow-100);
+  color: var(--yellow-700);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+/* Playground — divider between button groups */
+.pg-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+/* Playground — "Mark Done" button */
+.pg-btn-complete {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+/* Playground — Sidebar progress bar */
+.pg-sidebar-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+.pg-sidebar-progress-bar {
+  height: 100%;
+  background: var(--yellow-500);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Playground — Completed exercise styling */
+.playground-ex-done {
+  opacity: 0.75;
+}
+.playground-ex-num-done {
+  background: #22c55e !important;
+  color: white !important;
+}
+
+/* Playground — Difficulty dot in sidebar */
+.playground-ex-diff {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Playground — Info bar improvements */
+.playground-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.playground-info-desc {
+  font-size: 0.78rem;
+  color: #a6adc8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Playground — Hints panel */
+.playground-hints {
+  padding: 0.5rem 1rem;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+}
+.playground-hints-toggle {
+  background: transparent;
+  border: 1px solid #45475a;
+  color: #f9e2af;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.playground-hints-toggle:hover {
+  background: #313244;
+  border-color: #f9e2af;
+}
+.playground-hints-list {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.playground-hint-item {
+  font-size: 0.82rem;
+  color: #cdd6f4;
+  padding: 0.4rem 0.6rem;
+  background: #313244;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid #f9e2af;
+}
+.playground-hint-num {
+  font-weight: 700;
+  color: #f9e2af;
+  margin-right: 0.25rem;
+}
+.playground-hints-more {
+  background: transparent;
+  border: 1px dashed #45475a;
+  color: #a6adc8;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  width: fit-content;
+}
+.playground-hints-more:hover {
+  border-color: #f9e2af;
+  color: #f9e2af;
+}
+
+/* ===== Syntax Highlighting (InteractiveDemo) ===== */
+.demo-code-hl {
+  /* Override: allow colored tokens */
+}
+.hl-keyword { color: #c678dd; font-weight: 600; }
+.hl-type { color: #e5c07b; }
+.hl-fhe { color: #61afef; font-weight: 700; }
+.hl-string { color: #98c379; }
+.hl-number { color: #d19a66; }
+.hl-comment { color: #5c6370; font-style: italic; }
+
 /* Playground responsive */
 @media (max-width: 768px) {
   .playground-viewer { width: 100%; height: 100vh; border-radius: 0; }
   .playground-sidebar { width: 100%; min-width: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; padding: 0.5rem; max-height: 120px; }
   .playground-ex-label { display: none; }
   .playground-ex-btn { padding: 0.3rem 0.5rem; }
+  .playground-ex-diff { display: none; }
+  .playground-info-desc { display: none; }
+  .playground-hints { padding: 0.4rem 0.75rem; }
 }

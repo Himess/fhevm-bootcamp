@@ -3,15 +3,23 @@
 export interface ExerciseEntry {
   id: string;
   title: string;
+  description: string;
+  hints: string[];
   exercise: string;
   solution: string;
   language: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
 }
 
 export const exerciseEntries: ExerciseEntry[] = [
   {
     id: "01-hello-fhe",
     title: "Exercise 1: Hello FHE",
+    description: "Complete the TODOs to build your first FHE contract",
+    hints: [
+      "Use FHE.asEuint32() and FHE.allowThis()",
+      "Use FHE.fromExternal() with externalEuint32 and proof",
+    ],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -79,10 +87,13 @@ contract HelloFHESolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "02-encrypted-ops",
     title: "Exercise 2: Encrypted Operations",
+    description: "Implement basic FHE arithmetic and comparison operations",
+    hints: ["FHE.asEuint32() to encrypt, FHE.add() to add"],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -161,10 +172,13 @@ contract EncryptedOpsSolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "03-acl",
     title: "Exercise 3: ConfidentialToken — Encrypted ERC20-like Token with ACL",
+    description: "Build a minimal encrypted token that properly manages ACL for balances",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -339,10 +353,13 @@ contract ConfidentialToken is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "advanced",
   },
   {
     id: "04-confidential-token",
     title: "Exercise 4: Build a Confidential Token",
+    description: "Implement private transfer logic with balance privacy",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -437,10 +454,13 @@ contract ConfidentialTokenSolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "05-voting",
     title: "Exercise 5: Build a Private Voting System",
+    description: "Implement encrypted vote tallying",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -543,10 +563,13 @@ contract VotingSolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "beginner",
   },
   {
     id: "06-inputs",
     title: "Exercise 6: Secure Encrypted Input Handling",
+    description: "Practice accepting and processing encrypted inputs from users",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -649,10 +672,13 @@ contract InputSolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "07-auction",
     title: "Exercise 7: Build a Sealed-Bid Auction",
+    description: "Implement an auction where bids are encrypted",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -766,10 +792,13 @@ contract AuctionSolution is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "08-marketplace",
     title: "Exercise 8: Encrypted Marketplace with Conditional Logic",
+    description: "Complete the TODOs to implement a marketplace using FHE.select()",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -990,10 +1019,13 @@ contract EncryptedMarketplace is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "advanced",
   },
   {
     id: "09-lottery",
     title: "Exercise 9: Encrypted Lottery with On-Chain Randomness",
+    description: "Complete the TODOs to implement a lottery using FHE.randEuint32()",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -1178,10 +1210,14 @@ contract EncryptedLottery is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "11-erc20",
     title: "Exercise 11: Build a Confidential ERC-20 Token",
+    description:
+      "Implement encrypted balances, privacy-preserving transfers, and encrypted allowances",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -1397,10 +1433,14 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "12-voting",
     title: "Exercise 12: Build a Confidential Voting System",
+    description:
+      "Implement encrypted vote tallying with time-bounded proposals and reveal mechanism",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -1618,10 +1658,13 @@ contract ConfidentialVoting is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "beginner",
   },
   {
     id: "13-auction",
     title: "Exercise 13: Build a Sealed-Bid Auction",
+    description: "Implement a multi-auction contract with encrypted bids, ETH deposits,",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -1931,10 +1974,13 @@ contract SealedBidAuction is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "intermediate",
   },
   {
     id: "14-capstone",
     title: "Exercise 14 (Part 1): Governance Token",
+    description: "A confidential ERC-20 token with DAO access support for weighted voting",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -2410,10 +2456,13 @@ contract ConfidentialDAO is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "advanced",
   },
   {
     id: "14-testing",
     title: "testing",
+    description: "",
+    hints: [],
     exercise: `// Exercise 14: Write a Test Suite for ConfidentialERC20
 //
 // Instructions:
@@ -2954,10 +3003,13 @@ describe("Exercise 14: ConfidentialERC20 Test Suite", function () {
 });
 `,
     language: "typescript",
+    difficulty: "advanced",
   },
   {
     id: "15-gas",
     title: "InefficientToken - Module 15 Exercise",
+    description: "A deliberately inefficient confidential token contract.",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -3241,10 +3293,21 @@ contract OptimizedToken is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "beginner",
   },
   {
     id: "16-security",
     title: "EncryptedVault - Security Audit Exercise",
+    description: "This contract contains 7 FHE-specific security vulnerabilities.",
+    hints: [
+      "What happens to the ACL after the FHE.add operation?",
+      "What does the gas consumption reveal about the encrypted balance?",
+      "Is the encrypted input properly validated?",
+      "What happens if someone passes 100 recipients?",
+      "Does the revert pattern reveal anything about the encrypted state?",
+      "Should individual balances be made publicly decryptable?",
+      "Check the access control modifier.",
+    ],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -3749,10 +3812,13 @@ contract EncryptedVaultFixed is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "beginner",
   },
   {
     id: "17-patterns",
     title: "Exercise 17: Encrypted Escrow",
+    description: "Combine State Machine + LastError + Time-Lock patterns into a working escrow.",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -4209,10 +4275,13 @@ contract EncryptedEscrow is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "advanced",
   },
   {
     id: "18-defi",
     title: "Exercise 18: Build a Confidential Swap",
+    description: "Implement a simple token swap where users exchange encrypted amounts",
+    hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -4490,5 +4559,6 @@ contract ConfidentialSwap is ZamaEthereumConfig {
 }
 `,
     language: "sol",
+    difficulty: "advanced",
   },
 ];
