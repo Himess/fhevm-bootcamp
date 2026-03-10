@@ -16,10 +16,7 @@ export const exerciseEntries: ExerciseEntry[] = [
     id: "01-hello-fhe",
     title: "Exercise 1: Hello FHE",
     description: "Complete the TODOs to build your first FHE contract",
-    hints: [
-      "Use FHE.asEuint32() and FHE.allowThis()",
-      "Use FHE.fromExternal() with externalEuint32 and proof",
-    ],
+    hints: ["Use FHE.asEuint32() and FHE.allowThis()", "Use FHE.fromExternal() with externalEuint32 and proof"],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -1215,8 +1212,7 @@ contract EncryptedLottery is ZamaEthereumConfig {
   {
     id: "11-erc20",
     title: "Exercise 11: Build a Confidential ERC-20 Token",
-    description:
-      "Implement encrypted balances, privacy-preserving transfers, and encrypted allowances",
+    description: "Implement encrypted balances, privacy-preserving transfers, and encrypted allowances",
     hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -1438,8 +1434,7 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
   {
     id: "12-voting",
     title: "Exercise 12: Build a Confidential Voting System",
-    description:
-      "Implement encrypted vote tallying with time-bounded proposals and reveal mechanism",
+    description: "Implement encrypted vote tallying with time-bounded proposals and reveal mechanism",
     hints: [],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -3299,15 +3294,7 @@ contract OptimizedToken is ZamaEthereumConfig {
     id: "16-security",
     title: "EncryptedVault - Security Audit Exercise",
     description: "This contract contains 7 FHE-specific security vulnerabilities.",
-    hints: [
-      "What happens to the ACL after the FHE.add operation?",
-      "What does the gas consumption reveal about the encrypted balance?",
-      "Is the encrypted input properly validated?",
-      "What happens if someone passes 100 recipients?",
-      "Does the revert pattern reveal anything about the encrypted state?",
-      "Should individual balances be made publicly decryptable?",
-      "Check the access control modifier.",
-    ],
+    hints: ["What happens to the ACL after the FHE.add operation?", "What does the gas consumption reveal about the encrypted balance?", "Is the encrypted input properly validated?", "What happens if someone passes 100 recipients?", "Does the revert pattern reveal anything about the encrypted state?", "Should individual balances be made publicly decryptable?", "Check the access control modifier."],
     exercise: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 

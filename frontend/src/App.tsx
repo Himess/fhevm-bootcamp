@@ -188,6 +188,7 @@ export default function App() {
   const [viewedModules, setViewedModules] = React.useState<Set<string>>(getViewedModules);
   const [showDemo, setShowDemo] = React.useState(false);
   const [showPlayground, setShowPlayground] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const displayedContracts = showAllContracts ? CONTRACTS : CONTRACTS.slice(0, 10);
 
   const selectedIdx = selectedModule ? ALL_MODULES.findIndex((m) => m.id === selectedModule) : -1;
@@ -364,50 +365,76 @@ export default function App() {
         {/* Curriculum */}
         <section className="section">
           <h2 className="section-title">4-Week Curriculum — 20 Modules</h2>
-          {PHASES.map((phase) => (
-            <div key={phase.title} className="phase">
-              <h3 className="phase-title">{phase.title}</h3>
-              <div className="modules-list">
-                {phase.modules.map((m) => (
-                  <div key={m.id} className={`module-card ${viewedModules.has(m.id) ? "module-viewed" : ""}`}>
-                    <div className="module-id">
-                      {viewedModules.has(m.id) && <span className="module-check" aria-hidden="true">&#10003;</span>}
-                      {!viewedModules.has(m.id) && m.id}
+          <input
+            type="text"
+            className="module-search-input"
+            placeholder="Search modules..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search modules by name or description"
+          />
+          {(() => {
+            const q = searchQuery.trim().toLowerCase();
+            const filteredPhases = PHASES.map((phase) => ({
+              ...phase,
+              modules: q
+                ? phase.modules.filter(
+                    (m) =>
+                      m.name.toLowerCase().includes(q) ||
+                      m.desc.toLowerCase().includes(q)
+                  )
+                : phase.modules,
+            })).filter((phase) => phase.modules.length > 0);
+
+            if (filteredPhases.length === 0) {
+              return <div className="module-search-empty">No modules found</div>;
+            }
+
+            return filteredPhases.map((phase) => (
+              <div key={phase.title} className="phase">
+                <h3 className="phase-title">{phase.title}</h3>
+                <div className="modules-list">
+                  {phase.modules.map((m) => (
+                    <div key={m.id} className={`module-card ${viewedModules.has(m.id) ? "module-viewed" : ""}`}>
+                      <div className="module-id">
+                        {viewedModules.has(m.id) && <span className="module-check" aria-hidden="true">&#10003;</span>}
+                        {!viewedModules.has(m.id) && m.id}
+                      </div>
+                      <div className="module-info">
+                        <div className="module-name">{m.name}</div>
+                        <div className="module-desc">{m.desc}</div>
+                      </div>
+                      <div className="module-actions">
+                        <button
+                          className="module-btn module-btn-lesson"
+                          onClick={() => openLesson(m.id)}
+                          aria-label={`Open lesson for module ${m.id}: ${m.name}`}
+                        >
+                          Lesson
+                        </button>
+                        <button
+                          className="module-btn module-btn-exercise"
+                          onClick={() => openLesson(m.id)}
+                          aria-label={`Open exercise for module ${m.id}: ${m.name}`}
+                        >
+                          Exercise
+                        </button>
+                        <a
+                          href={`/slides/${MODULE_FOLDERS[m.id]}.html`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="module-btn module-btn-slide"
+                          aria-label={`View slides for module ${m.id}: ${m.name}`}
+                        >
+                          Slides
+                        </a>
+                      </div>
                     </div>
-                    <div className="module-info">
-                      <div className="module-name">{m.name}</div>
-                      <div className="module-desc">{m.desc}</div>
-                    </div>
-                    <div className="module-actions">
-                      <button
-                        className="module-btn module-btn-lesson"
-                        onClick={() => openLesson(m.id)}
-                        aria-label={`Open lesson for module ${m.id}: ${m.name}`}
-                      >
-                        Lesson
-                      </button>
-                      <button
-                        className="module-btn module-btn-exercise"
-                        onClick={() => openLesson(m.id)}
-                        aria-label={`Open exercise for module ${m.id}: ${m.name}`}
-                      >
-                        Exercise
-                      </button>
-                      <a
-                        href={`/slides/${MODULE_FOLDERS[m.id]}.html`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="module-btn module-btn-slide"
-                        aria-label={`View slides for module ${m.id}: ${m.name}`}
-                      >
-                        Slides
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ));
+          })()}
         </section>
 
         {/* Deployed Contracts */}

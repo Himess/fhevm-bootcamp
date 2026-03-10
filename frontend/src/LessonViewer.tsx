@@ -27,6 +27,7 @@ export default function LessonViewer({
   hasNext,
 }: Props) {
   const [tab, setTab] = React.useState<Tab>("lesson");
+  const [slidesLoading, setSlidesLoading] = React.useState(true);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const viewerRef = React.useRef<HTMLDivElement>(null);
   const closeRef = React.useRef<HTMLButtonElement>(null);
@@ -42,9 +43,10 @@ export default function LessonViewer({
     contentRef.current?.scrollTo(0, 0);
   }, [tab, moduleId]);
 
-  // Reset tab to lesson when module changes
+  // Reset tab to lesson and slides loading state when module changes
   React.useEffect(() => {
     setTab("lesson");
+    setSlidesLoading(true);
   }, [moduleId]);
 
   // Store previous focus and focus the modal on open
@@ -157,12 +159,21 @@ export default function LessonViewer({
         <div className="lesson-body" ref={contentRef} id="lesson-content" role="tabpanel">
           {tab === "slides" ? (
             <div className="lesson-slides-container">
-              <iframe
-                src={slidesUrl}
-                className="lesson-slides-iframe"
-                title={`Slides for Module ${moduleId}: ${moduleName}`}
-                sandbox="allow-scripts allow-same-origin"
-              />
+              <div className="lesson-slides-wrapper">
+                {slidesLoading && (
+                  <div className="lesson-slides-loading">
+                    <div className="lesson-slides-spinner" />
+                    <span>Loading slides...</span>
+                  </div>
+                )}
+                <iframe
+                  src={slidesUrl}
+                  className="lesson-slides-iframe"
+                  title={`Slides for Module ${moduleId}: ${moduleName}`}
+                  sandbox="allow-scripts allow-same-origin"
+                  onLoad={() => setSlidesLoading(false)}
+                />
+              </div>
               <div className="lesson-slides-hint">
                 <a href={slidesUrl} target="_blank" rel="noopener noreferrer">
                   Open in full screen
