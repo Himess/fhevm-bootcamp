@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// WARNING: SPOILER ALERT - This is the solution. Try solving the exercise first!
-
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 7: Sealed-Bid Auction
-contract AuctionSolution is ZamaEthereumConfig {
+/// @title Exercise 7: Build a Sealed-Bid Auction
+/// @notice Implement an auction where bids are encrypted
+contract AuctionExercise is ZamaEthereumConfig {
     address public owner;
     uint256 public deadline;
     bool public ended;

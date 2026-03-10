@@ -57,8 +57,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 1: Hello FHE
-contract HelloFHESolution is ZamaEthereumConfig {
+/// @title Exercise 1: Hello FHE
+/// @notice Complete the TODOs to build your first FHE contract
+contract HelloFHEExercise is ZamaEthereumConfig {
     euint32 private _secret;
     address public owner;
 
@@ -135,8 +136,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 2: Encrypted Operations
-contract EncryptedOpsSolution is ZamaEthereumConfig {
+/// @title Exercise 2: Encrypted Operations
+/// @notice Implement basic FHE arithmetic and comparison operations
+contract EncryptedOpsExercise is ZamaEthereumConfig {
     euint32 private _result;
     ebool private _boolResult;
 
@@ -267,7 +269,8 @@ pragma solidity ^0.8.24;
 import {FHE, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 3: ConfidentialToken — Encrypted ERC20-like Token with ACL
+/// @title Exercise 3: ConfidentialToken — Encrypted ERC20-like Token with ACL
+/// @notice Build a minimal encrypted token that properly manages ACL for balances
 contract ConfidentialToken is ZamaEthereumConfig {
     address public owner;
     mapping(address => euint64) private _balances;
@@ -407,8 +410,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 4: Confidential Token
-contract ConfidentialTokenSolution is ZamaEthereumConfig {
+/// @title Exercise 4: Build a Confidential Token
+/// @notice Implement private transfer logic with balance privacy
+contract ConfidentialTokenExercise is ZamaEthereumConfig {
     string public name;
     string public symbol;
     mapping(address => euint64) internal _balances;
@@ -422,7 +426,7 @@ contract ConfidentialTokenSolution is ZamaEthereumConfig {
 
     function mint(address to, uint64 amount) external {
         require(msg.sender == owner, "Not owner");
-        _balances[to] = FHE.add(_balances[to], amount);
+        _balances[to] = FHE.add(_balances[to], FHE.asEuint64(amount));
         FHE.allowThis(_balances[to]);
         FHE.allow(_balances[to], to);
     }
@@ -507,8 +511,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 5: Private Voting System
-contract VotingSolution is ZamaEthereumConfig {
+/// @title Exercise 5: Build a Private Voting System
+/// @notice Implement encrypted vote tallying
+contract VotingExercise is ZamaEthereumConfig {
     struct Proposal {
         string title;
         euint32 yesVotes;
@@ -589,7 +594,7 @@ contract InputExercise is ZamaEthereumConfig {
     /// TODO 1: Accept an encrypted deposit amount
     /// - Convert the external input using FHE.fromExternal()
     /// - Add it to the sender's balance
-    /// - Update ACL for both the balance and totalDeposits
+    /// - Update ACL for the balance
     function deposit(externalEuint64 encAmount, bytes calldata inputProof) external {
         // YOUR CODE HERE
     }
@@ -621,13 +626,12 @@ contract InputExercise is ZamaEthereumConfig {
     solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// WARNING: SPOILER ALERT - This is the solution. Try solving the exercise first!
-
 import {FHE, euint32, euint64, externalEuint32, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 6: Secure Encrypted Input Handling
-contract InputSolution is ZamaEthereumConfig {
+/// @title Exercise 6: Secure Encrypted Input Handling
+/// @notice Practice accepting and processing encrypted inputs from users
+contract InputExercise is ZamaEthereumConfig {
     mapping(address => euint64) private _balances;
     euint32 private _totalDeposits;
     address public owner;
@@ -730,13 +734,12 @@ contract AuctionExercise is ZamaEthereumConfig {
     solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// WARNING: SPOILER ALERT - This is the solution. Try solving the exercise first!
-
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 7: Sealed-Bid Auction
-contract AuctionSolution is ZamaEthereumConfig {
+/// @title Exercise 7: Build a Sealed-Bid Auction
+/// @notice Implement an auction where bids are encrypted
+contract AuctionExercise is ZamaEthereumConfig {
     address public owner;
     uint256 public deadline;
     bool public ended;
@@ -884,18 +887,15 @@ contract EncryptedMarketplaceExercise is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 08 - Encrypted Marketplace
-// This is the complete solution. Compare with exercises/08-marketplace-exercise.sol
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedMarketplace - Module 08: Conditional logic with FHE.select()
-/// @notice Marketplace with encrypted prices, stock, balances, and tiered discounts
-contract EncryptedMarketplace is ZamaEthereumConfig {
+/// @title Exercise 8: Encrypted Marketplace with Conditional Logic
+/// @notice Complete the TODOs to implement a marketplace using FHE.select()
+contract EncryptedMarketplaceExercise is ZamaEthereumConfig {
     struct Item {
         address seller;
         euint64 pricePerUnit;
@@ -1102,18 +1102,15 @@ contract EncryptedLotteryExercise is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 09 - Encrypted Lottery
-// This is the complete solution. Compare with exercises/09-lottery-exercise.sol
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedLottery - Module 09: On-chain lottery with encrypted randomness
-/// @notice Players buy tickets, a random winner is selected using FHE randomness.
-contract EncryptedLottery is ZamaEthereumConfig {
+/// @title Exercise 9: Encrypted Lottery with On-Chain Randomness
+/// @notice Complete the TODOs to implement a lottery using FHE.randEuint32()
+contract EncryptedLotteryExercise is ZamaEthereumConfig {
     address public owner;
     address[] public players;
     mapping(address => bool) public hasTicket;
@@ -1312,18 +1309,14 @@ contract ConfidentialERC20 is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 11 - Confidential ERC-20
-// This is the complete implementation of the ConfidentialERC20 token.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialERC20 - Module 11: ERC-20 with encrypted balances
-/// @notice Balances and allowances are encrypted. Transfer amounts are hidden.
-/// @dev Key design: failed transfers silently transfer 0 (no revert = no info leak)
+/// @title Exercise 11: Build a Confidential ERC-20 Token
+/// @notice Implement encrypted balances, privacy-preserving transfers, and encrypted allowances
 contract ConfidentialERC20 is ZamaEthereumConfig {
     string public name;
     string public symbol;
@@ -1522,17 +1515,14 @@ contract ConfidentialVoting is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 12 - Confidential Voting
-// This is the complete implementation of the ConfidentialVoting system.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialVoting - Module 12: Private on-chain voting
-/// @notice Vote tallies are encrypted until reveal. No one can see individual votes.
+/// @title Exercise 12: Build a Confidential Voting System
+/// @notice Implement encrypted vote tallying with time-bounded proposals and reveal mechanism
 contract ConfidentialVoting is ZamaEthereumConfig {
     struct Proposal {
         string description;
@@ -1792,19 +1782,15 @@ contract SealedBidAuction is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 13 - Sealed-Bid Auction
-// This is the complete implementation of the SealedBidAuction.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint64, externalEuint64, ebool, eaddress} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title SealedBidAuction - Module 13: Encrypted sealed-bid auction
-/// @notice Bids are encrypted using FHE. The highest bid is tracked with encrypted comparison.
-///         Uses eaddress to privately track the highest bidder.
-///         ETH deposits are required to prevent spam bidding.
+/// @title Exercise 13: Build a Sealed-Bid Auction
+/// @notice Implement a multi-auction contract with encrypted bids, ETH deposits,
+///         and winner reveal via FHE.makePubliclyDecryptable()
 contract SealedBidAuction is ZamaEthereumConfig {
     struct Auction {
         string item;
@@ -2197,10 +2183,7 @@ contract ConfidentialDAO is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 14 - Capstone Confidential DAO
-// Complete implementation matching the exercise architecture.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint64, ebool, externalEuint64, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
@@ -2210,7 +2193,7 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 // PART 1: GovernanceToken
 // ============================================================
 
-/// @title Solution 14 (Part 1): Governance Token
+/// @title Exercise 14 (Part 1): Governance Token
 /// @notice A confidential ERC-20 token with DAO access support for weighted voting
 contract GovernanceToken is ZamaEthereumConfig {
     string public name;
@@ -2296,8 +2279,8 @@ interface IGovernanceToken {
     function balanceOf(address account) external view returns (euint64);
 }
 
-/// @title Solution 14 (Part 2): Confidential DAO
-/// @notice Proposals, weighted encrypted voting, treasury management, and execution
+/// @title Exercise 14 (Part 2): Confidential DAO
+/// @notice Implement proposals, weighted encrypted voting, treasury management, and execution
 contract ConfidentialDAO is ZamaEthereumConfig {
     struct Proposal {
         string description;
@@ -3162,17 +3145,18 @@ pragma solidity ^0.8.24;
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint32, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title OptimizedToken - Module 15 Solution
-/// @notice The optimized version of InefficientToken with 30%+ gas savings.
+/// @title InefficientToken - Module 15 Exercise
+/// @notice A deliberately inefficient confidential token contract.
+///         Students must optimize this to reduce gas by at least 30%.
 ///
-/// OPTIMIZATIONS APPLIED:
-///   1. Downsized euint64 → euint32 (balances capped at 1,000,000 fit in 32 bits)
-///   2. Use plaintext operands instead of encrypting known constants
-///   3. Pre-compute fee rate in plaintext (baseFee + surcharge = 3, a public value)
-///   4. Replace comparison + select with FHE.max for threshold check
-///   5. Remove redundant balance check (only check once with total deduction)
-///   6. Batch parameter update into a single function
-contract OptimizedToken is ZamaEthereumConfig {
+/// KNOWN INEFFICIENCIES (for students to find and fix):
+///   1. Uses euint64 for balances that never exceed 1,000,000 (fits in euint32)
+///   2. Encrypts plaintext constants before every operation
+///   3. Recomputes fee rate from base components on every transfer
+///   4. Uses comparison + select instead of FHE.max for threshold check
+///   5. Performs the same balance comparison twice in transfer()
+///   6. Individual setter functions instead of batched parameter update
+contract InefficientToken is ZamaEthereumConfig {
     address public owner;
 
     // OPTIMIZATION 1: euint32 instead of euint64 (1,000,000 < 2^32)
@@ -3485,25 +3469,20 @@ pragma solidity ^0.8.24;
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedVault (FIXED) - Security Audit Exercise Solution
-/// @notice This is the corrected version of EncryptedVault with all 7
-///         vulnerabilities fixed. Compare with exercises/16-security-exercise.sol.
+/// @title EncryptedVault - Security Audit Exercise
+/// @notice This contract contains 7 FHE-specific security vulnerabilities.
+///         Your task is to find all of them and produce a fixed version.
 ///
-/// FIXES APPLIED:
-///   1. deposit()         -- Added FHE.allowThis + FHE.allow + isInitialized check
-///   2. withdraw()        -- Replaced if/else with FHE.select for uniform gas
-///   3. lockFunds()       -- Added FHE.isInitialized validation
-///   4. batchTransfer()   -- Added MAX_BATCH cap to prevent DoS
-///   5. emergencyWithdraw() -- Added onlyOwner + replaced revert with LastError
-///   6. revealBalance()   -- Replaced makePubliclyDecryptable with FHE.allow
-///   7. adminMint()       -- Added onlyOwner modifier
+/// INSTRUCTIONS:
+///   1. Read each function carefully
+///   2. Identify the vulnerability (marked with subtle hints in the code)
+///   3. Write the fix in your solution contract (solutions/16-security-solution.sol)
+///   4. Ensure your fixed contract maintains the same external interface
 ///
-/// ADDITIONS:
-///   - LastError pattern for encrypted error feedback
-///   - Rate limiting modifier for expensive operations
-///   - Custom errors for gas-efficient plaintext reverts
-///   - Input validation on all encrypted inputs
-contract EncryptedVaultFixed is ZamaEthereumConfig {
+/// VULNERABILITIES TO FIND: 7 total
+///   Categories: gas leak, missing ACL, unvalidated input, DoS,
+///               error leak, privacy violation, missing access control
+contract EncryptedVault is ZamaEthereumConfig {
 
     // =========================================================================
     // Custom Errors
@@ -4031,17 +4010,17 @@ contract EncryptedEscrow is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 17 - Encrypted Escrow
-// This is the complete implementation combining State Machine + LastError + Time-Lock patterns.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint8, externalEuint32, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedEscrow - Module 17: Solution
-/// @notice Combines State Machine + LastError + Time-Lock patterns into a working escrow.
+/// @title Exercise 17: Encrypted Escrow
+/// @notice Combine State Machine + LastError + Time-Lock patterns into a working escrow.
+///         The depositor funds the escrow with an encrypted amount. The arbiter can release
+///         funds to the beneficiary (if conditions are met) or resolve disputes. If the
+///         deadline passes, the depositor can reclaim expired funds.
 ///
 /// Error codes:
 ///   0 = SUCCESS
@@ -4373,18 +4352,15 @@ contract ConfidentialSwap is ZamaEthereumConfig {
     }
 }
 `,
-    solution: `// SOLUTION: Module 18 - Confidential Swap
-// This is the complete implementation of the ConfidentialSwap exercise.
-
-// SPDX-License-Identifier: MIT
+    solution: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialSwap - Module 18: Privacy-preserving token swap
-/// @notice Users exchange encrypted amounts of Token A and Token B
-///         at a fixed exchange rate (1 A = 2 B) enforced via FHE.
+/// @title Exercise 18: Build a Confidential Swap
+/// @notice Implement a simple token swap where users exchange encrypted amounts
+///         of Token A and Token B at a fixed exchange rate enforced via FHE.
 ///         Uses the LastError pattern: insufficient balance does not revert.
 contract ConfidentialSwap is ZamaEthereumConfig {
     // Exchange rate: 1 Token A = RATE Token B

@@ -1,14 +1,14 @@
-// SOLUTION: Module 17 - Encrypted Escrow
-// This is the complete implementation combining State Machine + LastError + Time-Lock patterns.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint8, externalEuint32, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedEscrow - Module 17: Solution
-/// @notice Combines State Machine + LastError + Time-Lock patterns into a working escrow.
+/// @title Exercise 17: Encrypted Escrow
+/// @notice Combine State Machine + LastError + Time-Lock patterns into a working escrow.
+///         The depositor funds the escrow with an encrypted amount. The arbiter can release
+///         funds to the beneficiary (if conditions are met) or resolve disputes. If the
+///         deadline passes, the depositor can reclaim expired funds.
 ///
 /// Error codes:
 ///   0 = SUCCESS

@@ -1,6 +1,3 @@
-// SOLUTION: Module 14 - Capstone Confidential DAO
-// Complete implementation matching the exercise architecture.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -11,7 +8,7 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 // PART 1: GovernanceToken
 // ============================================================
 
-/// @title Solution 14 (Part 1): Governance Token
+/// @title Exercise 14 (Part 1): Governance Token
 /// @notice A confidential ERC-20 token with DAO access support for weighted voting
 contract GovernanceToken is ZamaEthereumConfig {
     string public name;
@@ -97,8 +94,8 @@ interface IGovernanceToken {
     function balanceOf(address account) external view returns (euint64);
 }
 
-/// @title Solution 14 (Part 2): Confidential DAO
-/// @notice Proposals, weighted encrypted voting, treasury management, and execution
+/// @title Exercise 14 (Part 2): Confidential DAO
+/// @notice Implement proposals, weighted encrypted voting, treasury management, and execution
 contract ConfidentialDAO is ZamaEthereumConfig {
     struct Proposal {
         string description;

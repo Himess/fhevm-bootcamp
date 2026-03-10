@@ -4,17 +4,18 @@ pragma solidity ^0.8.24;
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint32, externalEuint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title OptimizedToken - Module 15 Solution
-/// @notice The optimized version of InefficientToken with 30%+ gas savings.
+/// @title InefficientToken - Module 15 Exercise
+/// @notice A deliberately inefficient confidential token contract.
+///         Students must optimize this to reduce gas by at least 30%.
 ///
-/// OPTIMIZATIONS APPLIED:
-///   1. Downsized euint64 → euint32 (balances capped at 1,000,000 fit in 32 bits)
-///   2. Use plaintext operands instead of encrypting known constants
-///   3. Pre-compute fee rate in plaintext (baseFee + surcharge = 3, a public value)
-///   4. Replace comparison + select with FHE.max for threshold check
-///   5. Remove redundant balance check (only check once with total deduction)
-///   6. Batch parameter update into a single function
-contract OptimizedToken is ZamaEthereumConfig {
+/// KNOWN INEFFICIENCIES (for students to find and fix):
+///   1. Uses euint64 for balances that never exceed 1,000,000 (fits in euint32)
+///   2. Encrypts plaintext constants before every operation
+///   3. Recomputes fee rate from base components on every transfer
+///   4. Uses comparison + select instead of FHE.max for threshold check
+///   5. Performs the same balance comparison twice in transfer()
+///   6. Individual setter functions instead of batched parameter update
+contract InefficientToken is ZamaEthereumConfig {
     address public owner;
 
     // OPTIMIZATION 1: euint32 instead of euint64 (1,000,000 < 2^32)

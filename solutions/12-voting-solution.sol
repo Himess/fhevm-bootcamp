@@ -1,14 +1,11 @@
-// SOLUTION: Module 12 - Confidential Voting
-// This is the complete implementation of the ConfidentialVoting system.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialVoting - Module 12: Private on-chain voting
-/// @notice Vote tallies are encrypted until reveal. No one can see individual votes.
+/// @title Exercise 12: Build a Confidential Voting System
+/// @notice Implement encrypted vote tallying with time-bounded proposals and reveal mechanism
 contract ConfidentialVoting is ZamaEthereumConfig {
     struct Proposal {
         string description;

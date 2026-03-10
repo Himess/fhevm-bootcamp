@@ -4,8 +4,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, euint8, externalEuint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 5: Private Voting System
-contract VotingSolution is ZamaEthereumConfig {
+/// @title Exercise 5: Build a Private Voting System
+/// @notice Implement encrypted vote tallying
+contract VotingExercise is ZamaEthereumConfig {
     struct Proposal {
         string title;
         euint32 yesVotes;

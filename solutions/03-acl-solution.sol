@@ -4,7 +4,8 @@ pragma solidity ^0.8.24;
 import {FHE, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 3: ConfidentialToken — Encrypted ERC20-like Token with ACL
+/// @title Exercise 3: ConfidentialToken — Encrypted ERC20-like Token with ACL
+/// @notice Build a minimal encrypted token that properly manages ACL for balances
 contract ConfidentialToken is ZamaEthereumConfig {
     address public owner;
     mapping(address => euint64) private _balances;

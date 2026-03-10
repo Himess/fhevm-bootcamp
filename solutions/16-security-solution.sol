@@ -4,25 +4,20 @@ pragma solidity ^0.8.24;
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32, externalEbool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedVault (FIXED) - Security Audit Exercise Solution
-/// @notice This is the corrected version of EncryptedVault with all 7
-///         vulnerabilities fixed. Compare with exercises/16-security-exercise.sol.
+/// @title EncryptedVault - Security Audit Exercise
+/// @notice This contract contains 7 FHE-specific security vulnerabilities.
+///         Your task is to find all of them and produce a fixed version.
 ///
-/// FIXES APPLIED:
-///   1. deposit()         -- Added FHE.allowThis + FHE.allow + isInitialized check
-///   2. withdraw()        -- Replaced if/else with FHE.select for uniform gas
-///   3. lockFunds()       -- Added FHE.isInitialized validation
-///   4. batchTransfer()   -- Added MAX_BATCH cap to prevent DoS
-///   5. emergencyWithdraw() -- Added onlyOwner + replaced revert with LastError
-///   6. revealBalance()   -- Replaced makePubliclyDecryptable with FHE.allow
-///   7. adminMint()       -- Added onlyOwner modifier
+/// INSTRUCTIONS:
+///   1. Read each function carefully
+///   2. Identify the vulnerability (marked with subtle hints in the code)
+///   3. Write the fix in your solution contract (solutions/16-security-solution.sol)
+///   4. Ensure your fixed contract maintains the same external interface
 ///
-/// ADDITIONS:
-///   - LastError pattern for encrypted error feedback
-///   - Rate limiting modifier for expensive operations
-///   - Custom errors for gas-efficient plaintext reverts
-///   - Input validation on all encrypted inputs
-contract EncryptedVaultFixed is ZamaEthereumConfig {
+/// VULNERABILITIES TO FIND: 7 total
+///   Categories: gas leak, missing ACL, unvalidated input, DoS,
+///               error leak, privacy violation, missing access control
+contract EncryptedVault is ZamaEthereumConfig {
 
     // =========================================================================
     // Custom Errors

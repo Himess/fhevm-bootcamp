@@ -4,8 +4,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 4: Confidential Token
-contract ConfidentialTokenSolution is ZamaEthereumConfig {
+/// @title Exercise 4: Build a Confidential Token
+/// @notice Implement private transfer logic with balance privacy
+contract ConfidentialTokenExercise is ZamaEthereumConfig {
     string public name;
     string public symbol;
     mapping(address => euint64) internal _balances;
@@ -19,7 +20,7 @@ contract ConfidentialTokenSolution is ZamaEthereumConfig {
 
     function mint(address to, uint64 amount) external {
         require(msg.sender == owner, "Not owner");
-        _balances[to] = FHE.add(_balances[to], amount);
+        _balances[to] = FHE.add(_balances[to], FHE.asEuint64(amount));
         FHE.allowThis(_balances[to]);
         FHE.allow(_balances[to], to);
     }

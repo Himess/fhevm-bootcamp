@@ -1,15 +1,12 @@
-// SOLUTION: Module 09 - Encrypted Lottery
-// This is the complete solution. Compare with exercises/09-lottery-exercise.sol
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedLottery - Module 09: On-chain lottery with encrypted randomness
-/// @notice Players buy tickets, a random winner is selected using FHE randomness.
-contract EncryptedLottery is ZamaEthereumConfig {
+/// @title Exercise 9: Encrypted Lottery with On-Chain Randomness
+/// @notice Complete the TODOs to implement a lottery using FHE.randEuint32()
+contract EncryptedLotteryExercise is ZamaEthereumConfig {
     address public owner;
     address[] public players;
     mapping(address => bool) public hasTicket;

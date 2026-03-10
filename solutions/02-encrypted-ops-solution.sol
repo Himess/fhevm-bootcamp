@@ -4,8 +4,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 2: Encrypted Operations
-contract EncryptedOpsSolution is ZamaEthereumConfig {
+/// @title Exercise 2: Encrypted Operations
+/// @notice Implement basic FHE arithmetic and comparison operations
+contract EncryptedOpsExercise is ZamaEthereumConfig {
     euint32 private _result;
     ebool private _boolResult;
 

@@ -4,8 +4,9 @@ pragma solidity ^0.8.24;
 import {FHE, euint32, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 1: Hello FHE
-contract HelloFHESolution is ZamaEthereumConfig {
+/// @title Exercise 1: Hello FHE
+/// @notice Complete the TODOs to build your first FHE contract
+contract HelloFHEExercise is ZamaEthereumConfig {
     euint32 private _secret;
     address public owner;
 

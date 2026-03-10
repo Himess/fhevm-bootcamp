@@ -1,15 +1,11 @@
-// SOLUTION: Module 11 - Confidential ERC-20
-// This is the complete implementation of the ConfidentialERC20 token.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialERC20 - Module 11: ERC-20 with encrypted balances
-/// @notice Balances and allowances are encrypted. Transfer amounts are hidden.
-/// @dev Key design: failed transfers silently transfer 0 (no revert = no info leak)
+/// @title Exercise 11: Build a Confidential ERC-20 Token
+/// @notice Implement encrypted balances, privacy-preserving transfers, and encrypted allowances
 contract ConfidentialERC20 is ZamaEthereumConfig {
     string public name;
     string public symbol;

@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// WARNING: SPOILER ALERT - This is the solution. Try solving the exercise first!
-
 import {FHE, euint32, euint64, externalEuint32, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title Solution 6: Secure Encrypted Input Handling
-contract InputSolution is ZamaEthereumConfig {
+/// @title Exercise 6: Secure Encrypted Input Handling
+/// @notice Practice accepting and processing encrypted inputs from users
+contract InputExercise is ZamaEthereumConfig {
     mapping(address => euint64) private _balances;
     euint32 private _totalDeposits;
     address public owner;

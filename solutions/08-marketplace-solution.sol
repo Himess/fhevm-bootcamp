@@ -1,15 +1,12 @@
-// SOLUTION: Module 08 - Encrypted Marketplace
-// This is the complete solution. Compare with exercises/08-marketplace-exercise.sol
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint32, euint64, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title EncryptedMarketplace - Module 08: Conditional logic with FHE.select()
-/// @notice Marketplace with encrypted prices, stock, balances, and tiered discounts
-contract EncryptedMarketplace is ZamaEthereumConfig {
+/// @title Exercise 8: Encrypted Marketplace with Conditional Logic
+/// @notice Complete the TODOs to implement a marketplace using FHE.select()
+contract EncryptedMarketplaceExercise is ZamaEthereumConfig {
     struct Item {
         address seller;
         euint64 pricePerUnit;

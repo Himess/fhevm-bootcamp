@@ -1,15 +1,12 @@
-// SOLUTION: Module 18 - Confidential Swap
-// This is the complete implementation of the ConfidentialSwap exercise.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint8, euint16, euint32, euint64, ebool, externalEuint64, externalEuint32} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title ConfidentialSwap - Module 18: Privacy-preserving token swap
-/// @notice Users exchange encrypted amounts of Token A and Token B
-///         at a fixed exchange rate (1 A = 2 B) enforced via FHE.
+/// @title Exercise 18: Build a Confidential Swap
+/// @notice Implement a simple token swap where users exchange encrypted amounts
+///         of Token A and Token B at a fixed exchange rate enforced via FHE.
 ///         Uses the LastError pattern: insufficient balance does not revert.
 contract ConfidentialSwap is ZamaEthereumConfig {
     // Exchange rate: 1 Token A = RATE Token B

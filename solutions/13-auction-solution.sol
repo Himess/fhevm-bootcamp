@@ -1,16 +1,12 @@
-// SOLUTION: Module 13 - Sealed-Bid Auction
-// This is the complete implementation of the SealedBidAuction.
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {FHE, euint64, externalEuint64, ebool, eaddress} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
-/// @title SealedBidAuction - Module 13: Encrypted sealed-bid auction
-/// @notice Bids are encrypted using FHE. The highest bid is tracked with encrypted comparison.
-///         Uses eaddress to privately track the highest bidder.
-///         ETH deposits are required to prevent spam bidding.
+/// @title Exercise 13: Build a Sealed-Bid Auction
+/// @notice Implement a multi-auction contract with encrypted bids, ETH deposits,
+///         and winner reveal via FHE.makePubliclyDecryptable()
 contract SealedBidAuction is ZamaEthereumConfig {
     struct Auction {
         string item;
